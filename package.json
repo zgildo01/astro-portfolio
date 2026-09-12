@@ -1,14 +1,23 @@
 {
   "name": "my-portfolio",
   "type": "module",
+  "private": true,
   "version": "0.0.1",
   "engines": {
-    "node": ">=22.12.0"
+    "node": "^22.22.3 || ^24.16.0 || >=26.3.0"
   },
   "scripts": {
     "dev": "astro dev",
+    "check": "astro check",
+    "lint": "eslint \"**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx,astro}\" --max-warnings=0",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "build": "astro build",
     "preview": "astro preview",
+    "validate": "npm run format:check && npm run lint && npm run check && npm run test && npm run build",
     "astro": "astro"
   },
   "dependencies": {
