@@ -1,0 +1,18 @@
+---
+import { siteConfig } from "../../config/site";
+import SiteNavigation from "./SiteNavigation.astro";
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <div class="site-header__identity">
+      <p class="site-header__name">
+        <a href="/">{siteConfig.name}</a>
+      </p>
+
+      <p class="site-header__role">{siteConfig.role}</p>
+    </div>
+
+    <SiteNavigation />
+  </div>
+</header>
