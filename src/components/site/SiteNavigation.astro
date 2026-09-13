@@ -1,0 +1,40 @@
+---
+import { siteConfig } from "../../config/site";
+import { normalizeRoutePath } from "../../lib/routing";
+
+interface Props {
+  label?: string;
+  variant?: "primary" | "footer";
+}
+
+const {
+  label = "Primary",
+  variant = "primary"
+} = Astro.props;
+
+const currentPath = normalizeRoutePath(Astro.url.pathname);
+const navigationClass = `site-navigation site-navigation--${variant}`;
+---
+
+<nav class={navigationClass} aria-label={label}>
+  <ul class="site-navigation__list">
+    {
+      siteConfig.primaryNavigation.map((item) => {
+        const isCurrentPage =
+          currentPath === normalizeRoutePath(item.href);
+
+        return (
+          <li class="site-navigation__item">
+            <a
+              class="site-navigation__link"
+              href={item.href}
+              aria-current={isCurrentPage ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
