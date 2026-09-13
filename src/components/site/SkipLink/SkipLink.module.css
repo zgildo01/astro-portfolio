@@ -1,0 +1,56 @@
+.skipLink {
+  position: fixed;
+  inset-inline-end: calc(1rem + env(safe-area-inset-right));
+  inset-block-end: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 70;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  max-inline-size: calc(100vw - 2rem);
+  padding: 0.75rem 1rem;
+
+  border: 2px solid currentColor;
+  background: Canvas;
+  color: CanvasText;
+  font: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+
+  transition:
+    opacity 120ms ease-out,
+    transform 120ms ease-out;
+}
+
+/*
+ * Once JavaScript has initialized the behavior, hide the link while the main
+ * region is visible. Keep it available whenever it receives keyboard focus.
+ */
+.skipLink[data-enhanced="true"][data-main-out-of-view="false"]:not(:focus) {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(calc(100% + 2rem));
+}
+
+.skipLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.skipLink:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skipLink {
+    transition: none;
+  }
+}
