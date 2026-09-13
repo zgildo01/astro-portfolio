@@ -4,16 +4,16 @@ import { normalizeRoutePath } from "../../lib/routing";
 
 interface Props {
   label?: string;
-  variant?: "primary" | "footer";
+  placement?: "header" | "footer";
 }
 
 const {
   label = "Primary",
-  variant = "primary"
+  placement = "header"
 } = Astro.props;
 
 const currentPath = normalizeRoutePath(Astro.url.pathname);
-const navigationClass = `site-navigation site-navigation--${variant}`;
+const navigationClass = `site-navigation site-navigation--${placement}`;
 ---
 
 <nav class={navigationClass} aria-label={label}>

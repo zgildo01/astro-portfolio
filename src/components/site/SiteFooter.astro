@@ -1,9 +1,8 @@
 ---
 import { siteConfig } from "../../config/site";
-import { normalizeRoutePath } from "../../lib/routing";
+import SiteNavigation from "./SiteNavigation.astro";
 
 const currentYear = new Date().getFullYear();
-const currentPath = normalizeRoutePath(Astro.url.pathname);
 ---
 
 <footer class="site-footer">
@@ -13,24 +12,7 @@ const currentPath = normalizeRoutePath(Astro.url.pathname);
       <p class="site-footer__role">{siteConfig.role}</p>
     </div>
 
-    <nav aria-label="Footer">
-      <ul class="site-footer__links">
-        {
-          siteConfig.primaryNavigation.map((item) => (
-            <li>
-              <a 
-                href={item.href}
-                aria-current={
-                  currentPath === normalizeRoutePath(item.href) ? "page" : undefined
-                }
-              >
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+    <SiteNavigation placement="footer"/>
 
     <p class="site-footer__copyright">
       <small>&copy; {currentYear} {siteConfig.name}</small>
