@@ -1,0 +1,13 @@
+---
+import styles from "./SkipLink.module.css";
+---
+
+<a class={styles.skipLink} href="#main-content" data-skip-link>
+  Jump to main content
+</a>
+
+<script>
+  import { initializeSkipLink } from "./skipLink";
+
+  initializeSkipLink();
+</script>
