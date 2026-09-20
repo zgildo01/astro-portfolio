@@ -1,0 +1,71 @@
+---
+import { pageMetadata } from "../../config/pageMetadata";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const metadata = pageMetadata.work;
+---
+
+<BaseLayout {...metadata}>
+  <div class="work-page">
+    <header class="work-page__header">
+      <p class="work-page__eyebrow">Selected work</p>
+
+      <h1>Work</h1>
+
+      <p class="work-page__introduction">
+        This page will collect selected professional and personal engineering
+        work, with an emphasis on the problems addressed, decisions made, and
+        outcomes produced.
+      </p>
+    </header>
+
+    <section
+      class="work-page__status"
+      aria-labelledby="work-status-heading"
+    >
+      <h2 id="work-status-heading">Case studies in progress</h2>
+
+      <p>
+        Complete project case studies will be introduced during the dedicated
+        Work and Case Studies pillar. Professional examples will be reviewed and
+        sanitized before publication.
+      </p>
+    </section>
+
+    <section
+      class="work-page__scope"
+      aria-labelledby="work-scope-heading"
+    >
+      <h2 id="work-scope-heading">What each case study will cover</h2>
+
+      <ul>
+        <li>The problem or opportunity that motivated the work</li>
+        <li>The relevant technical and organizational constraints</li>
+        <li>The approach taken and important engineering decisions</li>
+        <li>My individual responsibilities and contributions</li>
+        <li>The resulting outcome and lessons learned</li>
+      </ul>
+    </section>
+
+    <section
+      class="work-page__next-steps"
+      aria-labelledby="work-next-steps-heading"
+    >
+      <h2 id="work-next-steps-heading">Continue exploring</h2>
+
+      <ul>
+        <li>
+          <a href="/resume">View my resume</a>
+        </li>
+
+        <li>
+          <a href="/about">Learn more about me</a>
+        </li>
+
+        <li>
+          <a href="/contact">Contact me</a>
+        </li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>

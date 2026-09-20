@@ -1,0 +1,57 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { pageMetadata } from "../config/pageMetadata";
+
+const metadata = pageMetadata.contact;
+---
+
+<BaseLayout {...metadata}>
+  <div class="contact-page">
+    <header class="contact-page__header">
+      <p class="contact-page__eyebrow">Get in touch</p>
+
+      <h1>Contact</h1>
+
+      <p class="contact-page__introduction">
+        Interested in discussing platform engineering, developer tooling, or a
+        professional opportunity? This page will provide a direct and accessible
+        way to reach me.
+      </p>
+    </header>
+
+    <section
+      class="contact-page__status"
+      aria-labelledby="contact-status-heading"
+    >
+      <h2 id="contact-status-heading">Contact experience in progress</h2>
+
+      <p>
+        The complete contact form, validation, message delivery, and clear
+        success and failure feedback will be introduced during the dedicated
+        Contact pillar.
+      </p>
+    </section>
+
+    <section
+      class="contact-page__alternatives"
+      aria-labelledby="contact-alternatives-heading"
+    >
+      <h2 id="contact-alternatives-heading">Explore my work</h2>
+
+      <p>
+        While the contact experience is being completed, you can review my
+        professional background and selected work.
+      </p>
+
+      <ul>
+        <li>
+          <a href="/resume">View my resume</a>
+        </li>
+
+        <li>
+          <a href="/work">View selected work</a>
+        </li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
