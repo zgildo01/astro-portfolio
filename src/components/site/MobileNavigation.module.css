@@ -1,0 +1,62 @@
+.navigation {
+  position: relative;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text);
+
+  font: inherit;
+  font-weight: 600;
+  line-height: 1;
+
+  list-style: none;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.toggle::-webkit-details-marker {
+  display: none;
+}
+
+.toggle::marker {
+  content: "";
+}
+
+.icon {
+  display: grid;
+  gap: 0.2rem;
+  inline-size: 1.25rem;
+}
+
+.icon > span {
+  display: block;
+  block-size: 2px;
+  inline-size: 100%;
+  background: currentColor;
+}
+
+.panel {
+  position: absolute;
+  inset-block-start: calc(100% + var(--space-2));
+  inset-inline-end: 0;
+  z-index: 40;
+
+  inline-size: min(18rem, calc(100vw - (var(--page-gutter) * 2)));
+  max-block-size: 70vh;
+  overflow-y: auto;
+
+  padding: var(--space-4);
+
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+}

@@ -35,8 +35,7 @@ export function updateSkipLinkState(
   skipLink: Pick<HTMLAnchorElement, "dataset">,
   isMainIntersecting: boolean
 ): void {
-  skipLink.dataset.mainOutOfView =
-    getMainOutOfViewValue(isMainIntersecting);
+  skipLink.dataset.mainOutOfView = getMainOutOfViewValue(isMainIntersecting);
 
   skipLink.dataset.enhanced = "true";
 }
@@ -48,8 +47,7 @@ export function updateSkipLinkState(
 export function initializeSkipLink(
   root: Document = document
 ): IntersectionObserver | null {
-  const skipLink =
-    root.querySelector<HTMLAnchorElement>(skipLinkSelector);
+  const skipLink = root.querySelector<HTMLAnchorElement>(skipLinkSelector);
 
   if (!skipLink) {
     return null;

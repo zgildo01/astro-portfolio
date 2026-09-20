@@ -1,84 +1,10 @@
-.site-header,
-.site-footer {
-  border-color: var(--color-border);
-}
-
-.site-header {
-  border-block-end: 1px solid var(--color-border);
-}
-
-.site-footer {
-  border-block-start: 1px solid var(--color-border);
-}
-
-.site-header__inner,
-.site-footer__inner,
-main {
-  inline-size: min(
-    calc(100% - (var(--page-gutter) * 2)),
-    var(--shell-width)
-  );
+.shell-container {
+  inline-size: min(calc(100% - (var(--page-gutter) * 2)), var(--shell-width));
   margin-inline: auto;
 }
 
-.site-header__inner {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-  padding-block: var(--space-5);
-}
-
-.site-header__identity {
-  display: grid;
-  gap: var(--space-1);
-}
-
-.site-header__name,
-.site-header__role,
-.site-footer__name,
-.site-footer__role,
-.site-footer__copyright {
-  margin-block-end: 0;
-}
-
-.site-header__name {
-  font-size: 1.125rem;
-  font-weight: 700;
-}
-
-.site-header__name a {
-  color: inherit;
-}
-
-.site-header__role,
-.site-footer__role,
-.site-footer__copyright {
-  color: var(--color-text-secondary);
-}
-
-.site-navigation__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-
-  margin: 0;
-  padding: 0;
-
-  list-style: none;
-}
-
-.site-navigation__link {
-  display: inline-block;
-  padding-block: var(--space-1);
-}
-
-.site-navigation__link[aria-current="page"] {
-  color: var(--color-text);
-  font-weight: 700;
-  text-decoration-thickness: 0.15em;
-}
-
-main {
+.shell-main {
+  flex: 1;
   padding-block: clamp(var(--space-7), 8vw, var(--space-8));
 }
 
@@ -90,66 +16,22 @@ main {
   margin-block-start: var(--space-7);
 }
 
-.page header > * + * {
+.page :is(header, section) > * + * {
   margin-block-start: var(--space-4);
 }
 
-.page section > * + * {
-  margin-block-start: var(--space-4);
+.page :is(h1, h2) {
+  margin-block-end: 0;
 }
 
 .page h1 {
-  margin-block-end: 0;
   font-size: clamp(2.25rem, 8vw, 4rem);
 }
 
 .page h2 {
-  margin-block-end: 0;
   font-size: clamp(1.4rem, 4vw, 2rem);
 }
 
-.page p,
-.page li {
-  max-inline-size: var(--content-width);
-}
-
-.page ul,
-.page ol {
+.page :is(ul, ol) {
   padding-inline-start: 1.5rem;
-}
-
-.site-footer__inner {
-  display: grid;
-  gap: var(--space-6);
-  padding-block: var(--space-7);
-}
-
-.site-footer__identity {
-  display: grid;
-  gap: var(--space-1);
-}
-
-@media (min-width: 36rem) {
-  .site-navigation__list {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: var(--space-5);
-  }
-}
-
-@media (min-width: 48rem) {
-  .site-header__inner {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .site-footer__inner {
-    grid-template-columns: 1fr auto;
-    align-items: start;
-  }
-
-  .site-footer__copyright {
-    grid-column: 1 / -1;
-  }
 }

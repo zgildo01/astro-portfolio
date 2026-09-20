@@ -7,8 +7,7 @@ export const siteConfig = {
 
   defaultTitle: `${name} | ${role}`,
 
-  defaultDescription:
-    `The professional portfolio of ${name}, ${role}, focused on dependable development platforms, tooling, and engineering workflows.`,
+  defaultDescription: `The professional portfolio of ${name}, ${role}, focused on dependable development platforms, tooling, and engineering workflows.`,
 
   primaryNavigation: [
     {
