@@ -1,6 +1,15 @@
+const name = "Zeus Zaragoza";
+const role = "Platform Engineer";
+
 export const siteConfig = {
-  name: "Zeus Zaragoza",
-  role: "Platform Engineer",
+  name,
+  role,
+
+  defaultTitle: `${name} | ${role}`,
+
+  defaultDescription:
+    `The professional portfolio of ${name}, ${role}, focused on dependable development platforms, tooling, and engineering workflows.`,
+
   primaryNavigation: [
     {
       label: "Home",

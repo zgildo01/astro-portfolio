@@ -1,17 +1,20 @@
 ---
+import { pageMetadata } from "../config/pageMetadata";
+import { siteConfig } from "../config/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const metadata = pageMetadata.home;
 ---
 
-<BaseLayout
-  title="Zeus Zaragoza | Platform Engineer"
-  description="The professional portfolio of Zeus Zaragoza, Platform Engineer."
->
-  <h1>Zeus Zaragoza</h1>
+<BaseLayout {...metadata}>
+  <div class="page home-page">
+    <h1>{siteConfig.name}</h1>
 
-  <p>Platform Engineer</p>
+    <p>{siteConfig.role}</p>
 
-  <p>
-    I build and maintain dependable development platforms, tooling, and
-    engineering workflows.
-  </p>
+    <p>
+      I build and maintain dependable development platforms, tooling, and
+      engineering workflows.
+    </p>
+  </div>
 </BaseLayout>
