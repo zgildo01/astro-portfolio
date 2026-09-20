@@ -8,9 +8,7 @@ import {
 
 describe("getSkipLinkTargetId", () => {
   it("extracts an element ID from a URL fragment", () => {
-    expect(getSkipLinkTargetId("#main-content")).toBe(
-      "main-content"
-    );
+    expect(getSkipLinkTargetId("#main-content")).toBe("main-content");
   });
 
   it.each(["", "#", "/main-content"])(
@@ -28,9 +26,7 @@ describe("getMainOutOfViewValue", () => {
   ] as const)(
     "maps isIntersecting=%s to %s",
     (isIntersecting, expectedValue) => {
-      expect(
-        getMainOutOfViewValue(isIntersecting)
-      ).toBe(expectedValue);
+      expect(getMainOutOfViewValue(isIntersecting)).toBe(expectedValue);
     }
   );
 });

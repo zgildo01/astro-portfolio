@@ -1,20 +1,21 @@
 ---
 import { siteConfig } from "../../config/site";
 import SiteNavigation from "./SiteNavigation.astro";
+import styles from "./SiteFooter.module.css";
 
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="site-footer">
-  <div class="site-footer__inner">
-    <div class="site-footer__identity">
-      <p class="site-footer__name">{siteConfig.name}</p>
-      <p class="site-footer__role">{siteConfig.role}</p>
+<footer class={styles.footer}>
+  <div class:list={["shell-container", styles.inner]}>
+    <div class={styles.identity}>
+      <p class={styles.name}>{siteConfig.name}</p>
+      <p class={styles.role}>{siteConfig.role}</p>
     </div>
 
-    <SiteNavigation placement="footer"/>
+    <SiteNavigation placement="footer" />
 
-    <p class="site-footer__copyright">
+    <p class={styles.copyright}>
       <small>&copy; {currentYear} {siteConfig.name}</small>
     </p>
   </div>

@@ -1,0 +1,36 @@
+.footer {
+  border-block-start: 1px solid var(--color-border);
+}
+
+.inner {
+  display: grid;
+  gap: var(--space-6);
+  padding-block: var(--space-7);
+}
+
+.identity {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.name,
+.role,
+.copyright {
+  margin: 0;
+}
+
+.role,
+.copyright {
+  color: var(--color-text-secondary);
+}
+
+@media (min-width: 48rem) {
+  .inner {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+
+  .copyright {
+    grid-column: 1 / -1;
+  }
+}

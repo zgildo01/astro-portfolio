@@ -1,0 +1,20 @@
+---
+import SiteNavigation from "./SiteNavigation.astro";
+import styles from "./MobileNavigation.module.css";
+---
+
+<details class={styles.navigation}>
+  <summary class={styles.toggle}>
+    <span>Menu</span>
+
+    <span class={styles.icon} aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </summary>
+
+  <div class={styles.panel}>
+    <SiteNavigation placement="mobile" />
+  </div>
+</details>

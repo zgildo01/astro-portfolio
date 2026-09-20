@@ -1,32 +1,30 @@
 ---
 import { siteConfig } from "../../config/site";
 import { normalizeRoutePath } from "../../lib/routing";
+import styles from "./SiteNavigation.module.css";
+
+type NavigationPlacement = "header" | "footer" | "mobile";
 
 interface Props {
   label?: string;
-  placement?: "header" | "footer";
+  placement?: NavigationPlacement;
 }
 
-const {
-  label = "Primary",
-  placement = "header"
-} = Astro.props;
+const { label = "Primary", placement = "header" } = Astro.props;
 
 const currentPath = normalizeRoutePath(Astro.url.pathname);
-const navigationClass = `site-navigation site-navigation--${placement}`;
 ---
 
-<nav class={navigationClass} aria-label={label}>
-  <ul class="site-navigation__list">
+<nav class={styles.navigation} data-placement={placement} aria-label={label}>
+  <ul class={styles.list}>
     {
       siteConfig.primaryNavigation.map((item) => {
-        const isCurrentPage =
-          currentPath === normalizeRoutePath(item.href);
+        const isCurrentPage = currentPath === normalizeRoutePath(item.href);
 
         return (
-          <li class="site-navigation__item">
+          <li>
             <a
-              class="site-navigation__link"
+              class={styles.link}
               href={item.href}
               aria-current={isCurrentPage ? "page" : undefined}
             >
