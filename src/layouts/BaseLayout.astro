@@ -1,7 +1,11 @@
 ---
+import "../styles/global.css";
+import "../styles/shell.css";
+
 import SiteFooter from "../components/site/SiteFooter.astro";
 import SiteHeader from "../components/site/SiteHeader.astro";
 import SkipLink from "../components/site/SkipLink/SkipLink.astro";
+import { siteConfig } from "../config/site";
 
 interface Props {
   title: string;
@@ -10,18 +14,21 @@ interface Props {
 
 const {
   title,
-  description = "Zeus Zaragoza's professional portfolio"
+  description = siteConfig.defaultDescription
 } = Astro.props;
 ---
 
 <!doctype html>
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <meta
       name="viewport"
       content="width=device-width"
     />
+
     <meta
       name="description"
       content={description}
@@ -35,7 +42,7 @@ const {
 
     <SiteHeader />
 
-    <main id="main-content">
+    <main id="main-content" tabindex="-1">
       <slot />
     </main>
 

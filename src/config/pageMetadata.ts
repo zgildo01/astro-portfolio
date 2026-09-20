@@ -16,6 +16,11 @@ function createPageMetadata(
 }
 
 export const pageMetadata = {
+  home: {
+    title: siteConfig.defaultTitle,
+    description: siteConfig.defaultDescription
+  },
+
   resume: createPageMetadata(
     "Resume",
     `Professional resume for ${siteConfig.name}, ${siteConfig.role}.`
