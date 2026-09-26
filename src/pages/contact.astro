@@ -1,4 +1,5 @@
 ---
+import PageIntro from "../components/page/PageIntro.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { pageMetadata } from "../config/pageMetadata";
 
@@ -7,17 +8,15 @@ const metadata = pageMetadata.contact;
 
 <BaseLayout {...metadata}>
   <div class="page contact-page">
-    <header class="contact-page__header">
-      <p class="contact-page__eyebrow page-eyebrow">Get in touch</p>
-
-      <h1>Contact</h1>
-
-      <p class="contact-page__introduction page-introduction">
-        Interested in discussing platform engineering, developer tooling, or a
-        professional opportunity? This page will provide a direct and accessible
-        way to reach me.
-      </p>
-    </header>
+    <PageIntro
+      headerClass="contact-page__header"
+      eyebrow="Get in touch"
+      title="Contact"
+    >
+      Interested in discussing platform engineering, developer tooling, or a
+      professional opportunity? This page will provide a direct and accessible
+      way to reach me.
+    </PageIntro>
 
     <section
       class="contact-page__status incomplete-state"

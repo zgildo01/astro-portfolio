@@ -33,7 +33,7 @@
   margin-block-start: var(--section-gap);
 }
 
-.page :is(header, section) > * + * {
+.page > :is(header, section) > * + * {
   margin-block-start: var(--space-5);
 }
 

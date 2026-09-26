@@ -1,4 +1,5 @@
 ---
+import PageIntro from "../components/page/PageIntro.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { pageMetadata } from "../config/pageMetadata";
 
@@ -7,16 +8,14 @@ const metadata = pageMetadata.resume;
 
 <BaseLayout {...metadata}>
   <article class="page resume-page">
-    <header class="resume-page__header">
-      <p class="resume-page__eyebrow page-eyebrow">Professional record</p>
-
-      <h1>Resume</h1>
-
-      <p class="resume-page__introduction page-introduction">
-        This page will provide a concise overview of my professional experience,
-        technical strengths, and platform-engineering work.
-      </p>
-    </header>
+    <PageIntro
+      headerClass="resume-page__header"
+      eyebrow="Professional record"
+      title="Resume"
+    >
+      This page will provide a concise overview of my professional experience,
+      technical strengths, and platform-engineering work.
+    </PageIntro>
 
     <section
       class="resume-page__status incomplete-state"

@@ -1,4 +1,5 @@
 ---
+import PageIntro from "../../components/page/PageIntro.astro";
 import { pageMetadata } from "../../config/pageMetadata";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
@@ -7,17 +8,15 @@ const metadata = pageMetadata.work;
 
 <BaseLayout {...metadata}>
   <div class="page work-page">
-    <header class="work-page__header">
-      <p class="work-page__eyebrow page-eyebrow">Selected work</p>
-
-      <h1>Work</h1>
-
-      <p class="work-page__introduction page-introduction">
-        This page will collect selected professional and personal engineering
-        work, with an emphasis on the problems addressed, decisions made, and
-        outcomes produced.
-      </p>
-    </header>
+    <PageIntro
+      headerClass="work-page__header"
+      eyebrow="Selected work"
+      title="Work"
+    >
+      This page will collect selected professional and personal engineering
+      work, with an emphasis on the problems addressed, decisions made, and
+      outcomes produced.
+    </PageIntro>
 
     <section
       class="work-page__status incomplete-state"
