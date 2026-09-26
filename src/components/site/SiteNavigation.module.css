@@ -94,6 +94,14 @@
   color: var(--color-link-active);
 }
 
+.navigation[data-placement="footer"] .link {
+  display: inline-flex;
+  align-items: center;
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-2);
+}
+
 .navigation[data-placement="footer"] .link[aria-current="page"] {
   color: var(--color-text);
   font-weight: 600;

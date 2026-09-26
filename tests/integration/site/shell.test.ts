@@ -95,10 +95,13 @@ describe("site shell", () => {
           getAttribute(attributes, "data-placement")
         )
       ).toEqual(["header", "mobile", "footer"]);
+      expect(
+        navigation.map(([, attributes]) =>
+          getAttribute(attributes, "aria-label")
+        )
+      ).toEqual(["Primary", "Primary", "Footer"]);
 
-      for (const [, attributes, content] of navigation) {
-        expect(getAttribute(attributes, "aria-label")).toBe("Primary");
-
+      for (const [, , content] of navigation) {
         const links = [...content.matchAll(/<a\b([^>]*)>([^<]*)<\/a>/g)].map(
           ([, linkAttributes, label]) => ({
             label: label.trim(),
