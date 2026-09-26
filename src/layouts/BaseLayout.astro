@@ -1,4 +1,5 @@
 ---
+import "../styles/fonts.css";
 import "../styles/global.css";
 import "../styles/shell.css";
 
@@ -32,7 +33,7 @@ const { title, description = siteConfig.defaultDescription } = Astro.props;
 
     <SiteHeader />
 
-    <main id="main-content" tabindex="-1">
+    <main id="main-content" class="shell-container shell-main" tabindex="-1">
       <slot />
     </main>
 
