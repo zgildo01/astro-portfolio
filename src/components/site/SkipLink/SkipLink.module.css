@@ -27,24 +27,51 @@
 
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0);
 
   transition:
     opacity var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out),
     background-color var(--duration-interaction) var(--ease-out),
     border-color var(--duration-interaction) var(--ease-out),
     color var(--duration-interaction) var(--ease-out);
 }
 
 /*
- * Once JavaScript has initialized the behavior, hide the link while the start
- * of main is visible. Keep it available whenever it receives keyboard focus.
+ * JavaScript sets a visibility state from the viewport and header geometry.
+ * Keep the native link available whenever it receives keyboard focus.
  */
-.skipLink[data-enhanced="true"][data-main-out-of-view="false"]:not(:focus) {
+.skipLink[data-floating-visible="false"]:not(:focus) {
   opacity: 0;
   pointer-events: none;
-  transform: translateY(var(--space-2));
+}
+
+.compactLabel,
+.tinyLabel {
+  display: none;
+}
+
+@media (max-height: 25rem) and (orientation: landscape) {
+  .fullLabel {
+    display: none;
+  }
+
+  .compactLabel {
+    display: inline;
+  }
+}
+
+@media (max-width: 10rem) {
+  .skipLink {
+    padding-inline: var(--space-2);
+  }
+
+  .fullLabel,
+  .compactLabel {
+    display: none;
+  }
+
+  .tinyLabel {
+    display: inline;
+  }
 }
 
 @media (hover: hover) {
@@ -70,9 +97,5 @@
 @media (prefers-reduced-motion: reduce) {
   .skipLink {
     transition: none;
-  }
-
-  .skipLink[data-enhanced="true"][data-main-out-of-view="false"]:not(:focus) {
-    transform: none;
   }
 }

@@ -33,7 +33,7 @@ describe("site shell", () => {
     const html = await renderLayout("/", "A custom page description.");
     const main = html.match(/<main\b([^>]*)>([\s\S]*?)<\/main>/);
     const skipLink = html.match(
-      /<a\b([^>]*\bdata-skip-link[^>]*)>([^<]*)<\/a>/
+      /<a\b([^>]*\bdata-skip-link[^>]*)>([\s\S]*?)<\/a>/
     );
 
     expect(html).toMatch(/<!doctype html>/i);
@@ -58,7 +58,20 @@ describe("site shell", () => {
     );
     expect(skipLink).not.toBeNull();
     expect(getAttribute(skipLink![1], "href")).toBe("#main-content");
-    expect(skipLink![2].trim()).toBe("Jump to main content");
+    const accessibleName = getAttribute(skipLink![1], "aria-label");
+    const visibleLabels = [
+      ...skipLink![2].matchAll(/<span\b([^>]*)>([^<]*)<\/span>/g)
+    ];
+    expect(accessibleName).toBe("Jump to main content");
+    expect(visibleLabels.map(([, , label]) => label)).toEqual([
+      "Jump to main content",
+      "Jump to main",
+      "Main"
+    ]);
+    for (const [, attributes, label] of visibleLabels) {
+      expect(getAttribute(attributes, "aria-hidden")).toBe("true");
+      expect(accessibleName?.toLowerCase()).toContain(label.toLowerCase());
+    }
 
     const siteHeader = html.indexOf("<header");
     const mainStart = html.indexOf("<main");

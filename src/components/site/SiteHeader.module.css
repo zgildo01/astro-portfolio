@@ -65,7 +65,7 @@
   display: none;
 }
 
-@media (max-width: 37.499rem) and (orientation: portrait) {
+@media (max-width: 47.999rem) {
   .inner {
     flex-direction: row;
     flex-wrap: wrap;
