@@ -4,8 +4,20 @@
 }
 
 .shell-main {
+  --main-block-space: clamp(var(--space-8), 8vw, var(--space-10));
+
+  position: relative;
   flex: 1;
-  padding-block: clamp(var(--space-8), 8vw, var(--space-10));
+  padding-block: var(--main-block-space);
+}
+
+.main-start-marker {
+  position: absolute;
+  inset-block-start: var(--main-block-space);
+  inset-inline-start: 0;
+  inline-size: 1px;
+  block-size: 1px;
+  pointer-events: none;
 }
 
 .page {

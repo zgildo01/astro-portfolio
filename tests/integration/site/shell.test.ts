@@ -45,6 +45,14 @@ describe("site shell", () => {
     expect(main).not.toBeNull();
     expect(getAttribute(main![1], "id")).toBe("main-content");
     expect(getAttribute(main![1], "tabindex")).toBeUndefined();
+    const marker = main![2].match(
+      /<([a-z]+)\b([^>]*\bdata-main-start-marker\b[^>]*)>/
+    );
+    expect(marker).not.toBeNull();
+    expect(getAttribute(marker![2], "aria-hidden")).toBe("true");
+    expect(main![2].indexOf("data-main-start-marker")).toBeLessThan(
+      main![2].indexOf('id="slot-probe"')
+    );
     expect(main![2]).toContain(
       '<section id="slot-probe"><h1>Slot content</h1></section>'
     );

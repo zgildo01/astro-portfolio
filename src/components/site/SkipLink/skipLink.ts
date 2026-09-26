@@ -1,4 +1,5 @@
 const skipLinkSelector = "a[data-skip-link]";
+const mainStartSelector = "[data-main-start-marker]";
 
 export type MainOutOfViewValue = "true" | "false";
 
@@ -19,29 +20,31 @@ export function getSkipLinkTargetId(hash: string): string | null {
 }
 
 /**
- * Converts IntersectionObserver state into the string expected by the
+ * Converts the main-start marker intersection into the string expected by the
  * data-main-out-of-view HTML attribute.
  */
 export function getMainOutOfViewValue(
-  isMainIntersecting: boolean
+  isMainStartIntersecting: boolean
 ): MainOutOfViewValue {
-  return isMainIntersecting ? "false" : "true";
+  return isMainStartIntersecting ? "false" : "true";
 }
 
 /**
- * Records the current main-content visibility state on the skip link.
+ * Records whether the start of main is visible on the skip link.
  */
 export function updateSkipLinkState(
   skipLink: Pick<HTMLAnchorElement, "dataset">,
-  isMainIntersecting: boolean
+  isMainStartIntersecting: boolean
 ): void {
-  skipLink.dataset.mainOutOfView = getMainOutOfViewValue(isMainIntersecting);
+  skipLink.dataset.mainOutOfView = getMainOutOfViewValue(
+    isMainStartIntersecting
+  );
 
   skipLink.dataset.enhanced = "true";
 }
 
 /**
- * Observes whether the skip-link target is inside the viewport. The native
+ * Observes whether the start of main is inside the viewport. The native
  * same-page link handles scrolling and the next keyboard focus position.
  */
 export function initializeSkipLink(
@@ -65,6 +68,12 @@ export function initializeSkipLink(
     return null;
   }
 
+  const mainStart = mainContent.querySelector<HTMLElement>(mainStartSelector);
+
+  if (!mainStart) {
+    return null;
+  }
+
   /*
    * Leave the link permanently visible as a fallback when the browser does
    * not support IntersectionObserver.
@@ -81,7 +90,7 @@ export function initializeSkipLink(
     updateSkipLinkState(skipLink, entry.isIntersecting);
   });
 
-  observer.observe(mainContent);
+  observer.observe(mainStart);
 
   return observer;
 }

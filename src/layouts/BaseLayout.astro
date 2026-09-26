@@ -34,6 +34,8 @@ const { title, description = siteConfig.defaultDescription } = Astro.props;
     <SiteHeader />
 
     <main id="main-content" class="shell-container shell-main">
+      <span class="main-start-marker" data-main-start-marker aria-hidden="true"
+      ></span>
       <slot />
     </main>
 
