@@ -2,7 +2,7 @@
   position: fixed;
   inset-inline-end: calc(1rem + env(safe-area-inset-right));
   inset-block-end: calc(1rem + env(safe-area-inset-bottom));
-  z-index: 70;
+  z-index: var(--layer-skip-link);
 
   display: inline-flex;
   align-items: center;
@@ -25,8 +25,8 @@
   transform: translateY(0);
 
   transition:
-    opacity 120ms ease-out,
-    transform 120ms ease-out;
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 /*

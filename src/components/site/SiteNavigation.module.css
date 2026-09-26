@@ -16,7 +16,7 @@
 
 .link[aria-current="page"] {
   color: var(--color-text);
-  font-weight: 700;
+  font-weight: 600;
   text-decoration-thickness: 0.15em;
 }
 
