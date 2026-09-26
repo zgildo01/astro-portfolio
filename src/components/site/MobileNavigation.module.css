@@ -98,3 +98,22 @@
   background: var(--color-surface-recessed);
   box-shadow: var(--shadow-elevated);
 }
+
+/* Keep the full menu in document flow on very short portrait screens. */
+@media (max-height: 25rem) and (orientation: portrait) {
+  .navigation {
+    inline-size: calc(100vw - (var(--page-gutter) * 2));
+  }
+
+  .toggle {
+    margin-inline-start: auto;
+  }
+
+  .panel {
+    position: static;
+    inline-size: 100%;
+    max-block-size: none;
+    overflow: visible;
+    margin-block-start: var(--space-2);
+  }
+}

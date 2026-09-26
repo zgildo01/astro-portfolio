@@ -94,3 +94,9 @@
 .page-actions a:focus-visible {
   border-color: var(--color-focus);
 }
+
+@media (max-width: 36rem) {
+  .page .page-actions {
+    justify-content: center;
+  }
+}

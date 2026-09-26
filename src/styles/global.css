@@ -1,5 +1,5 @@
 /* Layout breakpoints: 36, 48, 64, 80, and 96rem. The native mobile
-   disclosure keeps its separate portrait-only threshold below 37.5rem.
+   disclosure is used below 48rem in both portrait and landscape.
    Media queries use literal widths because CSS variables cannot define them. */
 :root {
   color-scheme: dark;
