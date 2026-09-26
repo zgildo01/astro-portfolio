@@ -41,8 +41,8 @@ export function updateSkipLinkState(
 }
 
 /**
- * Connects the skip link to its target and observes whether the target is
- * currently inside the viewport.
+ * Observes whether the skip-link target is inside the viewport. The native
+ * same-page link handles scrolling and the next keyboard focus position.
  */
 export function initializeSkipLink(
   root: Document = document
@@ -82,14 +82,6 @@ export function initializeSkipLink(
   });
 
   observer.observe(mainContent);
-
-  skipLink.addEventListener("click", () => {
-    requestAnimationFrame(() => {
-      mainContent.focus({
-        preventScroll: true
-      });
-    });
-  });
 
   return observer;
 }

@@ -12,6 +12,11 @@
   inline-size: min(100%, var(--content-width));
 }
 
+.page > header {
+  padding-block-end: var(--space-6);
+  border-block-end: 1px solid var(--color-border-decorative);
+}
+
 .page > * + * {
   margin-block-start: var(--section-gap);
 }
@@ -38,4 +43,42 @@
 
 .page :is(ul, ol) {
   padding-inline-start: var(--space-5);
+}
+
+.page .page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+.page-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: var(--color-surface-recessed);
+  transition:
+    background-color var(--duration-interaction) var(--ease-out),
+    border-color var(--duration-interaction) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .page-actions a:hover {
+    border-color: var(--color-link-hover);
+    background: var(--color-surface-raised);
+  }
+}
+
+.page-actions a:active {
+  border-color: var(--color-link-active);
+  background: var(--color-surface-selected);
+}
+
+.page-actions a:focus-visible {
+  border-color: var(--color-focus);
 }
