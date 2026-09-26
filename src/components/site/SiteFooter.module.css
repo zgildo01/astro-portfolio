@@ -4,9 +4,16 @@
 }
 
 .inner {
+  --footer-block-space: clamp(var(--space-7), 6vw, var(--space-9));
+
   display: grid;
   gap: var(--space-6);
-  padding-block: clamp(var(--space-7), 6vw, var(--space-9));
+  padding-block: var(--footer-block-space);
+  /* Keep the final row clear of the fixed skip link. */
+  padding-block-end: max(
+    var(--footer-block-space),
+    calc(var(--space-8) + env(safe-area-inset-bottom))
+  );
 }
 
 .identity {
