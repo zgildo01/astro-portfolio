@@ -1,0 +1,31 @@
+.page-eyebrow {
+  color: var(--color-text-secondary);
+  font-family: var(--font-metadata);
+  font-size: var(--type-small);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.page-introduction {
+  max-inline-size: min(100%, var(--content-width-lede));
+  color: var(--color-text);
+  font-size: var(--type-lede);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.incomplete-state {
+  max-inline-size: min(100%, var(--content-width-narrow));
+  padding-inline-start: var(--space-5);
+  border-inline-start: 1px solid var(--color-border-decorative);
+}
+
+.page .incomplete-state > * + * {
+  margin-block-start: var(--space-3);
+}
+
+.incomplete-state h2 {
+  font-size: var(--type-heading-3);
+}

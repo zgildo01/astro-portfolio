@@ -8,18 +8,21 @@ const metadata = pageMetadata.work;
 <BaseLayout {...metadata}>
   <div class="page work-page">
     <header class="work-page__header">
-      <p class="work-page__eyebrow">Selected work</p>
+      <p class="work-page__eyebrow page-eyebrow">Selected work</p>
 
       <h1>Work</h1>
 
-      <p class="work-page__introduction">
+      <p class="work-page__introduction page-introduction">
         This page will collect selected professional and personal engineering
         work, with an emphasis on the problems addressed, decisions made, and
         outcomes produced.
       </p>
     </header>
 
-    <section class="work-page__status" aria-labelledby="work-status-heading">
+    <section
+      class="work-page__status incomplete-state"
+      aria-labelledby="work-status-heading"
+    >
       <h2 id="work-status-heading">Case studies in progress</h2>
 
       <p>
