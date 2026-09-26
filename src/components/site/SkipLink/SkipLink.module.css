@@ -38,8 +38,8 @@
 }
 
 /*
- * Once JavaScript has initialized the behavior, hide the link while the main
- * region is visible. Keep it available whenever it receives keyboard focus.
+ * Once JavaScript has initialized the behavior, hide the link while the start
+ * of main is visible. Keep it available whenever it receives keyboard focus.
  */
 .skipLink[data-enhanced="true"][data-main-out-of-view="false"]:not(:focus) {
   opacity: 0;
