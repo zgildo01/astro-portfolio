@@ -1,0 +1,12 @@
+---
+import { renderResumeInlineMarkdown } from "../../lib/resume/renderInlineMarkdown";
+
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const html = renderResumeInlineMarkdown(text);
+---
+
+<span set:html={html} />

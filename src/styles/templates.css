@@ -10,10 +10,6 @@
   padding-block-end: var(--space-7);
 }
 
-.page-landing h1 {
-  font-size: var(--type-hero);
-}
-
 .page-landing__role {
   color: var(--color-text-secondary);
   font-family: var(--font-metadata);
