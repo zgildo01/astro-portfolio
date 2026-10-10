@@ -41,7 +41,6 @@
   --type-heading-3: clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem);
   --type-heading-2: clamp(1.75rem, 1.35rem + 1.8vw, 3rem);
   --type-page-title: clamp(2.75rem, 1.8rem + 4vw, 6rem);
-  --type-hero: clamp(2.75rem, 2rem + 5vw, 7rem);
   --leading-body: 1.65;
   --leading-heading: 1.12;
   --leading-display: 1.02;

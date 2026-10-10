@@ -1,0 +1,213 @@
+@page {
+  size: letter;
+  margin: 0.5in 0.62in;
+}
+
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    min-block-size: 0;
+    background: #fff;
+  }
+
+  body {
+    display: block;
+    color: #1b211e;
+    font-size: 10pt;
+    line-height: 1.35;
+  }
+
+  body > header,
+  body > footer,
+  [data-skip-link],
+  .main-start-marker,
+  .resume-page__download {
+    display: none !important;
+  }
+
+  main.shell-main,
+  .resume-page {
+    inline-size: 100%;
+    max-inline-size: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .resume-page :is(h1, h2, h3, p, ul, ol) {
+    margin-block: 0;
+  }
+
+  .resume-page :is(h1, h2, h3) {
+    color: #111614;
+    break-after: avoid-page;
+  }
+
+  .resume-page h1 {
+    font-size: 24pt;
+    line-height: 1.1;
+  }
+
+  .resume-page h2 {
+    font-size: 12pt;
+    line-height: 1.2;
+  }
+
+  .resume-page h3 {
+    font-size: 10pt;
+    line-height: 1.25;
+  }
+
+  .resume-page .page-eyebrow {
+    display: none;
+  }
+
+  .resume-page > header {
+    padding-block-end: 0.12in;
+    border-block-end: 1px solid #8d9891;
+  }
+
+  .resume-page > header .page-introduction {
+    max-inline-size: none;
+    margin-block-start: 0.04in;
+    color: #28322d;
+    font-size: 10.5pt;
+    line-height: 1.3;
+  }
+
+  .resume-page > * + * {
+    margin-block-start: 0.16in;
+  }
+
+  .resume-page > section > * + * {
+    margin-block-start: 0;
+  }
+
+  .resume-page__section > h2 {
+    margin-block-end: 0.07in;
+    padding-block-end: 0.025in;
+    border-block-end: 1px solid #cbd2cd;
+  }
+
+  .resume-page__summary > * + * {
+    margin-block-start: 0.06in;
+  }
+
+  .resume-page__experience-list > * + *,
+  .resume-page__entry-list > * + * {
+    margin-block-start: 0.13in;
+  }
+
+  .resume-page__experience-item,
+  .resume-page__entry {
+    padding-block-start: 0.08in;
+    border-block-start: 1px solid #d5dbd7;
+  }
+
+  .resume-page__experience-item:first-child,
+  .resume-page__entry:first-child {
+    padding-block-start: 0;
+    border-block-start: 0;
+  }
+
+  .resume-page__experience-item > * + *,
+  .resume-page__entry > * + * {
+    margin-block-start: 0.025in;
+  }
+
+  .resume-page__employer {
+    color: #111614;
+  }
+
+  .resume-page__metadata {
+    color: #424c46;
+    font-size: 8.5pt;
+    line-height: 1.25;
+  }
+
+  .resume-page :is(ul, ol) {
+    padding-inline-start: 0.17in;
+  }
+
+  .resume-page__experience-item > .resume-page__achievements,
+  .resume-page__entry > .resume-page__achievements {
+    margin-block-start: 0.06in;
+  }
+
+  .resume-page__achievements > * + *,
+  .resume-page__skills > * + * {
+    margin-block-start: 0.025in;
+  }
+
+  .resume-page__skill-groups {
+    display: block;
+  }
+
+  .resume-page__skill-groups > section + section {
+    margin-block-start: 0.08in;
+  }
+
+  .resume-page__skill-groups > section {
+    break-inside: avoid-page;
+  }
+
+  .resume-page__skill-groups h3 {
+    margin-block-end: 0.04in;
+  }
+
+  .resume-page__skills {
+    padding-inline-start: 0;
+    list-style: none;
+  }
+
+  .resume-page__skills li {
+    display: inline;
+  }
+
+  .resume-page__skills li + li::before {
+    content: " · ";
+  }
+
+  .resume-page :is(p, li) {
+    orphans: 2;
+    widows: 2;
+  }
+
+  .resume-page :is(.resume-page__achievements, .resume-page__skills) > li {
+    break-inside: avoid-page;
+  }
+
+  .resume-page a[href] {
+    color: #174b39;
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+  }
+
+  .resume-page__contact a[href]::after {
+    content: " (" attr(href) ")";
+    color: #36423b;
+    font-size: 8pt;
+    font-weight: 400;
+  }
+
+  .resume-page .page-actions {
+    display: block;
+    padding-inline-start: 0;
+  }
+
+  .resume-page .page-actions > li + li {
+    margin-block-start: 0.025in;
+  }
+
+  .resume-page .page-actions a {
+    display: inline;
+    min-block-size: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+}
