@@ -1,0 +1,31 @@
+.page-landing {
+  inline-size: min(100%, var(--shell-width));
+}
+
+.page-landing > :is(header, section) {
+  inline-size: min(100%, var(--content-width));
+}
+
+.page-landing > header {
+  padding-block-end: var(--space-7);
+}
+
+.page-landing__role {
+  color: var(--color-text-secondary);
+  font-family: var(--font-metadata);
+  font-size: var(--type-small);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 64rem) {
+  .page-landing {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-4);
+  }
+
+  .page-landing > :is(header, section) {
+    grid-column: 1 / span 6;
+  }
+}

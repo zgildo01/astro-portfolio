@@ -1,98 +1,136 @@
-import { execFileSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { createRequire } from "node:module";
-import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { experimental_AstroContainer as AstroContainer } from "astro/container";
+import { beforeAll, describe, expect, it } from "vitest";
 
 import { siteConfig } from "../../../src/config/site";
+import BaseLayout from "../../../src/layouts/BaseLayout.astro";
 
-const projectRoot = fileURLToPath(new URL("../../../", import.meta.url));
-const require = createRequire(import.meta.url);
-const astroCli = join(
-  dirname(require.resolve("astro/package.json")),
-  "bin/astro.mjs"
-);
-const outputDirectory = mkdtempSync(join(tmpdir(), "portfolio-shell-test-"));
+let container: Awaited<ReturnType<typeof AstroContainer.create>>;
 
-function readPage(pathname: string): string {
-  const pagePath =
-    pathname === "/" ? "index.html" : join(pathname.slice(1), "index.html");
-
-  return readFileSync(join(outputDirectory, pagePath), "utf8");
+function getAttribute(tag: string, name: string): string | undefined {
+  return tag.match(new RegExp(`(?:^|\\s)${name}="([^"]*)"`))?.[1];
 }
 
-function classNames(tag: string): string[] {
-  return (tag.match(/\bclass="([^"]*)"/)?.[1] ?? "").split(/\s+/);
+async function renderLayout(
+  path: string,
+  description?: string
+): Promise<string> {
+  return container.renderToString(BaseLayout, {
+    request: new Request(`http://localhost${path}`),
+    props: { title: "Shell integration test", description },
+    slots: {
+      default: '<section id="slot-probe"><h1>Slot content</h1></section>'
+    },
+    partial: false
+  });
 }
 
-describe("published site shell", () => {
-  beforeAll(() => {
-    execFileSync(
-      process.execPath,
-      [astroCli, "build", "--outDir", outputDirectory],
-      {
-        cwd: projectRoot,
-        stdio: "pipe",
-        timeout: 120_000
-      }
-    );
-  }, 120_000);
-
-  afterAll(() => {
-    rmSync(outputDirectory, { recursive: true, force: true });
+describe("site shell", () => {
+  beforeAll(async () => {
+    container = await AstroContainer.create();
   });
 
-  it.each(siteConfig.primaryNavigation)(
-    "renders the shared shell and current-page navigation at $href",
-    ({ href }) => {
-      const html = readPage(href);
-      const skipLink = html.match(/<a\b[^>]*data-skip-link[^>]*>/)?.[0] ?? "";
-      const main = html.match(/<main\b[^>]*>/)?.[0] ?? "";
-      const mainContent =
-        html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1] ?? "";
-      const pageWrapper = mainContent.match(/^\s*<[a-z]+\b[^>]*>/)?.[0] ?? "";
+  it("renders document metadata, landmarks, the content slot, and a working skip target", async () => {
+    const html = await renderLayout("/", "A custom page description.");
+    const main = html.match(/<main\b([^>]*)>([\s\S]*?)<\/main>/);
+    const skipLink = html.match(
+      /<a\b([^>]*\bdata-skip-link[^>]*)>([\s\S]*?)<\/a>/
+    );
 
-      expect(skipLink).toContain('href="#main-content"');
-      expect(main).toContain('id="main-content"');
-      expect(main).toContain('tabindex="-1"');
-      expect(classNames(main)).toEqual(
-        expect.arrayContaining(["shell-container", "shell-main"])
-      );
-      expect(classNames(pageWrapper)).toContain("page");
+    expect(html).toMatch(/<!doctype html>/i);
+    expect(html).toMatch(/<html lang="en">/);
+    expect(html).toContain("<title>Shell integration test</title>");
+    expect(html).toContain(
+      '<meta name="description" content="A custom page description.">'
+    );
+    expect(main).not.toBeNull();
+    expect(getAttribute(main![1], "id")).toBe("main-content");
+    expect(getAttribute(main![1], "tabindex")).toBeUndefined();
+    const marker = main![2].match(
+      /<([a-z]+)\b([^>]*\bdata-main-start-marker\b[^>]*)>/
+    );
+    expect(marker).not.toBeNull();
+    expect(getAttribute(marker![2], "aria-hidden")).toBe("true");
+    expect(main![2].indexOf("data-main-start-marker")).toBeLessThan(
+      main![2].indexOf('id="slot-probe"')
+    );
+    expect(main![2]).toContain(
+      '<section id="slot-probe"><h1>Slot content</h1></section>'
+    );
+    expect(skipLink).not.toBeNull();
+    expect(getAttribute(skipLink![1], "href")).toBe("#main-content");
+    const accessibleName = getAttribute(skipLink![1], "aria-label");
+    const visibleLabels = [
+      ...skipLink![2].matchAll(/<span\b([^>]*)>([^<]*)<\/span>/g)
+    ];
+    expect(accessibleName).toBe("Jump to main content");
+    expect(visibleLabels.map(([, , label]) => label)).toEqual([
+      "Jump to main content",
+      "Jump to main",
+      "Main"
+    ]);
+    for (const [, attributes, label] of visibleLabels) {
+      expect(getAttribute(attributes, "aria-hidden")).toBe("true");
+      expect(accessibleName?.toLowerCase()).toContain(label.toLowerCase());
+    }
 
+    const siteHeader = html.indexOf("<header");
+    const mainStart = html.indexOf("<main");
+    const siteFooter = html.indexOf("<footer");
+
+    expect(siteHeader).toBeGreaterThan(html.indexOf("<body>"));
+    expect(mainStart).toBeGreaterThan(siteHeader);
+    expect(siteFooter).toBeGreaterThan(mainStart);
+    expect(html.match(/<main\b/g)).toHaveLength(1);
+    expect(html.match(/<footer\b/g)).toHaveLength(1);
+    expect(html).not.toMatch(/<astro-island\b/);
+  });
+
+  it("uses the default description when one is not supplied", async () => {
+    const html = await renderLayout("/");
+
+    expect(html).toContain(
+      `<meta name="description" content="${siteConfig.defaultDescription}">`
+    );
+  });
+
+  it.each([
+    { path: "/", currentHref: "/" },
+    { path: "/work/", currentHref: "/work" }
+  ])(
+    "renders five links and marks $currentHref current in each navigation",
+    async ({ path, currentHref }) => {
+      const html = await renderLayout(path);
       const navigation = [...html.matchAll(/<nav\b([^>]*)>([\s\S]*?)<\/nav>/g)];
 
-      for (const placement of ["header", "mobile", "footer"]) {
-        const content =
-          navigation.find(([, attributes]) =>
-            attributes.includes('data-placement="' + placement + '"')
-          )?.[2] ?? "";
-        const currentLinks = [...content.matchAll(/<a\b([^>]*)>/g)].filter(
-          ([, attributes]) => attributes.includes('aria-current="page"')
+      expect(navigation).toHaveLength(3);
+      expect(
+        navigation.map(([, attributes]) =>
+          getAttribute(attributes, "data-placement")
+        )
+      ).toEqual(["header", "mobile", "footer"]);
+      expect(
+        navigation.map(([, attributes]) =>
+          getAttribute(attributes, "aria-label")
+        )
+      ).toEqual(["Primary", "Primary", "Footer"]);
+
+      for (const [, , content] of navigation) {
+        const links = [...content.matchAll(/<a\b([^>]*)>([^<]*)<\/a>/g)].map(
+          ([, linkAttributes, label]) => ({
+            label: label.trim(),
+            href: getAttribute(linkAttributes, "href"),
+            current: getAttribute(linkAttributes, "aria-current")
+          })
         );
 
-        expect(currentLinks).toHaveLength(1);
-        expect(currentLinks[0]?.[1]).toContain('href="' + href + '"');
+        expect(links).toEqual(
+          siteConfig.primaryNavigation.map(({ label, href }) => ({
+            label,
+            href,
+            current: href === currentHref ? "page" : undefined
+          }))
+        );
       }
     }
   );
-
-  it("publishes the shell styles used by the rendered classes", () => {
-    const html = readPage("/");
-    const stylesheet =
-      html.match(/<link\b[^>]*rel="stylesheet"[^>]*href="([^"]+)"/)?.[1] ?? "";
-
-    expect(stylesheet).toMatch(/^\/_astro\//);
-
-    const css = readFileSync(
-      join(outputDirectory, stylesheet.slice(1)),
-      "utf8"
-    );
-    expect(css).toContain(".shell-container");
-    expect(css).toContain(".shell-main");
-    expect(css).toContain(".page");
-  });
 });

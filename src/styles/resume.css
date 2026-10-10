@@ -1,0 +1,80 @@
+.resume-page > .resume-page__download {
+  margin-block-start: var(--space-5);
+}
+
+.resume-page__section > h2 {
+  margin-block-end: var(--space-6);
+}
+
+.resume-page__summary > * + * {
+  margin-block-start: var(--space-4);
+}
+
+.page .resume-page__experience-list,
+.page .resume-page__entry-list {
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+.resume-page__experience-list > * + *,
+.resume-page__entry-list > * + * {
+  margin-block-start: var(--space-7);
+}
+
+.resume-page__experience-item,
+.resume-page__entry {
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--color-border-decorative);
+}
+
+.resume-page__experience-item > * + *,
+.resume-page__entry > * + * {
+  margin-block-start: var(--space-2);
+}
+
+.resume-page__employer {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.resume-page__metadata {
+  color: var(--color-text-secondary);
+  font-family: var(--font-metadata);
+  font-size: var(--type-small);
+  line-height: 1.6;
+}
+
+.resume-page__achievements {
+  margin-block-start: var(--space-4);
+}
+
+.resume-page__achievements > * + * {
+  margin-block-start: var(--space-2);
+}
+
+.resume-page__skill-groups {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.resume-page__skill-groups h3 {
+  margin-block-end: var(--space-3);
+}
+
+.resume-page__skills > * + * {
+  margin-block-start: var(--space-1);
+}
+
+.resume-page__contact {
+  font-style: normal;
+}
+
+.resume-page__contact > * + * {
+  margin-block-start: var(--space-4);
+}
+
+@media (min-width: 48rem) {
+  .resume-page__skill-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

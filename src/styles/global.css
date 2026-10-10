@@ -1,14 +1,49 @@
+/* Layout breakpoints: 36, 48, 64, 80, and 96rem. The native mobile
+   disclosure is used below 48rem in both portrait and landscape.
+   Media queries use literal widths because CSS variables cannot define them. */
 :root {
-  --color-background: #ffffff;
-  --color-surface: #f4f4f4;
-  --color-text: #1b1b1b;
-  --color-text-secondary: #555555;
-  --color-border: #b8b8b8;
-  --color-link: #174ea6;
-  --color-focus: #005fcc;
+  color-scheme: dark;
 
-  --font-body:
-    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Semantic colors. The professional site uses this palette without effects. */
+  --color-void: #090b0b;
+  --color-background: #0e1212;
+  --color-surface-recessed: #141a1a;
+  --color-surface-raised: #1a2221;
+  --color-surface-selected: #222b2a;
+  --color-surface: var(--color-surface-recessed);
+  --color-text: #e5e2d8;
+  --color-text-body: #c3c5be;
+  --color-text-secondary: #959b95;
+  --color-border-decorative: #39423f;
+  --color-border: #66716d;
+  --color-border-strong: #7a8781;
+  --color-link: #a7c7ba;
+  --color-link-hover: #c4ddd2;
+  --color-link-active: #7f9e92;
+  --color-link-visited: #8f869f;
+  --color-accent-warm: #b99b68;
+  --color-focus: #d7f0e4;
+  --color-status-error: #b97a6b;
+  --color-status-success: #9fbea9;
+  --color-status-warning: #c2a76e;
+  --color-disabled-surface: #111515;
+  --color-disabled-border: #2a302e;
+  --color-disabled-text: #656b68;
+
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+  --font-metadata: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  --type-caption: 0.75rem;
+  --type-small: 0.875rem;
+  --type-body: clamp(1rem, 0.96rem + 0.18vw, 1.125rem);
+  --type-lede: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  --type-heading-3: clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem);
+  --type-heading-2: clamp(1.75rem, 1.35rem + 1.8vw, 3rem);
+  --type-page-title: clamp(2.75rem, 1.8rem + 4vw, 6rem);
+  --leading-body: 1.65;
+  --leading-heading: 1.12;
+  --leading-display: 1.02;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -18,10 +53,42 @@
   --space-6: 2rem;
   --space-7: 3rem;
   --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+  --section-gap: clamp(4.5rem, 8vw, 8rem);
+  --section-gap-large: clamp(6rem, 12vw, 11rem);
 
-  --page-gutter: clamp(1rem, 4vw, 2.5rem);
+  --page-gutter: clamp(1.25rem, 3vw, 3.5rem);
   --shell-width: 80rem;
+  --shell-width-wide: 92rem;
   --content-width: 68ch;
+  --content-width-narrow: 52ch;
+  --content-width-lede: 48ch;
+
+  --radius-none: 0;
+  --radius-small: 2px;
+  --radius-medium: 4px;
+  --shadow-elevated:
+    inset 0 1px 0 rgb(255 255 255 / 0.025), 0 18px 48px rgb(0 0 0 / 0.28);
+
+  --duration-instant: 0ms;
+  --duration-press: 80ms;
+  --duration-fast: 120ms;
+  --duration-interaction: 180ms;
+  --duration-standard: 240ms;
+  --duration-deliberate: 420ms;
+  --duration-scene: 700ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --layer-background: 0;
+  --layer-environment: 10;
+  --layer-surface: 20;
+  --layer-content: 30;
+  --layer-navigation: 40;
+  --layer-overlay: 50;
+  --layer-focus: 60;
+  --layer-skip-link: 70;
 }
 
 *,
@@ -32,6 +99,7 @@
 
 html {
   min-block-size: 100%;
+  background: var(--color-void);
 }
 
 body {
@@ -43,11 +111,11 @@ body {
   flex-direction: column;
 
   background: var(--color-background);
-  color: var(--color-text);
+  color: var(--color-text-body);
 
   font-family: var(--font-body);
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
 }
 
 main {
@@ -69,10 +137,30 @@ select {
   font: inherit;
 }
 
+:is(button, input, textarea, select):disabled {
+  border-color: var(--color-disabled-border);
+  background: var(--color-disabled-surface);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}
+
 h1,
 h2,
 h3 {
-  line-height: 1.2;
+  color: var(--color-text);
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: var(--leading-display);
+  letter-spacing: -0.025em;
+}
+
+h2,
+h3 {
+  font-weight: 600;
+  line-height: var(--leading-heading);
 }
 
 h1,
@@ -88,15 +176,28 @@ a {
   color: var(--color-link);
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.18em;
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
-a:hover {
-  text-decoration-thickness: 0.12em;
+@media (hover: hover) {
+  a:hover {
+    color: var(--color-link-hover);
+    text-decoration-thickness: 0.12em;
+  }
+}
+
+a:active {
+  color: var(--color-link-active);
 }
 
 :focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-link);
+  color: var(--color-void);
 }
 
 @media (prefers-reduced-motion: reduce) {

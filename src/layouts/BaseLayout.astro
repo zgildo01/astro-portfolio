@@ -1,6 +1,9 @@
 ---
+import "../styles/fonts.css";
 import "../styles/global.css";
 import "../styles/shell.css";
+import "../styles/patterns.css";
+import "../styles/templates.css";
 
 import SiteFooter from "../components/site/SiteFooter.astro";
 import SiteHeader from "../components/site/SiteHeader.astro";
@@ -32,7 +35,9 @@ const { title, description = siteConfig.defaultDescription } = Astro.props;
 
     <SiteHeader />
 
-    <main id="main-content" class="shell-container shell-main" tabindex="-1">
+    <main id="main-content" class="shell-container shell-main">
+      <span class="main-start-marker" data-main-start-marker aria-hidden="true"
+      ></span>
       <slot />
     </main>
 
