@@ -3,27 +3,28 @@ import { describe, expect, it } from "vitest";
 import { siteConfig } from "../../../src/config/site";
 
 describe("siteConfig", () => {
-  it("provides complete default metadata for the site", () => {
-    expect(siteConfig.name.trim()).not.toBe("");
-    expect(siteConfig.role.trim()).not.toBe("");
-    expect(siteConfig.defaultTitle).toBe(
-      siteConfig.name + " | " + siteConfig.role
-    );
+  it("keeps the site identity consistent across default metadata", () => {
+    expect(siteConfig.name).toBe("Zeus Zaragoza");
+    expect(siteConfig.role).toBe("Platform Engineer");
+    expect(siteConfig.defaultTitle).toBe("Zeus Zaragoza | Platform Engineer");
     expect(siteConfig.defaultDescription).toContain(siteConfig.name);
     expect(siteConfig.defaultDescription).toContain(siteConfig.role);
   });
 
-  it("lists the five primary pages once, in navigation order", () => {
-    expect(siteConfig.primaryNavigation.map(({ href }) => href)).toEqual([
-      "/",
-      "/resume",
-      "/work",
-      "/about",
-      "/contact"
+  it("provides the five primary routes in their intended order", () => {
+    expect(siteConfig.primaryNavigation).toEqual([
+      { label: "Home", href: "/" },
+      { label: "Resume", href: "/resume" },
+      { label: "Work", href: "/work" },
+      { label: "About", href: "/about" },
+      { label: "Contact", href: "/contact" }
     ]);
+  });
 
-    const labels = siteConfig.primaryNavigation.map(({ label }) => label);
-    expect(labels.every((label) => label.trim().length > 0)).toBe(true);
-    expect(new Set(labels).size).toBe(labels.length);
+  it("uses unique navigation targets and keeps experience out of primary navigation", () => {
+    const targets = siteConfig.primaryNavigation.map(({ href }) => href);
+
+    expect(new Set(targets).size).toBe(targets.length);
+    expect(targets).not.toContain("/experience");
   });
 });

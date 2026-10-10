@@ -1,4 +1,5 @@
 ---
+import PageIntro from "../components/page/PageIntro.astro";
 import { pageMetadata } from "../config/pageMetadata";
 import { siteConfig } from "../config/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -7,20 +8,18 @@ const metadata = pageMetadata.about;
 ---
 
 <BaseLayout {...metadata}>
-  <article class="about-page">
-    <header class="about-page__header">
-      <p class="about-page__eyebrow">Professional profile</p>
+  <article class="page about-page">
+    <PageIntro
+      headerClass="about-page__header"
+      eyebrow="Professional profile"
+      title="About"
+    >
+      I’m {siteConfig.name}, a {siteConfig.role}. This page will provide a
+      concise introduction to my professional background, engineering approach,
+      and the work represented throughout this portfolio.
+    </PageIntro>
 
-      <h1>About</h1>
-
-      <p class="about-page__introduction">
-        I’m {siteConfig.name}, a {siteConfig.role}. This page will provide a
-        concise introduction to my professional background, engineering
-        approach, and the work represented throughout this portfolio.
-      </p>
-    </header>
-
-    <section class="about-page__status">
+    <section class="about-page__status incomplete-state">
       <h2>About page in progress</h2>
 
       <p>
@@ -43,7 +42,7 @@ const metadata = pageMetadata.about;
     <section class="about-page__next-steps">
       <h2>Continue exploring</h2>
 
-      <ul>
+      <ul class="page-actions">
         <li>
           <a href="/resume">View my resume</a>
         </li>

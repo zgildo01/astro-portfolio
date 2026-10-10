@@ -1,16 +1,25 @@
 .footer {
-  border-block-start: 1px solid var(--color-border);
+  border-block-start: 1px solid var(--color-border-decorative);
+  background: var(--color-void);
 }
 
 .inner {
+  --footer-block-space: clamp(var(--space-7), 6vw, var(--space-9));
+
   display: grid;
   gap: var(--space-6);
-  padding-block: var(--space-7);
+  padding-block: var(--footer-block-space);
+  /* Keep the final row clear of the fixed skip link. */
+  padding-block-end: max(
+    var(--footer-block-space),
+    calc(var(--space-8) + env(safe-area-inset-bottom))
+  );
 }
 
 .identity {
   display: grid;
-  gap: var(--space-1);
+  align-content: start;
+  gap: var(--space-2);
 }
 
 .name,
@@ -24,9 +33,37 @@
   color: var(--color-text-secondary);
 }
 
-@media (min-width: 48rem) {
+.name {
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.3rem + 0.7vw, 2rem);
+  font-weight: 500;
+  line-height: var(--leading-heading);
+  letter-spacing: -0.01em;
+}
+
+.role {
+  font-family: var(--font-metadata);
+  font-size: var(--type-small);
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+}
+
+.copyright {
+  border-block-start: 1px solid var(--color-border-decorative);
+  padding-block-start: var(--space-5);
+  font-family: var(--font-metadata);
+  font-size: var(--type-caption);
+  line-height: 1.5;
+}
+
+.copyright small {
+  font-size: inherit;
+}
+
+@media (min-width: 64rem) {
   .inner {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
   }
 

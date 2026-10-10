@@ -1,66 +1,32 @@
-# Astro Starter Kit: Minimal
+# Zeus Zaragoza portfolio
+
+Astro site with a resume built from the approved `resume.md` in the private `zgildo01/Zeus-Vault` repository. The site validates that Markdown at build time, then generates the HTML resume and a downloadable PDF from the same build output.
+
+## Local setup
+
+Use a Node version supported by `package.json` (Node 22.22.3 works here), then install dependencies and the PDF browser:
 
 ```sh
-npm create astro@latest -- --template minimal
+npm ci
+npx playwright install --only-shell chromium
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+On Linux, Chromium also needs system libraries. Install them with `npx playwright install --with-deps --only-shell chromium` if they are missing. The browser is needed for production builds and `npm run validate`, not for `npm run dev`.
 
-## 🚀 Project Structure
+Choose one resume source for development and builds:
 
-Inside of your Astro project, you'll see the following folders and files:
+- For a local sibling checkout, set `RESUME_VAULT_DIR=../Zeus-Vault` in an ignored `.env` file. The configured `master` branch must contain a committed root `resume.md`.
+- For a hosted build, set `RESUME_CONTENT_TOKEN` as a build secret with read access to the private vault. Do not set `RESUME_VAULT_DIR` in that environment.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+See `.env.example` for the variable names. A build fails when neither source is available or the selected resume is invalid.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Commands
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+| Command            | Action                                                              |
+| :----------------- | :------------------------------------------------------------------ |
+| `npm run dev`      | Start the local Astro server                                        |
+| `npm run build`    | Build `dist/`, including `dist/resume/Zeus-Zaragoza-Resume.pdf`     |
+| `npm run preview`  | Preview the production build                                        |
+| `npm run validate` | Run formatting, lint, Astro checks, tests, and the production build |
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Development
-
-When starting the dev server, use background mode:
-
-```
-astro dev --background
-```
-
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
-
-## Documentation
-
-Full documentation: https://docs.astro.build
-
-Consult these guides before working on related tasks:
-
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+The PDF is printed from the built `/resume` page. Every Astro production build, including `npm run build` and direct `npx astro build`, generates it in the build completion hook. A build resolves the vault branch once, and PDF generation does not read the vault again. Run a build before `npm run preview`; preview serves the existing `dist/` files.

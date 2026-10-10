@@ -7,15 +7,15 @@ const metadata = pageMetadata.home;
 ---
 
 <BaseLayout {...metadata}>
-  <div class="page home-page">
+  <div class="page page-landing home-page">
     <header>
-      <p>Professional portfolio</p>
+      <p class="page-eyebrow">Professional portfolio</p>
 
       <h1>{siteConfig.name}</h1>
 
-      <p>{siteConfig.role}</p>
+      <p class="page-landing__role">{siteConfig.role}</p>
 
-      <p>
+      <p class="page-introduction">
         I build and maintain dependable development platforms, tooling, and
         engineering workflows.
       </p>
@@ -25,11 +25,11 @@ const metadata = pageMetadata.home;
       <h2 id="home-actions-heading">Explore my work</h2>
 
       <p>
-        Review my professional background, explore selected engineering work,
-        or get in touch.
+        Review my professional background, explore selected engineering work, or
+        get in touch.
       </p>
 
-      <ul>
+      <ul class="page-actions">
         <li>
           <a href="/resume">View my resume</a>
         </li>
