@@ -1,0 +1,302 @@
+---
+import InlineMarkdown from "../components/resume/InlineMarkdown.astro";
+import PageIntro from "../components/page/PageIntro.astro";
+import { resumeContentSource } from "../config/resumeContentSource";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { loadResumeForBuild } from "../lib/resume/loadResumeForBuild";
+import { withBasePath } from "../lib/routing";
+import "../styles/resume.css";
+import "../styles/resume-print.css";
+
+const { resume, sourceCommitSha } = await loadResumeForBuild({
+  vaultDir: import.meta.env.RESUME_VAULT_DIR,
+  token: import.meta.env.RESUME_CONTENT_TOKEN
+});
+
+console.info(
+  `Resume source ${resumeContentSource.owner}/${resumeContentSource.repo}@${resumeContentSource.branch}: ${sourceCommitSha}`
+);
+
+const metadata = {
+  title: resume.name + " | Resume",
+  description:
+    resume.name +
+    ", " +
+    resume.headline +
+    ". Professional experience, technical skills, and public contact information."
+};
+
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
+] as const;
+
+function formatDate(value: string): string {
+  if (value === "present") return "Present";
+
+  const [year, month] = value.split("-");
+  return month ? monthNames[Number(month) - 1] + " " + year : year;
+}
+
+const summaryParagraphs = resume.summary
+  .split(/\n\s*\n/)
+  .map((paragraph) => paragraph.replace(/\s*\n\s*/g, " ").trim())
+  .filter(Boolean);
+
+const contactLinks = [
+  ...(resume.contact.email
+    ? [{ label: "Email", href: "mailto:" + resume.contact.email }]
+    : []),
+  ...(resume.contact.website
+    ? [{ label: "Website", href: resume.contact.website }]
+    : []),
+  ...(resume.contact.linkedin
+    ? [{ label: "LinkedIn", href: resume.contact.linkedin }]
+    : []),
+  ...(resume.contact.github
+    ? [{ label: "GitHub", href: resume.contact.github }]
+    : [])
+];
+---
+
+<BaseLayout {...metadata}>
+  <article class="page resume-page">
+    <PageIntro
+      headerClass="resume-page__header"
+      eyebrow="Professional resume"
+      title={resume.name}
+    >
+      {resume.headline}
+    </PageIntro>
+
+    {
+      import.meta.env.PROD && (
+        <ul class="page-actions resume-page__download">
+          <li>
+            <a
+              href={withBasePath(
+                "/resume/Zeus-Zaragoza-Resume.pdf",
+                import.meta.env.BASE_URL
+              )}
+              download="Zeus-Zaragoza-Resume.pdf"
+            >
+              Download PDF resume
+            </a>
+          </li>
+        </ul>
+      )
+    }
+
+    <section
+      class="resume-page__section"
+      aria-labelledby="resume-summary-heading"
+    >
+      <h2 id="resume-summary-heading">Summary</h2>
+
+      <div class="resume-page__summary">
+        {
+          summaryParagraphs.map((paragraph) => (
+            <p>
+              <InlineMarkdown text={paragraph} />
+            </p>
+          ))
+        }
+      </div>
+    </section>
+
+    <section
+      class="resume-page__section"
+      aria-labelledby="resume-experience-heading"
+    >
+      <h2 id="resume-experience-heading">Experience</h2>
+
+      <ol class="resume-page__experience-list">
+        {
+          resume.experience.map((role) => (
+            <li class="resume-page__experience-item">
+              <h3>{role.title}</h3>
+              <p class="resume-page__employer">{role.employer}</p>
+
+              <p class="resume-page__metadata">
+                <time datetime={role.start}>{formatDate(role.start)}</time>
+                <span> to </span>
+                {role.end === "present" ? (
+                  <span>Present</span>
+                ) : (
+                  <time datetime={role.end}>{formatDate(role.end)}</time>
+                )}
+                {role.location && <span> · {role.location}</span>}
+              </p>
+
+              <ul class="resume-page__achievements">
+                {role.achievements.map((achievement) => (
+                  <li>
+                    <InlineMarkdown text={achievement} />
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section
+      class="resume-page__section"
+      aria-labelledby="resume-skills-heading"
+    >
+      <h2 id="resume-skills-heading">Skills</h2>
+
+      <div class="resume-page__skill-groups">
+        {
+          resume.skills.map((category, index) => (
+            <section aria-labelledby={"resume-skill-category-" + index}>
+              <h3 id={"resume-skill-category-" + index}>{category.name}</h3>
+              <ul class="resume-page__skills">
+                {category.skills.map((skill) => (
+                  <li>{skill}</li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      resume.selectedProjects && (
+        <section
+          class="resume-page__section"
+          aria-labelledby="resume-projects-heading"
+        >
+          <h2 id="resume-projects-heading">Selected projects</h2>
+          <ul class="resume-page__entry-list">
+            {resume.selectedProjects.map((project) => (
+              <li class="resume-page__entry">
+                <h3>
+                  {project.link ? (
+                    <a href={project.link}>{project.name}</a>
+                  ) : (
+                    project.name
+                  )}
+                </h3>
+                <ul class="resume-page__achievements">
+                  {project.achievements.map((achievement) => (
+                    <li>
+                      <InlineMarkdown text={achievement} />
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      resume.education && (
+        <section
+          class="resume-page__section"
+          aria-labelledby="resume-education-heading"
+        >
+          <h2 id="resume-education-heading">Education</h2>
+          <ul class="resume-page__entry-list">
+            {resume.education.map((entry) => (
+              <li class="resume-page__entry">
+                <h3>{entry.name}</h3>
+                <p>{entry.institution}</p>
+                {entry.completed && (
+                  <p class="resume-page__metadata">
+                    Completed{" "}
+                    <time datetime={entry.completed}>
+                      {formatDate(entry.completed)}
+                    </time>
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      resume.certifications && (
+        <section
+          class="resume-page__section"
+          aria-labelledby="resume-certifications-heading"
+        >
+          <h2 id="resume-certifications-heading">Certifications</h2>
+          <ul class="resume-page__entry-list">
+            {resume.certifications.map((entry) => (
+              <li class="resume-page__entry">
+                <h3>
+                  {entry.link ? (
+                    <a href={entry.link}>{entry.name}</a>
+                  ) : (
+                    entry.name
+                  )}
+                </h3>
+                <p>{entry.issuer}</p>
+                {(entry.issued || entry.expires) && (
+                  <p class="resume-page__metadata">
+                    {entry.issued && (
+                      <span>
+                        Issued{" "}
+                        <time datetime={entry.issued}>
+                          {formatDate(entry.issued)}
+                        </time>
+                      </span>
+                    )}
+                    {entry.issued && entry.expires && (
+                      <span aria-hidden="true"> · </span>
+                    )}
+                    {entry.expires && (
+                      <span>
+                        Expires{" "}
+                        <time datetime={entry.expires}>
+                          {formatDate(entry.expires)}
+                        </time>
+                      </span>
+                    )}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section
+      class="resume-page__section"
+      aria-labelledby="resume-contact-heading"
+    >
+      <h2 id="resume-contact-heading">Contact</h2>
+
+      <address class="resume-page__contact">
+        {resume.contact.location && <p>{resume.contact.location}</p>}
+        <ul class="page-actions">
+          {
+            contactLinks.map(({ label, href }) => (
+              <li>
+                <a href={href}>{label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </address>
+    </section>
+  </article>
+</BaseLayout>

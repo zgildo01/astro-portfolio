@@ -1,0 +1,67 @@
+---
+import PageIntro from "../components/page/PageIntro.astro";
+import { pageMetadata } from "../config/pageMetadata";
+import { siteConfig } from "../config/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { withBasePath } from "../lib/routing";
+
+const metadata = pageMetadata.about;
+---
+
+<BaseLayout {...metadata}>
+  <article class="page about-page">
+    <PageIntro
+      headerClass="about-page__header"
+      eyebrow="Professional profile"
+      title="About"
+    >
+      I’m {siteConfig.name}, a {siteConfig.role}. This page will provide a
+      concise introduction to my professional background, engineering approach,
+      and the work represented throughout this portfolio.
+    </PageIntro>
+
+    <section class="about-page__status incomplete-state">
+      <h2>About page in progress</h2>
+
+      <p>
+        A fuller professional biography, working philosophy, and supporting
+        background will be added as the portfolio’s professional content is
+        developed.
+      </p>
+    </section>
+
+    <section class="about-page__scope">
+      <h2>What this page will cover</h2>
+
+      <ul>
+        <li>My professional background and progression</li>
+        <li>My approach to engineering and technical problem-solving</li>
+        <li>The principles that guide the work presented in this portfolio</li>
+      </ul>
+    </section>
+
+    <section class="about-page__next-steps">
+      <h2>Continue exploring</h2>
+
+      <ul class="page-actions">
+        <li>
+          <a href={withBasePath("/resume", import.meta.env.BASE_URL)}
+            >View my resume</a
+          >
+        </li>
+
+        <li>
+          <a href={withBasePath("/work", import.meta.env.BASE_URL)}
+            >View selected work</a
+          >
+        </li>
+
+        <li>
+          <a href={withBasePath("/contact", import.meta.env.BASE_URL)}
+            >Contact me</a
+          >
+        </li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>

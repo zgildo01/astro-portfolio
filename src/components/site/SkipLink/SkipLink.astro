@@ -1,0 +1,20 @@
+---
+import styles from "./SkipLink.module.css";
+---
+
+<a
+  class={styles.skipLink}
+  href="#main-content"
+  aria-label="Jump to main content"
+  data-skip-link
+>
+  <span class={styles.fullLabel} aria-hidden="true">Jump to main content</span>
+  <span class={styles.compactLabel} aria-hidden="true">Jump to main</span>
+  <span class={styles.tinyLabel} aria-hidden="true">Main</span>
+</a>
+
+<script>
+  import { initializeSkipLink } from "./skipLink";
+
+  initializeSkipLink();
+</script>

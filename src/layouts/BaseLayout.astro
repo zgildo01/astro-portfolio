@@ -1,0 +1,53 @@
+---
+import "../styles/fonts.css";
+import "../styles/global.css";
+import "../styles/shell.css";
+import "../styles/patterns.css";
+import "../styles/templates.css";
+
+import SiteFooter from "../components/site/SiteFooter.astro";
+import SiteHeader from "../components/site/SiteHeader.astro";
+import SkipLink from "../components/site/SkipLink/SkipLink.astro";
+import { siteConfig } from "../config/site";
+import { withBasePath } from "../lib/routing";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = siteConfig.defaultDescription } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width" />
+
+    <link
+      rel="icon"
+      href={withBasePath("/favicon.svg", import.meta.env.BASE_URL)}
+      type="image/svg+xml"
+    />
+
+    <meta name="description" content={description} />
+
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <SkipLink />
+
+    <SiteHeader />
+
+    <main id="main-content" class="shell-container shell-main">
+      <span class="main-start-marker" data-main-start-marker aria-hidden="true"
+      ></span>
+      <slot />
+    </main>
+
+    <SiteFooter />
+  </body>
+</html>

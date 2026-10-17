@@ -1,0 +1,74 @@
+---
+import PageIntro from "../../components/page/PageIntro.astro";
+import { pageMetadata } from "../../config/pageMetadata";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBasePath } from "../../lib/routing";
+
+const metadata = pageMetadata.work;
+---
+
+<BaseLayout {...metadata}>
+  <div class="page work-page">
+    <PageIntro
+      headerClass="work-page__header"
+      eyebrow="Selected work"
+      title="Work"
+    >
+      This page will collect selected professional and personal engineering
+      work, with an emphasis on the problems addressed, decisions made, and
+      outcomes produced.
+    </PageIntro>
+
+    <section
+      class="work-page__status incomplete-state"
+      aria-labelledby="work-status-heading"
+    >
+      <h2 id="work-status-heading">Case studies in progress</h2>
+
+      <p>
+        Complete project case studies will be introduced during the dedicated
+        case study update. Professional examples will be reviewed and sanitized
+        before publication.
+      </p>
+    </section>
+
+    <section class="work-page__scope" aria-labelledby="work-scope-heading">
+      <h2 id="work-scope-heading">What each case study will cover</h2>
+
+      <ul>
+        <li>The problem or opportunity that motivated the work</li>
+        <li>The relevant technical and organizational constraints</li>
+        <li>The approach taken and important engineering decisions</li>
+        <li>My individual responsibilities and contributions</li>
+        <li>The resulting outcome and lessons learned</li>
+      </ul>
+    </section>
+
+    <section
+      class="work-page__next-steps"
+      aria-labelledby="work-next-steps-heading"
+    >
+      <h2 id="work-next-steps-heading">Continue exploring</h2>
+
+      <ul class="page-actions">
+        <li>
+          <a href={withBasePath("/resume", import.meta.env.BASE_URL)}
+            >View my resume</a
+          >
+        </li>
+
+        <li>
+          <a href={withBasePath("/about", import.meta.env.BASE_URL)}
+            >Learn more about me</a
+          >
+        </li>
+
+        <li>
+          <a href={withBasePath("/contact", import.meta.env.BASE_URL)}
+            >Contact me</a
+          >
+        </li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>

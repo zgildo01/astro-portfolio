@@ -1,17 +1,54 @@
 ---
+import { pageMetadata } from "../config/pageMetadata";
+import { siteConfig } from "../config/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { withBasePath } from "../lib/routing";
 
+const metadata = pageMetadata.home;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout {...metadata}>
+  <div class="page page-landing home-page">
+    <header>
+      <p class="page-eyebrow">Professional portfolio</p>
+
+      <h1>{siteConfig.name}</h1>
+
+      <p class="page-landing__role">{siteConfig.role}</p>
+
+      <p class="page-introduction">
+        I build and maintain dependable development platforms, tooling, and
+        engineering workflows.
+      </p>
+    </header>
+
+    <section aria-labelledby="home-actions-heading">
+      <h2 id="home-actions-heading">Explore my work</h2>
+
+      <p>
+        Review my professional background, explore selected engineering work, or
+        get in touch.
+      </p>
+
+      <ul class="page-actions">
+        <li>
+          <a href={withBasePath("/resume", import.meta.env.BASE_URL)}
+            >View my resume</a
+          >
+        </li>
+
+        <li>
+          <a href={withBasePath("/work", import.meta.env.BASE_URL)}
+            >View selected work</a
+          >
+        </li>
+
+        <li>
+          <a href={withBasePath("/contact", import.meta.env.BASE_URL)}
+            >Contact me</a
+          >
+        </li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>

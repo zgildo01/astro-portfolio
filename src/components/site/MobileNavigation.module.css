@@ -1,0 +1,119 @@
+.navigation {
+  position: relative;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+
+  font-family: var(--font-body);
+  font-size: var(--type-small);
+  font-weight: 600;
+  line-height: 1;
+
+  list-style: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.toggle::-webkit-details-marker {
+  display: none;
+}
+
+.toggle::marker {
+  content: "";
+}
+
+.navigation[open] .toggle {
+  border-color: var(--color-link);
+  background: var(--color-surface-selected);
+}
+
+@media (hover: hover) {
+  .toggle:hover {
+    border-color: var(--color-link-hover);
+    background: var(--color-surface-selected);
+  }
+}
+
+.toggle:active {
+  background: var(--color-surface-recessed);
+}
+
+.icon {
+  display: grid;
+  gap: 0.2rem;
+  inline-size: 1.25rem;
+}
+
+.icon > span {
+  display: block;
+  block-size: 2px;
+  inline-size: 100%;
+  background: currentColor;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.navigation[open] .icon > span:first-child {
+  transform: translateY(0.325rem) rotate(45deg);
+}
+
+.navigation[open] .icon > span:nth-child(2) {
+  opacity: 0;
+}
+
+.navigation[open] .icon > span:last-child {
+  transform: translateY(-0.325rem) rotate(-45deg);
+}
+
+.panel {
+  position: absolute;
+  inset-block-start: calc(100% + var(--space-2));
+  inset-inline-end: 0;
+  z-index: var(--layer-overlay);
+
+  inline-size: min(18rem, calc(100vw - (var(--page-gutter) * 2)));
+  max-block-size: 70vh;
+  overflow-y: auto;
+
+  padding: var(--space-2);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: var(--color-surface-recessed);
+  box-shadow: var(--shadow-elevated);
+}
+
+/* Keep the full menu in document flow on very short portrait screens. */
+@media (max-height: 25rem) and (orientation: portrait) {
+  .navigation {
+    inline-size: calc(100vw - (var(--page-gutter) * 2));
+  }
+
+  .toggle {
+    margin-inline-start: auto;
+  }
+
+  .panel {
+    position: static;
+    inline-size: 100%;
+    max-block-size: none;
+    overflow: visible;
+    margin-block-start: var(--space-2);
+  }
+}

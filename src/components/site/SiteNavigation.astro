@@ -1,0 +1,39 @@
+---
+import { siteConfig } from "../../config/site";
+import { normalizeRoutePath, withBasePath } from "../../lib/routing";
+import styles from "./SiteNavigation.module.css";
+
+type NavigationPlacement = "header" | "footer" | "mobile";
+
+interface Props {
+  label?: string;
+  placement?: NavigationPlacement;
+}
+
+const { label = "Primary", placement = "header" } = Astro.props;
+
+const currentPath = normalizeRoutePath(Astro.url.pathname);
+---
+
+<nav class={styles.navigation} data-placement={placement} aria-label={label}>
+  <ul class={styles.list}>
+    {
+      siteConfig.primaryNavigation.map((item) => {
+        const href = withBasePath(item.href, import.meta.env.BASE_URL);
+        const isCurrentPage = currentPath === normalizeRoutePath(href);
+
+        return (
+          <li>
+            <a
+              class={styles.link}
+              href={href}
+              aria-current={isCurrentPage ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
