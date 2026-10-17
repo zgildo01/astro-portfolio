@@ -14,6 +14,7 @@ import { chromium } from "playwright";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const distDirectory = resolve(process.argv[2] ?? join(projectRoot, "dist"));
+const basePath = normalizeBasePath(process.argv[3] ?? "/");
 const resumeHtmlPath = join(distDirectory, "resume", "index.html");
 const pdfPath = join(distDirectory, "resume", "Zeus-Zaragoza-Resume.pdf");
 const temporaryPdfPath = `${pdfPath}.tmp-${process.pid}`;
@@ -31,6 +32,22 @@ const contentTypes = new Map([
   [".woff", "font/woff"],
   [".woff2", "font/woff2"]
 ]);
+
+function normalizeBasePath(value) {
+  if (
+    !value.startsWith("/") ||
+    value.startsWith("//") ||
+    value.includes("\\") ||
+    value.includes("?") ||
+    value.includes("#") ||
+    value.includes("\0") ||
+    value.split("/").some((part) => part === ".." || part === ".")
+  ) {
+    throw new Error(`Invalid portfolio base path: ${value}`);
+  }
+
+  return value === "/" ? "/" : value.replace(/\/+$/, "");
+}
 
 function isWithinDirectory(directory, candidate) {
   const pathFromDirectory = relative(directory, candidate);
@@ -74,9 +91,23 @@ async function serveBuiltFile(request, response, distRealPath) {
     return;
   }
 
-  const requestedPath = pathname.endsWith("/")
-    ? `${pathname}index.html`
-    : pathname;
+  const pathWithinBase =
+    basePath === "/"
+      ? pathname
+      : pathname === basePath
+        ? "/"
+        : pathname.startsWith(`${basePath}/`)
+          ? pathname.slice(basePath.length)
+          : null;
+
+  if (pathWithinBase === null) {
+    sendStatus(response, 404);
+    return;
+  }
+
+  const requestedPath = pathWithinBase.endsWith("/")
+    ? `${pathWithinBase}index.html`
+    : pathWithinBase;
   const filePath = resolve(distRealPath, `.${requestedPath}`);
 
   if (!isWithinDirectory(distRealPath, filePath)) {
@@ -171,7 +202,8 @@ async function main() {
     });
 
     try {
-      await page.goto(`${origin}/resume/`, { waitUntil: "networkidle" });
+      const resumeUrl = `${origin}${basePath === "/" ? "" : basePath}/resume/`;
+      await page.goto(resumeUrl, { waitUntil: "networkidle" });
       await page.emulateMedia({ media: "print" });
       await page.evaluate(async () => {
         await globalThis.document.fonts.ready;

@@ -4,6 +4,7 @@ import PageIntro from "../components/page/PageIntro.astro";
 import { resumeContentSource } from "../config/resumeContentSource";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { loadResumeForBuild } from "../lib/resume/loadResumeForBuild";
+import { withBasePath } from "../lib/routing";
 import "../styles/resume.css";
 import "../styles/resume-print.css";
 
@@ -83,7 +84,10 @@ const contactLinks = [
         <ul class="page-actions resume-page__download">
           <li>
             <a
-              href="/resume/Zeus-Zaragoza-Resume.pdf"
+              href={withBasePath(
+                "/resume/Zeus-Zaragoza-Resume.pdf",
+                import.meta.env.BASE_URL
+              )}
               download="Zeus-Zaragoza-Resume.pdf"
             >
               Download PDF resume

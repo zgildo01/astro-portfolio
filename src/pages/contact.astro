@@ -2,6 +2,7 @@
 import PageIntro from "../components/page/PageIntro.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { pageMetadata } from "../config/pageMetadata";
+import { withBasePath } from "../lib/routing";
 
 const metadata = pageMetadata.contact;
 ---
@@ -44,11 +45,15 @@ const metadata = pageMetadata.contact;
 
       <ul class="page-actions">
         <li>
-          <a href="/resume">View my resume</a>
+          <a href={withBasePath("/resume", import.meta.env.BASE_URL)}
+            >View my resume</a
+          >
         </li>
 
         <li>
-          <a href="/work">View selected work</a>
+          <a href={withBasePath("/work", import.meta.env.BASE_URL)}
+            >View selected work</a
+          >
         </li>
       </ul>
     </section>

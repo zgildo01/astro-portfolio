@@ -1,0 +1,91 @@
+name: Portfolio build
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [resume_changed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out portfolio
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22.22.3"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check Astro and TypeScript
+        run: npm run check
+
+      - name: Run tests
+        run: npm run test
+
+  build:
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out portfolio
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22.22.3"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium and system dependencies
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Build site and resume PDF
+        env:
+          RESUME_CONTENT_TOKEN: ${{ secrets.RESUME_CONTENT_TOKEN }}
+        run: |
+          if [[ -z "$RESUME_CONTENT_TOKEN" ]]; then
+            echo "RESUME_CONTENT_TOKEN is required for trusted builds." >&2
+            exit 1
+          fi
+          npm run build
+
+      - name: Verify resume PDF
+        run: test -s dist/resume/Zeus-Zaragoza-Resume.pdf
+
+      - name: Upload built site
+        uses: actions/upload-artifact@v7
+        with:
+          name: portfolio-dist
+          path: dist/
+          if-no-files-found: error

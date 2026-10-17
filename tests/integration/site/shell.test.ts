@@ -40,6 +40,9 @@ describe("site shell", () => {
     expect(html).toMatch(/<html lang="en">/);
     expect(html).toContain("<title>Shell integration test</title>");
     expect(html).toContain(
+      '<link rel="icon" href="/favicon.svg" type="image/svg+xml">'
+    );
+    expect(html).toContain(
       '<meta name="description" content="A custom page description.">'
     );
     expect(main).not.toBeNull();
