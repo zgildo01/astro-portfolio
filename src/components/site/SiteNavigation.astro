@@ -1,6 +1,6 @@
 ---
 import { siteConfig } from "../../config/site";
-import { normalizeRoutePath } from "../../lib/routing";
+import { normalizeRoutePath, withBasePath } from "../../lib/routing";
 import styles from "./SiteNavigation.module.css";
 
 type NavigationPlacement = "header" | "footer" | "mobile";
@@ -19,13 +19,14 @@ const currentPath = normalizeRoutePath(Astro.url.pathname);
   <ul class={styles.list}>
     {
       siteConfig.primaryNavigation.map((item) => {
-        const isCurrentPage = currentPath === normalizeRoutePath(item.href);
+        const href = withBasePath(item.href, import.meta.env.BASE_URL);
+        const isCurrentPage = currentPath === normalizeRoutePath(href);
 
         return (
           <li>
             <a
               class={styles.link}
-              href={item.href}
+              href={href}
               aria-current={isCurrentPage ? "page" : undefined}
             >
               {item.label}
