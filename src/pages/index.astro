@@ -1,54 +1,80 @@
 ---
 import { pageMetadata } from "../config/pageMetadata";
 import { siteConfig } from "../config/site";
+import arrival from "../assets/scenery/arrival.png";
+import SceneFigure from "../components/atmosphere/SceneFigure.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { withBasePath } from "../lib/routing";
+import "../styles/atmosphere-content.css";
 
 const metadata = pageMetadata.home;
 ---
 
 <BaseLayout {...metadata}>
-  <div class="page page-landing home-page">
-    <header>
-      <p class="page-eyebrow">Professional portfolio</p>
+  <article
+    class="page page-landing home-page atmospheric-page atmospheric-home"
+  >
+    <section class="atmospheric-home-hero" aria-labelledby="home-title">
+      <div class="atmospheric-hero-copy">
+        <p class="page-eyebrow">Professional portfolio</p>
 
-      <h1>{siteConfig.name}</h1>
+        <h1 id="home-title">{siteConfig.name}</h1>
 
-      <p class="page-landing__role">{siteConfig.role}</p>
+        <p class="page-landing__role">{siteConfig.role}</p>
 
-      <p class="page-introduction">
-        I build and maintain dependable development platforms, tooling, and
-        engineering workflows.
-      </p>
-    </header>
+        <p class="page-introduction">
+          I build and maintain dependable development platforms, tooling, and
+          engineering workflows.
+        </p>
 
-    <section aria-labelledby="home-actions-heading">
-      <h2 id="home-actions-heading">Explore my work</h2>
+        <ul class="page-actions atmospheric-actions atmospheric-hero-actions">
+          <li>
+            <a
+              class="atmospheric-action-primary"
+              href={withBasePath("/resume", import.meta.env.BASE_URL)}
+              >View my resume <span aria-hidden="true">↗</span></a
+            >
+          </li>
 
-      <p>
-        Review my professional background, explore selected engineering work, or
-        get in touch.
-      </p>
+          <li>
+            <a href={withBasePath("/work", import.meta.env.BASE_URL)}
+              >View selected work <span aria-hidden="true">→</span></a
+            >
+          </li>
 
-      <ul class="page-actions">
-        <li>
-          <a href={withBasePath("/resume", import.meta.env.BASE_URL)}
-            >View my resume</a
-          >
-        </li>
+          <li>
+            <a href={withBasePath("/contact", import.meta.env.BASE_URL)}
+              >Contact me <span aria-hidden="true">→</span></a
+            >
+          </li>
+        </ul>
+      </div>
 
-        <li>
-          <a href={withBasePath("/work", import.meta.env.BASE_URL)}
-            >View selected work</a
-          >
-        </li>
-
-        <li>
-          <a href={withBasePath("/contact", import.meta.env.BASE_URL)}
-            >Contact me</a
-          >
-        </li>
-      </ul>
+      <SceneFigure
+        image={arrival}
+        alt="Vacant brick storefronts with faded green awnings line a cracked street at night. A single lit display window overlooks a dark passage leading to empty houses."
+        caption="Good people are so hard to find."
+        number="01"
+        variant="arrival"
+        eager
+      />
     </section>
-  </div>
+
+    <section
+      class="atmospheric-home-continuation"
+      aria-labelledby="home-actions-heading"
+    >
+      <p class="page-eyebrow">Continue exploring</p>
+
+      <div>
+        <h2 id="home-actions-heading">Explore my work</h2>
+        <p>
+          Review my professional background, explore selected engineering work,
+          or get in touch.
+        </p>
+      </div>
+
+      <p class="atmospheric-courtesy">The lights are left on for a reason.</p>
+    </section>
+  </article>
 </BaseLayout>

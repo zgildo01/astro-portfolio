@@ -1,16 +1,18 @@
 ---
 import PageIntro from "../components/page/PageIntro.astro";
+import AtmosphericNote from "../components/atmosphere/AtmosphericNote.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { pageMetadata } from "../config/pageMetadata";
 import { withBasePath } from "../lib/routing";
+import "../styles/atmosphere-content.css";
 
 const metadata = pageMetadata.contact;
 ---
 
 <BaseLayout {...metadata}>
-  <div class="page contact-page">
+  <div class="page contact-page atmospheric-page">
     <PageIntro
-      headerClass="contact-page__header"
+      headerClass="contact-page__header atmospheric-page-intro"
       eyebrow="Get in touch"
       title="Contact"
     >
@@ -19,43 +21,50 @@ const metadata = pageMetadata.contact;
       way to reach me.
     </PageIntro>
 
-    <section
-      class="contact-page__status incomplete-state"
-      aria-labelledby="contact-status-heading"
-    >
-      <h2 id="contact-status-heading">Contact experience in progress</h2>
+    <div class="atmospheric-editorial-grid">
+      <div class="atmospheric-editorial-copy">
+        <section
+          class="contact-page__status atmospheric-content-block"
+          aria-labelledby="contact-status-heading"
+        >
+          <p class="atmospheric-section-number">01 / In preparation</p>
 
-      <p>
-        The complete contact form, validation, message delivery, and clear
-        success and failure feedback will be introduced during the dedicated
-        contact update.
-      </p>
-    </section>
+          <h2 id="contact-status-heading">Contact experience in progress</h2>
 
-    <section
-      class="contact-page__alternatives"
-      aria-labelledby="contact-alternatives-heading"
-    >
-      <h2 id="contact-alternatives-heading">Explore my work</h2>
+          <p>
+            Contact options are being prepared. In the meantime, you can explore
+            my professional background and selected work below.
+          </p>
+        </section>
 
-      <p>
-        While the contact experience is being completed, you can review my
-        professional background and selected work.
-      </p>
+        <section
+          class="contact-page__alternatives atmospheric-content-block"
+          aria-labelledby="contact-alternatives-heading"
+        >
+          <h2 id="contact-alternatives-heading">Explore my work</h2>
 
-      <ul class="page-actions">
-        <li>
-          <a href={withBasePath("/resume", import.meta.env.BASE_URL)}
-            >View my resume</a
-          >
-        </li>
+          <p>
+            While the contact experience is being completed, you can review my
+            professional background and selected work.
+          </p>
 
-        <li>
-          <a href={withBasePath("/work", import.meta.env.BASE_URL)}
-            >View selected work</a
-          >
-        </li>
-      </ul>
-    </section>
+          <ul class="page-actions atmospheric-actions">
+            <li>
+              <a href={withBasePath("/resume", import.meta.env.BASE_URL)}
+                >View my resume</a
+              >
+            </li>
+
+            <li>
+              <a href={withBasePath("/work", import.meta.env.BASE_URL)}
+                >View selected work</a
+              >
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <AtmosphericNote text="We could build so much together." />
+    </div>
   </div>
 </BaseLayout>

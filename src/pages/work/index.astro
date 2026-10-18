@@ -1,16 +1,18 @@
 ---
 import PageIntro from "../../components/page/PageIntro.astro";
+import AtmosphericNote from "../../components/atmosphere/AtmosphericNote.astro";
 import { pageMetadata } from "../../config/pageMetadata";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { withBasePath } from "../../lib/routing";
+import "../../styles/atmosphere-content.css";
 
 const metadata = pageMetadata.work;
 ---
 
 <BaseLayout {...metadata}>
-  <div class="page work-page">
+  <div class="page work-page atmospheric-page">
     <PageIntro
-      headerClass="work-page__header"
+      headerClass="work-page__header atmospheric-page-intro"
       eyebrow="Selected work"
       title="Work"
     >
@@ -19,56 +21,66 @@ const metadata = pageMetadata.work;
       outcomes produced.
     </PageIntro>
 
-    <section
-      class="work-page__status incomplete-state"
-      aria-labelledby="work-status-heading"
-    >
-      <h2 id="work-status-heading">Case studies in progress</h2>
+    <div class="atmospheric-editorial-grid">
+      <div class="atmospheric-editorial-copy">
+        <section
+          class="work-page__status atmospheric-content-block"
+          aria-labelledby="work-status-heading"
+        >
+          <p class="atmospheric-section-number">01 / In preparation</p>
 
-      <p>
-        Complete project case studies will be introduced during the dedicated
-        case study update. Professional examples will be reviewed and sanitized
-        before publication.
-      </p>
-    </section>
+          <h2 id="work-status-heading">Case studies in progress</h2>
 
-    <section class="work-page__scope" aria-labelledby="work-scope-heading">
-      <h2 id="work-scope-heading">What each case study will cover</h2>
+          <p>
+            Selected engineering case studies will be added here when they are
+            ready to share.
+          </p>
+        </section>
 
-      <ul>
-        <li>The problem or opportunity that motivated the work</li>
-        <li>The relevant technical and organizational constraints</li>
-        <li>The approach taken and important engineering decisions</li>
-        <li>My individual responsibilities and contributions</li>
-        <li>The resulting outcome and lessons learned</li>
-      </ul>
-    </section>
+        <section
+          class="work-page__scope atmospheric-content-block"
+          aria-labelledby="work-scope-heading"
+        >
+          <h2 id="work-scope-heading">What each case study will cover</h2>
 
-    <section
-      class="work-page__next-steps"
-      aria-labelledby="work-next-steps-heading"
-    >
-      <h2 id="work-next-steps-heading">Continue exploring</h2>
+          <ul>
+            <li>The problem or opportunity that motivated the work</li>
+            <li>The relevant technical and organizational constraints</li>
+            <li>The approach taken and important engineering decisions</li>
+            <li>My individual responsibilities and contributions</li>
+            <li>The resulting outcome and lessons learned</li>
+          </ul>
+        </section>
 
-      <ul class="page-actions">
-        <li>
-          <a href={withBasePath("/resume", import.meta.env.BASE_URL)}
-            >View my resume</a
-          >
-        </li>
+        <section
+          class="work-page__next-steps atmospheric-content-block"
+          aria-labelledby="work-next-steps-heading"
+        >
+          <h2 id="work-next-steps-heading">Continue exploring</h2>
 
-        <li>
-          <a href={withBasePath("/about", import.meta.env.BASE_URL)}
-            >Learn more about me</a
-          >
-        </li>
+          <ul class="page-actions atmospheric-actions">
+            <li>
+              <a href={withBasePath("/resume", import.meta.env.BASE_URL)}
+                >View my resume</a
+              >
+            </li>
 
-        <li>
-          <a href={withBasePath("/contact", import.meta.env.BASE_URL)}
-            >Contact me</a
-          >
-        </li>
-      </ul>
-    </section>
+            <li>
+              <a href={withBasePath("/about", import.meta.env.BASE_URL)}
+                >Learn more about me</a
+              >
+            </li>
+
+            <li>
+              <a href={withBasePath("/contact", import.meta.env.BASE_URL)}
+                >Contact me</a
+              >
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <AtmosphericNote text="Good work rarely goes unnoticed." />
+    </div>
   </div>
 </BaseLayout>

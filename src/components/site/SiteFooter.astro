@@ -1,9 +1,16 @@
 ---
 import { siteConfig } from "../../config/site";
+import SceneryMotionControl from "../atmosphere/SceneryMotionControl.astro";
 import SiteNavigation from "./SiteNavigation.astro";
 import styles from "./SiteFooter.module.css";
 
 const currentYear = new Date().getFullYear();
+
+interface Props {
+  scenery?: boolean;
+}
+
+const { scenery = false } = Astro.props;
 ---
 
 <footer class={styles.footer}>
@@ -15,8 +22,12 @@ const currentYear = new Date().getFullYear();
 
     <SiteNavigation placement="footer" label="Footer" />
 
-    <p class={styles.copyright}>
-      <small>&copy; {currentYear} {siteConfig.name}</small>
-    </p>
+    <div class={styles.lower}>
+      <p class={styles.remark}>Why not stay a while?</p>
+      {scenery && <SceneryMotionControl />}
+      <p class={styles.copyright}>
+        <small>&copy; {currentYear} {siteConfig.name}</small>
+      </p>
+    </div>
   </div>
 </footer>

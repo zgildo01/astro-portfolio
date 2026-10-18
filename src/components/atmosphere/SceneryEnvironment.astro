@@ -1,0 +1,67 @@
+---
+import { getImage } from "astro:assets";
+import arrival from "../../assets/scenery/arrival.png";
+import botanical from "../../assets/scenery/botanical.png";
+import interior from "../../assets/scenery/interior.png";
+import signal from "../../assets/scenery/signal.png";
+import styles from "./SceneryEnvironment.module.css";
+
+const [arrivalPlate, interiorPlate, signalPlate, botanicalPlate] =
+  await Promise.all(
+    [arrival, interior, signal, botanical].map((src) =>
+      getImage({
+        src,
+        width: Math.min(1100, src.width),
+        format: "webp",
+        quality: 72
+      })
+    )
+  );
+const ascending = [arrivalPlate, interiorPlate, arrivalPlate, interiorPlate];
+const descending = [signalPlate, botanicalPlate, signalPlate, botanicalPlate];
+---
+
+<div class={styles.environment} aria-hidden="true" data-scenery-environment>
+  <div class={styles.reels}>
+    <div class:list={[styles.reel, styles.ascending]}>
+      <div class={styles.track} data-scenery-effect>
+        {
+          ascending.map((plate) => (
+            <img
+              src={plate.src}
+              {...plate.attributes}
+              alt=""
+              decoding="async"
+              fetchpriority="low"
+            />
+          ))
+        }
+      </div>
+    </div>
+    <div class:list={[styles.reel, styles.descending]}>
+      <div class={styles.track} data-scenery-effect>
+        {
+          descending.map((plate) => (
+            <img
+              src={plate.src}
+              {...plate.attributes}
+              alt=""
+              decoding="async"
+              fetchpriority="low"
+            />
+          ))
+        }
+      </div>
+    </div>
+  </div>
+  <div
+    class={styles.ghost}
+    style={{ backgroundImage: `url("${signalPlate.src}")` }}
+    data-scenery-effect
+  >
+  </div>
+  <div class={styles.scanlines}></div>
+  <div class={styles.roll} data-scenery-effect></div>
+  <div class={styles.tear} data-scenery-effect></div>
+  <div class={styles.vignette}></div>
+</div>

@@ -1,0 +1,13 @@
+---
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+<aside class="atmospheric-note" aria-label="Notes">
+  <span class="page-eyebrow">Notes</span>
+  <p>{text}</p>
+  <span class="atmospheric-note__rule" aria-hidden="true"></span>
+</aside>

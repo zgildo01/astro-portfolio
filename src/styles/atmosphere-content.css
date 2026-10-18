@@ -1,0 +1,586 @@
+.page.atmospheric-page {
+  display: block;
+  inline-size: 100%;
+}
+
+.page.atmospheric-page > * + * {
+  margin-block-start: 0;
+}
+
+.atmospheric-page h1 {
+  font-size: var(--type-page-title);
+}
+
+.page.atmospheric-page h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+}
+
+.atmospheric-page .page-eyebrow,
+.atmospheric-section-number {
+  color: var(--color-text-secondary);
+  font-family: var(--font-metadata);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0.105em;
+  text-transform: uppercase;
+}
+
+.atmospheric-hero-copy,
+.atmospheric-page-intro,
+.atmospheric-content-block,
+.atmospheric-home-continuation {
+  background: linear-gradient(90deg, #0e1212fc, #0e1212f5 76%, #0e1212ec);
+  box-shadow:
+    -20px 0 22px #0e1212d6,
+    20px 0 26px #0e1212d6;
+}
+
+.page .atmospheric-home-hero {
+  display: grid;
+  grid-template-columns: 1.07fr 1fr;
+  gap: clamp(2.25rem, 5.3vw, 4.75rem);
+  align-items: start;
+  inline-size: 100%;
+}
+
+.page .atmospheric-home-hero > * {
+  min-inline-size: 0;
+  margin-block: 0;
+}
+
+.atmospheric-hero-copy {
+  padding-block-start: 1.125rem;
+}
+
+.atmospheric-hero-copy > * {
+  margin-block-end: 0;
+}
+
+.atmospheric-hero-copy .page-eyebrow {
+  margin-block-end: 1.75rem;
+}
+
+.atmospheric-hero-copy h1 {
+  margin-block-end: 1.5625rem;
+}
+
+.atmospheric-hero-copy .page-landing__role {
+  margin-block-end: 1.75rem;
+  color: var(--color-accent-warm);
+  font-size: 0.75rem;
+  letter-spacing: 0.13em;
+}
+
+.atmospheric-page .page-introduction {
+  margin-block-end: 0;
+  font-size: clamp(1.18rem, 1.7vw, 1.45rem);
+  line-height: 1.65;
+}
+
+.page .atmospheric-actions {
+  gap: 0.75rem 1.375rem;
+  margin-block: 1.875rem 0;
+  justify-content: start;
+}
+
+.page .atmospheric-actions a {
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-block-size: 2.875rem;
+  padding: 0.625rem 0;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.9375rem;
+}
+
+.page .atmospheric-actions a.atmospheric-action-primary {
+  min-inline-size: 12.125rem;
+  max-inline-size: 100%;
+  padding-inline: 1rem;
+  border-color: #83968a;
+  background: #a7c7ba0a;
+}
+
+.atmospheric-hero-actions li:first-child {
+  flex-basis: 100%;
+}
+
+@media (hover: hover) {
+  .page .atmospheric-actions a:hover {
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .page .atmospheric-actions a.atmospheric-action-primary:hover {
+    border-color: var(--color-link-hover);
+    background: var(--color-surface-raised);
+  }
+}
+
+.page .atmospheric-actions a:focus-visible {
+  border-color: var(--color-focus);
+}
+
+.atmospheric-scene {
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.atmospheric-scene__frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface-recessed);
+}
+
+.atmospheric-scene--arrival .atmospheric-scene__frame {
+  block-size: 34.25rem;
+}
+
+.atmospheric-scene--interior .atmospheric-scene__frame {
+  block-size: 30rem;
+}
+
+.atmospheric-scene__frame img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: 55% 50%;
+  animation: scene-frame-weave 31s step-end infinite paused;
+}
+
+.atmospheric-scene--interior img {
+  object-position: 61% 50%;
+}
+
+.atmospheric-scene__frame::before,
+.atmospheric-scene__frame::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.atmospheric-scene__frame::before {
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    #08120c40 0px,
+    #08120c40 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  box-shadow: inset 0 0 70px #0b130d6b;
+}
+
+.atmospheric-scene__frame::after {
+  inset: -44% 0 auto;
+  block-size: 34%;
+  background: linear-gradient(
+    transparent,
+    #c7dab21c 52%,
+    #d3e1be2e 67%,
+    transparent 100%
+  );
+  animation: scene-frame-roll 17s linear infinite paused;
+  animation-delay: -6s;
+}
+
+html[data-scenery-motion="motion"][data-scenery-paused="false"]
+  .atmospheric-scene__frame
+  img,
+html[data-scenery-motion="motion"][data-scenery-paused="false"]
+  .atmospheric-scene__frame::after {
+  animation-play-state: running;
+}
+
+.atmospheric-scene figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.875rem;
+  padding-block-start: 1.25rem;
+  background: #0e1212f5;
+  color: var(--color-text-body);
+  font-family: var(--font-metadata);
+  font-size: 0.75rem;
+  line-height: 1.75;
+}
+
+.atmospheric-scene__number {
+  flex-shrink: 0;
+  color: var(--color-accent-warm);
+}
+
+.page .atmospheric-home-continuation {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 1.5rem 4.75rem;
+  inline-size: 100%;
+  margin-block-start: 5.875rem;
+  padding-block-start: 2rem;
+  border-block-start: 1px solid var(--color-border-decorative);
+}
+
+.page .atmospheric-home-continuation > * {
+  min-inline-size: 0;
+  margin-block: 0;
+}
+
+.atmospheric-home-continuation > .page-eyebrow {
+  padding-block-start: 0.5rem;
+}
+
+.atmospheric-home-continuation h2 {
+  margin-block-end: 1rem;
+}
+
+.atmospheric-home-continuation p {
+  margin-block-end: 0;
+}
+
+.atmospheric-home-continuation .atmospheric-courtesy {
+  grid-column: 2;
+  margin-block-start: 0.875rem;
+  padding-inline-start: 1.125rem;
+  border-inline-start: 1px solid var(--color-accent-warm);
+  color: var(--color-text-secondary);
+  font-family: var(--font-metadata);
+  font-size: 0.75rem;
+  line-height: 1.75;
+}
+
+.page > header.atmospheric-page-intro,
+.atmospheric-page-intro {
+  max-inline-size: 52.1875rem;
+  padding-block: 0.75rem 3.5rem;
+  border-block-end: 1px solid var(--color-border-decorative);
+}
+
+.atmospheric-page-intro > * {
+  margin-block-end: 0;
+}
+
+.atmospheric-page-intro .page-eyebrow {
+  margin-block-end: 1.75rem;
+}
+
+.atmospheric-page-intro h1 {
+  margin-block-end: 1.625rem;
+}
+
+.page > header.atmospheric-page-intro > * + * {
+  margin-block-start: 0;
+}
+
+.atmospheric-editorial-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  align-items: start;
+  gap: clamp(2.5rem, 7.5vw, 6.875rem);
+  padding-block-start: 3.625rem;
+}
+
+.atmospheric-editorial-copy,
+.atmospheric-about-copy {
+  min-inline-size: 0;
+}
+
+.atmospheric-content-block > * + * {
+  margin-block-start: 1.375rem;
+}
+
+.atmospheric-content-block > :last-child {
+  margin-block-end: 0;
+}
+
+.atmospheric-content-block + .atmospheric-content-block {
+  margin-block-start: 2.5rem;
+}
+
+.atmospheric-content-block p,
+.atmospheric-content-block ul {
+  font-size: 1.0625rem;
+}
+
+.atmospheric-content-block .atmospheric-section-number {
+  margin-block-end: 1.375rem;
+  font-size: 0.6875rem;
+}
+
+.atmospheric-content-block .atmospheric-section-number + h2 {
+  margin-block-start: 0;
+}
+
+.atmospheric-content-block li + li {
+  margin-block-start: 0.5625rem;
+}
+
+.atmospheric-content-block .page-actions li + li {
+  margin-block-start: 0;
+}
+
+.atmospheric-note {
+  align-self: start;
+  max-inline-size: 17.8125rem;
+  margin-block-start: 0.5625rem;
+  padding: 1.5rem;
+  border-block-start: 1px solid var(--color-accent-warm);
+  background: #121a16f5;
+}
+
+.atmospheric-note .page-eyebrow {
+  display: block;
+  margin-block-end: 1.5rem;
+  color: var(--color-accent-warm);
+  font-size: 0.625rem;
+}
+
+.atmospheric-note > p {
+  margin-block-end: 1.75rem;
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 1.6875rem;
+  line-height: 1.45;
+}
+
+.atmospheric-note__rule {
+  display: block;
+  inline-size: 2rem;
+  block-size: 1px;
+  background: var(--color-border-decorative);
+}
+
+.atmospheric-about-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: clamp(2.5rem, 6.5vw, 5.875rem);
+}
+
+.atmospheric-about-copy > .atmospheric-page-intro {
+  padding-block-end: 2.5rem;
+}
+
+.atmospheric-about-copy > .atmospheric-content-block {
+  margin-block-start: 2.5rem;
+}
+
+.atmospheric-about-grid > .atmospheric-scene {
+  padding-block-start: 1rem;
+}
+
+@keyframes scene-frame-roll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 520%, 0);
+  }
+}
+
+@keyframes scene-frame-weave {
+  0%,
+  89%,
+  94%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.01);
+  }
+  90%,
+  93% {
+    transform: translate3d(-3px, 1px, 0) scale(1.01);
+  }
+}
+
+@media (max-width: 61.25rem) {
+  .atmospheric-scene--arrival .atmospheric-scene__frame {
+    block-size: 32.5rem;
+  }
+
+  .atmospheric-scene--interior .atmospheric-scene__frame {
+    block-size: 27.5rem;
+  }
+
+  .page .atmospheric-home-continuation {
+    gap: 1.5rem 2.25rem;
+    margin-block-start: 4rem;
+  }
+
+  .atmospheric-note {
+    padding: 1.25rem;
+  }
+
+  .atmospheric-note > p {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .page .atmospheric-home-hero,
+  .atmospheric-about-grid {
+    display: block;
+  }
+
+  .atmospheric-hero-copy {
+    padding-block-start: 0;
+  }
+
+  .atmospheric-page .page-eyebrow {
+    font-size: 0.625rem;
+  }
+
+  .atmospheric-page .page-introduction {
+    font-size: 1.1875rem;
+    line-height: 1.6;
+  }
+
+  .page .atmospheric-hero-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem 1rem;
+    margin-block-start: 1.5625rem;
+  }
+
+  .atmospheric-hero-actions li:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .page .atmospheric-hero-actions a {
+    gap: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .page .atmospheric-hero-actions .atmospheric-action-primary {
+    display: flex;
+    min-inline-size: 0;
+    padding-block: 0.75rem;
+  }
+
+  .page .atmospheric-home-hero > .atmospheric-scene {
+    margin-block-start: 2.125rem;
+  }
+
+  .atmospheric-scene--arrival .atmospheric-scene__frame {
+    block-size: 16.875rem;
+  }
+
+  .atmospheric-scene figcaption {
+    gap: 0.75rem;
+    padding-block-start: 1.0625rem;
+    line-height: 1.8;
+  }
+
+  .page .atmospheric-home-continuation {
+    display: block;
+    margin-block-start: 3rem;
+    padding-block-start: 1.75rem;
+  }
+
+  .atmospheric-home-continuation > .page-eyebrow {
+    margin-block-end: 1.25rem;
+  }
+
+  .atmospheric-home-continuation .atmospheric-courtesy {
+    margin-block-start: 1.5rem;
+  }
+
+  .page > header.atmospheric-page-intro,
+  .atmospheric-page-intro {
+    padding-block: 0 2.125rem;
+  }
+
+  .atmospheric-editorial-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    padding-block-start: 2.25rem;
+  }
+
+  .atmospheric-content-block p,
+  .atmospheric-content-block ul {
+    font-size: 1rem;
+  }
+
+  .atmospheric-content-block h2,
+  .atmospheric-home-continuation h2 {
+    font-size: 1.8125rem;
+  }
+
+  .atmospheric-note {
+    max-inline-size: 100%;
+    margin: 0;
+    padding: 1.375rem;
+  }
+
+  .atmospheric-note > p {
+    max-inline-size: 18.75rem;
+    margin-block-end: 1.25rem;
+    font-size: 1.5625rem;
+  }
+
+  .atmospheric-note .page-eyebrow {
+    margin-block-end: 1rem;
+  }
+
+  .atmospheric-about-grid > .atmospheric-scene {
+    margin-block-start: 2.5rem;
+    padding-block-start: 0;
+  }
+
+  .atmospheric-scene--interior .atmospheric-scene__frame {
+    block-size: auto;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (max-width: 22.5rem) {
+  .page .atmospheric-hero-actions {
+    display: block;
+  }
+
+  .atmospheric-hero-actions li + li {
+    margin-block-start: 0.25rem;
+  }
+
+  .atmospheric-scene--arrival .atmospheric-scene__frame {
+    block-size: 14.375rem;
+  }
+}
+
+/* The shared control decides whether motion runs. Restoring duration here
+   leaves the original still composition intact under the global motion reset. */
+@media (prefers-reduced-motion: reduce) {
+  .atmospheric-scene__frame img {
+    animation-duration: 31s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .atmospheric-scene__frame::after {
+    animation-duration: 17s !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+
+@media print {
+  .atmospheric-scene__frame::before,
+  .atmospheric-scene__frame::after {
+    display: none;
+  }
+
+  .atmospheric-hero-copy,
+  .atmospheric-page-intro,
+  .atmospheric-content-block,
+  .atmospheric-home-continuation,
+  .atmospheric-scene figcaption,
+  .atmospheric-note {
+    background: none;
+    box-shadow: none;
+  }
+
+  .atmospheric-scene__frame img {
+    animation: none;
+  }
+}

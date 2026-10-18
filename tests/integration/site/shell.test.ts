@@ -37,7 +37,7 @@ describe("site shell", () => {
     );
 
     expect(html).toMatch(/<!doctype html>/i);
-    expect(html).toMatch(/<html lang="en">/);
+    expect(html).toMatch(/<html\b[^>]*\blang="en"/);
     expect(html).toContain("<title>Shell integration test</title>");
     expect(html).toContain(
       '<link rel="icon" href="/favicon.svg" type="image/svg+xml">'
@@ -80,7 +80,7 @@ describe("site shell", () => {
     const mainStart = html.indexOf("<main");
     const siteFooter = html.indexOf("<footer");
 
-    expect(siteHeader).toBeGreaterThan(html.indexOf("<body>"));
+    expect(siteHeader).toBeGreaterThan(html.indexOf("<body"));
     expect(mainStart).toBeGreaterThan(siteHeader);
     expect(siteFooter).toBeGreaterThan(mainStart);
     expect(html.match(/<main\b/g)).toHaveLength(1);
@@ -94,6 +94,14 @@ describe("site shell", () => {
     expect(html).toContain(
       `<meta name="description" content="${siteConfig.defaultDescription}">`
     );
+  });
+
+  it("keeps decorative scenery and its controls out of the resume", async () => {
+    const html = await renderLayout("/resume/");
+
+    expect(html).not.toContain('data-scenery="enabled"');
+    expect(html).not.toMatch(/\bdata-scenery-environment(?:\s|=|>)/);
+    expect(html).not.toMatch(/\bdata-scenery-control(?:\s|=|>)/);
   });
 
   it.each([

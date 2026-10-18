@@ -4,7 +4,7 @@
 :root {
   color-scheme: dark;
 
-  /* Semantic colors. The professional site uses this palette without effects. */
+  /* Semantic colors shared by the professional interface and scenery. */
   --color-void: #090b0b;
   --color-background: #0e1212;
   --color-surface-recessed: #141a1a;
@@ -103,6 +103,7 @@ html {
 }
 
 body {
+  isolation: isolate;
   min-block-size: 100vh;
   min-block-size: 100dvh;
   margin: 0;
@@ -120,6 +121,10 @@ body {
 
 main {
   flex: 1;
+}
+
+body[data-scenery="enabled"] > main {
+  z-index: var(--layer-content);
 }
 
 img,
