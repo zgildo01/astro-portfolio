@@ -1,0 +1,23 @@
+---
+import styles from "./SceneryMotionControl.module.css";
+---
+
+<fieldset class={styles.control} data-scenery-control hidden>
+  <legend>Background</legend>
+  <div class={styles.options}>
+    <label>
+      <input type="radio" name="scenery-motion" value="motion" />
+      <span>Motion</span>
+    </label>
+    <label>
+      <input type="radio" name="scenery-motion" value="still" checked />
+      <span>Still</span>
+    </label>
+  </div>
+</fieldset>
+
+<script>
+  import { initializeSceneryMotion } from "../../lib/atmosphere/sceneryMotion";
+
+  initializeSceneryMotion();
+</script>

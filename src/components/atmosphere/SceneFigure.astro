@@ -1,0 +1,40 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+  caption: string;
+  number: string;
+  variant: "arrival" | "interior";
+  eager?: boolean;
+}
+
+const { image, alt, caption, number, variant, eager = false } = Astro.props;
+const widths = image.width > 1024 ? [480, 768, 1024, 1536] : [480, 768, 1024];
+---
+
+<figure class:list={["atmospheric-scene", `atmospheric-scene--${variant}`]}>
+  <div class="atmospheric-scene__frame">
+    <Image
+      src={image}
+      alt={alt}
+      width={image.width}
+      height={image.height}
+      widths={widths}
+      sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1340px) 45vw, 580px"
+      format="webp"
+      quality={80}
+      loading={eager ? "eager" : "lazy"}
+      fetchpriority={eager ? "high" : "auto"}
+      decoding="async"
+      data-scenery-effect
+    />
+  </div>
+
+  <figcaption>
+    <span class="atmospheric-scene__number" aria-hidden="true">{number} /</span>
+    <span>{caption}</span>
+  </figcaption>
+</figure>

@@ -9,13 +9,17 @@ import styles from "./SiteHeader.module.css";
 <header class={styles.header}>
   <div class:list={["shell-container", styles.inner]}>
     <div class={styles.identity}>
-      <p class={styles.name}>
-        <a href={withBasePath("/", import.meta.env.BASE_URL)}
-          >{siteConfig.name}</a
-        >
-      </p>
+      <span class={styles.monogram} aria-hidden="true">Z<span>.</span>Z</span>
 
-      <p class={styles.role}>{siteConfig.role}</p>
+      <div class={styles.identityText}>
+        <p class={styles.name}>
+          <a href={withBasePath("/", import.meta.env.BASE_URL)}
+            >{siteConfig.name}</a
+          >
+        </p>
+
+        <p class={styles.role}>{siteConfig.role}</p>
+      </div>
     </div>
 
     <div class={styles.fullNavigation}>

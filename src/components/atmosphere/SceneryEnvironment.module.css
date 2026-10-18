@@ -1,0 +1,263 @@
+.environment {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: #111914;
+  opacity: 0.8;
+  contain: paint;
+}
+
+.reels {
+  position: absolute;
+  inset: 0;
+  left: 39%;
+  width: 74%;
+  overflow: hidden;
+  opacity: 0.83;
+}
+
+.reel {
+  position: absolute;
+  top: -7vh;
+  height: 114vh;
+  overflow: hidden;
+  border-inline: 10px solid #111812;
+  background: #111812;
+}
+
+.ascending {
+  left: -9%;
+  width: 69%;
+  transform: rotate(-4deg);
+}
+
+.descending {
+  left: 54%;
+  width: 63%;
+  transform: rotate(3deg);
+  opacity: 0.72;
+}
+
+.track {
+  --scenery-duration: 48s;
+
+  width: 100%;
+  height: 200%;
+  animation: reel-up var(--scenery-duration) linear infinite;
+  animation-delay: -9s;
+  will-change: transform;
+}
+
+.descending .track {
+  --scenery-duration: 61s;
+
+  animation-name: reel-down;
+  animation-delay: -17s;
+}
+
+.track img {
+  display: block;
+  height: 25%;
+  width: 100%;
+  max-inline-size: none;
+  border-bottom: 12px solid #111812;
+  object-fit: cover;
+}
+
+.ghost {
+  --scenery-duration: 29s;
+
+  position: absolute;
+  inset: 0 0 0 56%;
+  background-position: 57% center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  opacity: 0.09;
+  transform: translateX(9px);
+  animation: signal-ghost var(--scenery-duration) step-end infinite;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    #06100a70 0px,
+    #06100a70 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  opacity: 0.46;
+}
+
+.roll {
+  --scenery-duration: 17s;
+
+  position: absolute;
+  inset: -34% 0 auto;
+  height: 30%;
+  background: linear-gradient(
+    transparent 0%,
+    #afc8a310 30%,
+    #dae0bb25 67%,
+    #d9dfb70a 72%,
+    transparent 100%
+  );
+  animation: signal-roll var(--scenery-duration) linear infinite;
+  animation-delay: -6s;
+  opacity: 0.65;
+  will-change: transform;
+}
+
+.tear {
+  --scenery-duration: 23s;
+
+  position: absolute;
+  left: 47%;
+  width: 53%;
+  height: 7%;
+  top: 58%;
+  background: repeating-linear-gradient(
+    0deg,
+    #b6c99b20 0px,
+    #b6c99b20 1px,
+    transparent 1px,
+    transparent 6px
+  );
+  opacity: 0;
+  animation: signal-tear var(--scenery-duration) step-end infinite;
+  animation-delay: -5s;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      #0e1212 3%,
+      #0e1212fa 24%,
+      #0e12129c 51%,
+      #0e121226 83%
+    ),
+    linear-gradient(
+      0deg,
+      #0e1212ab,
+      transparent 24%,
+      transparent 78%,
+      #0e12128c
+    );
+}
+
+/* A still composition is also the no-script fallback. Only scenery animates. */
+.environment [data-scenery-effect] {
+  animation-play-state: paused;
+}
+
+:global(html[data-scenery-motion="motion"][data-scenery-paused="false"])
+  .environment
+  [data-scenery-effect] {
+  animation-play-state: running;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Keep the still frame intact despite the global short-duration fallback.
+     Explicitly selecting Motion is the only way to resume these effects. */
+  .environment [data-scenery-effect] {
+    animation-duration: var(--scenery-duration) !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+
+@media (max-width: 47.999rem) {
+  .environment {
+    opacity: 0.72;
+  }
+
+  .reels {
+    left: 6%;
+    width: 121%;
+    opacity: 0.78;
+  }
+
+  .vignette {
+    background:
+      linear-gradient(90deg, #0e1212d9 0%, #0e1212b8 55%, #0e12123b 100%),
+      linear-gradient(0deg, #0e121270, transparent 45%);
+  }
+
+  .ghost {
+    left: 24%;
+  }
+
+  .tear {
+    left: 12%;
+    width: 88%;
+  }
+}
+
+@media print {
+  .environment {
+    display: none;
+  }
+}
+
+@keyframes reel-up {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@keyframes reel-down {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes signal-roll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 520%, 0);
+  }
+}
+
+@keyframes signal-ghost {
+  0%,
+  88%,
+  92%,
+  100% {
+    transform: translate3d(9px, 0, 0);
+    opacity: 0.09;
+  }
+  89%,
+  91% {
+    transform: translate3d(-6px, 3px, 0);
+    opacity: 0.14;
+  }
+}
+
+@keyframes signal-tear {
+  0%,
+  79%,
+  85%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  80%,
+  83% {
+    opacity: 0.35;
+    transform: translate3d(13px, -9vh, 0);
+  }
+}
