@@ -20,14 +20,23 @@ const currentPath = normalizeRoutePath(Astro.url.pathname);
     {
       siteConfig.primaryNavigation.map((item) => {
         const href = withBasePath(item.href, import.meta.env.BASE_URL);
-        const isCurrentPage = currentPath === normalizeRoutePath(href);
+        const itemPath = normalizeRoutePath(href);
+        const isCurrentPage = currentPath === itemPath;
+        const isCurrentLocation =
+          item.href !== "/" && currentPath.startsWith(`${itemPath}/`);
 
         return (
           <li>
             <a
               class={styles.link}
               href={href}
-              aria-current={isCurrentPage ? "page" : undefined}
+              aria-current={
+                isCurrentPage
+                  ? "page"
+                  : isCurrentLocation
+                    ? "location"
+                    : undefined
+              }
             >
               {item.label}
             </a>

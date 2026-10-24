@@ -1,0 +1,128 @@
+---
+import PageIntro from "../components/page/PageIntro.astro";
+import { siteConfig } from "../config/site";
+import type { CaseStudy } from "../lib/work/types";
+import { withBasePath } from "../lib/routing";
+import BaseLayout from "./BaseLayout.astro";
+import "../styles/atmosphere-content.css";
+import "../styles/work.css";
+
+interface Props {
+  caseStudy: CaseStudy;
+}
+
+const { caseStudy } = Astro.props;
+const workHref = withBasePath("/work", import.meta.env.BASE_URL);
+---
+
+<BaseLayout
+  title={`${caseStudy.title} | ${siteConfig.name}`}
+  description={caseStudy.description}
+>
+  <article class="page atmospheric-page case-study">
+    <nav class="work-breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href={workHref}>Work</a></li>
+        <li><span aria-current="page">Case study</span></li>
+      </ol>
+    </nav>
+
+    <PageIntro
+      headerClass="atmospheric-page-intro case-study__header"
+      eyebrow={caseStudy.category}
+      title={caseStudy.title}
+    >
+      {caseStudy.description}
+    </PageIntro>
+
+    <div class="case-study__layout">
+      <aside class="case-study__sidebar" aria-label="Case study overview">
+        <dl class="case-study__facts">
+          <div>
+            <dt>Organization</dt>
+            <dd>{caseStudy.organization}</dd>
+          </div>
+          <div>
+            <dt>My role</dt>
+            <dd>{caseStudy.role}</dd>
+          </div>
+          <div>
+            <dt>Technologies</dt>
+            <dd>
+              <ul class="work-technologies">
+                {
+                  caseStudy.technologies.map((technology) => (
+                    <li>{technology}</li>
+                  ))
+                }
+              </ul>
+            </dd>
+          </div>
+        </dl>
+
+        <nav class="case-study__contents" aria-label="On this page">
+          <p class="page-eyebrow">In this case study</p>
+          <ol>
+            {
+              caseStudy.sections.map((section) => (
+                <li>
+                  <a href={`#${section.id}`}>{section.title}</a>
+                </li>
+              ))
+            }
+          </ol>
+        </nav>
+      </aside>
+
+      <div class="case-study__body">
+        {
+          caseStudy.sections.map((section, index) => (
+            <section
+              class="case-study__section atmospheric-content-block"
+              aria-labelledby={section.id}
+            >
+              <p class="atmospheric-section-number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </p>
+              <h2 id={section.id}>{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+
+              {section.workflow && section.workflow.length > 0 && (
+                <figure class="case-study__workflow">
+                  <figcaption>Workflow</figcaption>
+                  <ol>
+                    {section.workflow.map((step) => (
+                      <li>{step}</li>
+                    ))}
+                  </ol>
+                </figure>
+              )}
+            </section>
+          ))
+        }
+      </div>
+    </div>
+
+    <section
+      class="case-study__next atmospheric-content-block"
+      aria-labelledby="case-study-next-heading"
+    >
+      <h2 id="case-study-next-heading">Continue exploring</h2>
+      <ul class="page-actions atmospheric-actions">
+        <li><a href={workHref}>Back to selected work</a></li>
+        <li>
+          <a href={withBasePath("/resume", import.meta.env.BASE_URL)}
+            >View my resume</a
+          >
+        </li>
+        <li>
+          <a href={withBasePath("/contact", import.meta.env.BASE_URL)}
+            >Contact me</a
+          >
+        </li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>

@@ -105,11 +105,23 @@ describe("site shell", () => {
   });
 
   it.each([
-    { path: "/", currentHref: "/" },
-    { path: "/work/", currentHref: "/work" }
+    { path: "/", currentHref: "/", current: "page" },
+    { path: "/work/", currentHref: "/work", current: "page" },
+    {
+      path: "/work/python-documentation-automation",
+      currentHref: "/work",
+      current: "location"
+    },
+    {
+      path: "/work/python-documentation-automation/implementation/",
+      currentHref: "/work",
+      current: "location"
+    },
+    { path: "/workshop", currentHref: undefined, current: undefined },
+    { path: "/workshop/case-study", currentHref: undefined, current: undefined }
   ])(
-    "renders five links and marks $currentHref current in each navigation",
-    async ({ path, currentHref }) => {
+    "renders five links with the correct current state at $path in each navigation",
+    async ({ path, currentHref, current }) => {
       const html = await renderLayout(path);
       const navigation = [...html.matchAll(/<nav\b([^>]*)>([\s\S]*?)<\/nav>/g)];
 
@@ -138,7 +150,7 @@ describe("site shell", () => {
           siteConfig.primaryNavigation.map(({ label, href }) => ({
             label,
             href,
-            current: href === currentHref ? "page" : undefined
+            current: href === currentHref ? current : undefined
           }))
         );
       }

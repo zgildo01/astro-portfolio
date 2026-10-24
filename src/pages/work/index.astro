@@ -1,12 +1,19 @@
 ---
 import PageIntro from "../../components/page/PageIntro.astro";
 import AtmosphericNote from "../../components/atmosphere/AtmosphericNote.astro";
+import CaseStudyCard from "../../components/work/CaseStudyCard.astro";
 import { pageMetadata } from "../../config/pageMetadata";
+import { loadPortfolioForBuild } from "../../lib/content/loadPortfolioForBuild";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { withBasePath } from "../../lib/routing";
 import "../../styles/atmosphere-content.css";
+import "../../styles/work.css";
 
 const metadata = pageMetadata.work;
+const { caseStudies } = await loadPortfolioForBuild({
+  vaultDir: import.meta.env.RESUME_VAULT_DIR,
+  token: import.meta.env.RESUME_CONTENT_TOKEN
+});
 ---
 
 <BaseLayout {...metadata}>
@@ -16,40 +23,38 @@ const metadata = pageMetadata.work;
       eyebrow="Selected work"
       title="Work"
     >
-      This page will collect selected professional and personal engineering
-      work, with an emphasis on the problems addressed, decisions made, and
-      outcomes produced.
+      Engineering work focused on dependable developer tooling and the workflows
+      teams use to understand and build on existing capabilities.
     </PageIntro>
 
     <div class="atmospheric-editorial-grid">
       <div class="atmospheric-editorial-copy">
-        <section
-          class="work-page__status atmospheric-content-block"
-          aria-labelledby="work-status-heading"
-        >
-          <p class="atmospheric-section-number">01 / In preparation</p>
+        <section class="work-list" aria-labelledby="work-list-heading">
+          <h2 id="work-list-heading">Engineering case studies</h2>
 
-          <h2 id="work-status-heading">Case studies in progress</h2>
-
-          <p>
-            Selected engineering case studies will be added here when they are
-            ready to share.
-          </p>
-        </section>
-
-        <section
-          class="work-page__scope atmospheric-content-block"
-          aria-labelledby="work-scope-heading"
-        >
-          <h2 id="work-scope-heading">What each case study will cover</h2>
-
-          <ul>
-            <li>The problem or opportunity that motivated the work</li>
-            <li>The relevant technical and organizational constraints</li>
-            <li>The approach taken and important engineering decisions</li>
-            <li>My individual responsibilities and contributions</li>
-            <li>The resulting outcome and lessons learned</li>
-          </ul>
+          {
+            caseStudies.length > 0 ? (
+              <ul class="work-list__items">
+                {caseStudies.map((caseStudy) => (
+                  <li>
+                    <CaseStudyCard caseStudy={caseStudy} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div class="work-empty-state">
+                <h3>Case studies in preparation</h3>
+                <p>
+                  Selected engineering work will appear here when it is ready to
+                  share. In the meantime, my resume covers my professional
+                  background and experience.
+                </p>
+                <a href={withBasePath("/resume", import.meta.env.BASE_URL)}>
+                  View my resume
+                </a>
+              </div>
+            )
+          }
         </section>
 
         <section

@@ -1,21 +1,16 @@
 ---
 import InlineMarkdown from "../components/resume/InlineMarkdown.astro";
 import PageIntro from "../components/page/PageIntro.astro";
-import { resumeContentSource } from "../config/resumeContentSource";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { loadResumeForBuild } from "../lib/resume/loadResumeForBuild";
+import { loadPortfolioForBuild } from "../lib/content/loadPortfolioForBuild";
 import { withBasePath } from "../lib/routing";
 import "../styles/resume.css";
 import "../styles/resume-print.css";
 
-const { resume, sourceCommitSha } = await loadResumeForBuild({
+const { resume } = await loadPortfolioForBuild({
   vaultDir: import.meta.env.RESUME_VAULT_DIR,
   token: import.meta.env.RESUME_CONTENT_TOKEN
 });
-
-console.info(
-  `Resume source ${resumeContentSource.owner}/${resumeContentSource.repo}@${resumeContentSource.branch}: ${sourceCommitSha}`
-);
 
 const metadata = {
   title: resume.name + " | Resume",
