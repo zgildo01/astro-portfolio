@@ -70,7 +70,7 @@ jobs:
       - name: Install Chromium and system dependencies
         run: npx playwright install --with-deps --only-shell chromium
 
-      - name: Build site and resume PDF
+      - name: Build site from vault content and generate resume PDF
         env:
           RESUME_CONTENT_TOKEN: ${{ secrets.RESUME_CONTENT_TOKEN }}
         run: |

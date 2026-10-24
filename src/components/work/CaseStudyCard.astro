@@ -1,0 +1,29 @@
+---
+import type { CaseStudy } from "../../lib/work/types";
+import { withBasePath } from "../../lib/routing";
+
+interface Props {
+  caseStudy: CaseStudy;
+}
+
+const { caseStudy } = Astro.props;
+const href = withBasePath(`/work/${caseStudy.slug}`, import.meta.env.BASE_URL);
+---
+
+<article class="work-card">
+  <p class="work-card__context">
+    {caseStudy.organization}
+    <span aria-hidden="true">/</span>
+    {caseStudy.category}
+  </p>
+  <h3>
+    <a href={href}>
+      <span>{caseStudy.title}</span>
+      <span class="work-card__arrow" aria-hidden="true">↗</span>
+    </a>
+  </h3>
+  <p class="work-card__description">{caseStudy.description}</p>
+  <ul class="work-technologies" aria-label="Technologies">
+    {caseStudy.technologies.map((technology) => <li>{technology}</li>)}
+  </ul>
+</article>

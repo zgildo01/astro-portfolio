@@ -1,0 +1,26 @@
+---
+import type { GetStaticPaths } from "astro";
+import { loadPortfolioForBuild } from "../../lib/content/loadPortfolioForBuild";
+import type { CaseStudy } from "../../lib/work/types";
+import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro";
+
+export const getStaticPaths = (async () => {
+  const { caseStudies } = await loadPortfolioForBuild({
+    vaultDir: import.meta.env.RESUME_VAULT_DIR,
+    token: import.meta.env.RESUME_CONTENT_TOKEN
+  });
+
+  return caseStudies.map((caseStudy) => ({
+    params: { slug: caseStudy.slug },
+    props: { caseStudy }
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  caseStudy: CaseStudy;
+}
+
+const { caseStudy } = Astro.props;
+---
+
+<CaseStudyLayout caseStudy={caseStudy} />
