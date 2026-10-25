@@ -51,6 +51,8 @@ function browser(options: { reduced?: boolean; stored?: string } = {}) {
   };
   const inputs = ["motion", "still"].map((value) => ({
     ...target(),
+    name: "scenery-motion",
+    closest: () => control,
     value,
     checked: value === "still"
   }));

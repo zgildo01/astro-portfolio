@@ -287,7 +287,10 @@ function parseSections(
 
   for (const line of lines) {
     validateNarrative(line, issues);
-    if (!line.text.trim()) continue;
+    if (!line.text.trim()) {
+      current?.lines.push(line);
+      continue;
+    }
     const heading = line.text.match(HEADING);
     if (heading?.[1] === "#") {
       if (sawName)

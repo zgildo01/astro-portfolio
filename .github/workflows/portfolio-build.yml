@@ -44,8 +44,17 @@ jobs:
       - name: Check Astro and TypeScript
         run: npm run check
 
-      - name: Run tests
-        run: npm run test
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: portfolio-coverage
+          path: coverage/
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Install Chromium for contact browser checks
         run: npx playwright install --with-deps --only-shell chromium
