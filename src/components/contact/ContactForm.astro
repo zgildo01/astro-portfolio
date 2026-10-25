@@ -1,0 +1,195 @@
+---
+import { CONTACT_LIMITS } from "../../lib/contact/validation";
+import "../../styles/contact.css";
+
+interface Props {
+  siteKey: string;
+  endpoint: string;
+  email?: string;
+  linkedin: string;
+  github: string;
+}
+
+const { siteKey, endpoint, email, linkedin, github } = Astro.props;
+const configured = Boolean(siteKey);
+---
+
+<section
+  class="contact-message atmospheric-content-block"
+  aria-labelledby="contact-form-heading"
+>
+  <p class="atmospheric-section-number">01 / Correspondence</p>
+  <h2 id="contact-form-heading">Start a conversation</h2>
+  <p>
+    Tell me about the opportunity, the challenge, or what you would like to
+    build.
+  </p>
+
+  <form
+    class="contact-form"
+    action={endpoint}
+    method="post"
+    data-contact-form
+    data-site-key={siteKey}
+    aria-labelledby="contact-form-heading"
+  >
+    <div
+      id="contact-errors"
+      class="contact-feedback contact-feedback--error"
+      tabindex="-1"
+      aria-labelledby="contact-errors-heading"
+      hidden
+    >
+      <h3 id="contact-errors-heading">Please review your message</h3>
+      <p data-contact-error-message></p>
+      <ul data-contact-error-list></ul>
+    </div>
+
+    <fieldset class="contact-fields" data-contact-fields disabled>
+      <legend class="contact-sr-only">Your message</legend>
+      <div class="contact-form__identity">
+        <div class="contact-field">
+          <label for="contact-name">Name <span>(required)</span></label>
+          <input
+            id="contact-name"
+            name="name"
+            type="text"
+            autocomplete="name"
+            maxlength={CONTACT_LIMITS.name}
+            aria-describedby="contact-name-error"
+            required
+          />
+          <p id="contact-name-error" class="contact-field-error" hidden></p>
+        </div>
+
+        <div class="contact-field">
+          <label for="contact-email">Email <span>(required)</span></label>
+          <input
+            id="contact-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            inputmode="email"
+            maxlength={CONTACT_LIMITS.email}
+            aria-describedby="contact-email-hint contact-email-error"
+            required
+          />
+          <p id="contact-email-hint" class="contact-field-hint">
+            The address I can reply to.
+          </p>
+          <p id="contact-email-error" class="contact-field-error" hidden></p>
+        </div>
+      </div>
+
+      <div class="contact-field">
+        <label for="contact-message">Message <span>(required)</span></label>
+        <textarea
+          id="contact-message"
+          name="message"
+          rows="7"
+          minlength={CONTACT_LIMITS.messageMin}
+          maxlength={CONTACT_LIMITS.message}
+          aria-describedby="contact-message-hint contact-message-error"
+          required></textarea>
+        <p id="contact-message-hint" class="contact-field-hint">
+          {
+            `${CONTACT_LIMITS.messageMin}–${CONTACT_LIMITS.message.toLocaleString("en-US")} characters.`
+          }
+          Please leave out confidential information.
+        </p>
+        <p id="contact-message-error" class="contact-field-error" hidden></p>
+      </div>
+
+      <div hidden aria-hidden="true">
+        <label for="contact-honeypot">Leave this field empty</label>
+        <input
+          id="contact-honeypot"
+          type="text"
+          name="honeypot"
+          autocomplete="off"
+          tabindex="-1"
+        />
+      </div>
+    </fieldset>
+
+    {
+      configured && (
+        <div class="contact-verification">
+          <p id="contact-verification-label" class="contact-field-label">
+            Quick verification
+          </p>
+          <div
+            id="contact-verification"
+            class="contact-challenge"
+            data-contact-challenge
+            aria-labelledby="contact-verification-label"
+            aria-describedby="contact-turnstile-error"
+          />
+          <p id="contact-turnstile-error" class="contact-field-error" hidden />
+          <button class="contact-retry" type="button" data-contact-retry hidden>
+            Retry verification
+          </button>
+        </div>
+      )
+    }
+
+    <p
+      class="contact-feedback"
+      data-contact-status
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      {
+        configured
+          ? "Preparing the message form. The contact links below are also available."
+          : "The message form is currently unavailable. You can reach me through the links below."
+      }
+    </p>
+
+    <button class="contact-submit" type="submit" data-contact-submit disabled>
+      <span data-contact-submit-label>Send message</span>
+      <span aria-hidden="true">↗</span>
+    </button>
+
+    <p class="contact-form__privacy">
+      Your name, email, and message are used to respond to your inquiry. This
+      site does not keep a contact database.
+    </p>
+    <noscript>
+      <p class="contact-feedback">
+        JavaScript is needed to send this form. You can use the contact links
+        below instead.
+      </p>
+    </noscript>
+  </form>
+</section>
+
+<section
+  class="contact-alternatives atmospheric-content-block"
+  aria-labelledby="contact-alternatives-heading"
+>
+  <p class="atmospheric-section-number">02 / Other ways to connect</p>
+  <h2 id="contact-alternatives-heading">A direct connection</h2>
+  <p>
+    Prefer another route? You can find my professional profile and public work
+    here.
+  </p>
+  <ul class="page-actions atmospheric-actions">
+    {
+      email && (
+        <li>
+          <a href={`mailto:${email}`}>Email me</a>
+        </li>
+      )
+    }
+    <li><a href={linkedin}>Connect on LinkedIn</a></li>
+    <li><a href={github}>View GitHub</a></li>
+  </ul>
+</section>
+
+<script>
+  import { initializeContactForms } from "./contactForm";
+
+  initializeContactForms();
+</script>
