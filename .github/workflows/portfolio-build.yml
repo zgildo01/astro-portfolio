@@ -47,6 +47,12 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:coverage
 
+      - name: Verify contact provider requests in the Worker runtime
+        env:
+          CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: "false"
+          WRANGLER_SEND_METRICS: "false"
+        run: npm run test:contact:worker
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v7
