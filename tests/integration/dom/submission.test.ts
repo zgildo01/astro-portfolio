@@ -83,6 +83,7 @@ describe("contact form through Worker and provider boundaries", () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
     mountHtml(
       await container.renderToString(ContactForm, { props: testContactProps })
     );
@@ -172,7 +173,10 @@ describe("contact form through Worker and provider boundaries", () => {
   });
 
   afterEach(() => {
-    const logs = JSON.stringify(vi.mocked(console.warn).mock.calls);
+    const logs = JSON.stringify([
+      ...vi.mocked(console.warn).mock.calls,
+      ...vi.mocked(console.error).mock.calls
+    ]);
     for (const value of [
       "server-only-turnstile-secret",
       "server-only-resend-secret",
@@ -218,6 +222,8 @@ describe("contact form through Worker and provider boundaries", () => {
     expect(emailRequests[0]).not.toHaveProperty("html");
     expect(status().dataset.state).toBe("success");
     expect(document.activeElement).toBe(status());
+    expect(console.warn).not.toHaveBeenCalled();
+    expect(console.error).not.toHaveBeenCalled();
     expect(
       (document.querySelector("#contact-message") as HTMLTextAreaElement).value
     ).toBe("");
@@ -264,6 +270,8 @@ describe("contact form through Worker and provider boundaries", () => {
       expectDraftRetained();
       expect(verificationRequests).toHaveLength(1);
       expect(emailRequests).toEqual([]);
+      expect(console.warn).toHaveBeenCalledOnce();
+      expect(console.error).not.toHaveBeenCalled();
       expect(
         document.querySelector(
           '#contact-errors a[href="#contact-verification"]'
@@ -318,6 +326,11 @@ describe("contact form through Worker and provider boundaries", () => {
         "private provider failure details"
       );
       expect(document.body.textContent).not.toContain("RESEND_API_KEY");
+      expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+        reason: "email_http_error",
+        status: code
+      });
+      expect(console.warn).not.toHaveBeenCalled();
     }
   );
 

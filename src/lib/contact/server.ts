@@ -48,7 +48,7 @@ type FailureReason =
   | "email_timeout"
   | "email_request_failed";
 
-function warnFailure(
+function logFailure(
   reason: FailureReason,
   details: {
     status?: number;
@@ -61,7 +61,14 @@ function warnFailure(
     actionMatches?: boolean;
   } = {}
 ): void {
-  console.warn("contact_failure", { reason, ...details });
+  if (
+    reason === "turnstile_rejected" ||
+    reason === "turnstile_context_mismatch"
+  ) {
+    console.warn("contact_failure", { reason, ...details });
+  } else {
+    console.error("contact_failure", { reason, ...details });
+  }
 }
 
 function isTimeout(error: unknown): boolean {
@@ -164,24 +171,24 @@ async function verifyTurnstile(
       }
     );
     if (!response.ok) {
-      warnFailure("turnstile_http_error", { status: response.status });
+      logFailure("turnstile_http_error", { status: response.status });
       return "unavailable";
     }
     let result: unknown;
     try {
       result = await response.json();
     } catch (error) {
-      warnFailure(
+      logFailure(
         isTimeout(error) ? "turnstile_timeout" : "turnstile_response_invalid"
       );
       return "unavailable";
     }
     if (!isRecord(result) || typeof result.success !== "boolean") {
-      warnFailure("turnstile_response_invalid");
+      logFailure("turnstile_response_invalid");
       return "unavailable";
     }
     if (!result.success) {
-      warnFailure("turnstile_rejected", {
+      logFailure("turnstile_rejected", {
         errorCodes: Array.isArray(result["error-codes"])
           ? [
               ...new Set(
@@ -198,7 +205,7 @@ async function verifyTurnstile(
     const hostnameMatches = result.hostname === hostname;
     const actionMatches = result.action === "contact";
     if (!hostnameMatches || !actionMatches) {
-      warnFailure("turnstile_context_mismatch", {
+      logFailure("turnstile_context_mismatch", {
         hostnameMatches,
         actionMatches
       });
@@ -206,7 +213,7 @@ async function verifyTurnstile(
     }
     return "verified";
   } catch (error) {
-    warnFailure(
+    logFailure(
       isTimeout(error) ? "turnstile_timeout" : "turnstile_request_failed"
     );
     return "unavailable";
@@ -243,24 +250,22 @@ async function sendNotification(
       })
     });
     if (!response.ok) {
-      warnFailure("email_http_error", { status: response.status });
+      logFailure("email_http_error", { status: response.status });
       return false;
     }
     let result: unknown;
     try {
       result = await response.json();
     } catch (error) {
-      warnFailure(
-        isTimeout(error) ? "email_timeout" : "email_response_invalid"
-      );
+      logFailure(isTimeout(error) ? "email_timeout" : "email_response_invalid");
       return false;
     }
     const accepted =
       isRecord(result) && typeof result.id === "string" && result.id.length > 0;
-    if (!accepted) warnFailure("email_response_invalid");
+    if (!accepted) logFailure("email_response_invalid");
     return accepted;
   } catch (error) {
-    warnFailure(isTimeout(error) ? "email_timeout" : "email_request_failed");
+    logFailure(isTimeout(error) ? "email_timeout" : "email_request_failed");
     return false;
   }
 }
@@ -357,7 +362,7 @@ export async function handleContactRequest(
     const invalidMailboxFields = (
       ["CONTACT_FROM_EMAIL", "CONTACT_TO_EMAIL"] as const
     ).filter((name) => env[name]?.trim() && !configuredMailbox(env[name]));
-    warnFailure("configuration_unavailable", {
+    logFailure("configuration_unavailable", {
       missingConfiguration,
       invalidMailboxFields
     });
@@ -366,7 +371,7 @@ export async function handleContactRequest(
 
   const ip = request.headers.get("CF-Connecting-IP");
   if (!ip?.trim()) {
-    warnFailure("client_ip_missing");
+    logFailure("client_ip_missing");
     return unavailable();
   }
 
@@ -384,7 +389,7 @@ export async function handleContactRequest(
       );
     }
   } catch {
-    warnFailure("rate_limiter_unavailable");
+    logFailure("rate_limiter_unavailable");
     return unavailable();
   }
 
