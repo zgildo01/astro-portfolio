@@ -111,15 +111,17 @@ export function parseWorkMarkdown(markdown: string): CaseStudy | null {
 
   const status = fields.get("status");
   if (!status) return null;
-  if (
-    !isScalar(status.value) ||
-    !["draft", "published"].includes(status.value.value as string)
-  ) {
+  const statusValue = isScalar(status.value) ? status.value.value : undefined;
+  const normalizedStatus =
+    typeof statusValue === "string"
+      ? statusValue.trim().toLowerCase()
+      : undefined;
+  if (normalizedStatus !== "draft" && normalizedStatus !== "published") {
     throw new WorkValidationError([
       { line: status.line, message: "status must be draft or published." }
     ]);
   }
-  if (status.value.value === "draft") return null;
+  if (normalizedStatus === "draft") return null;
 
   for (const [key, field] of fields) {
     if (!FRONTMATTER_FIELDS.has(key)) {
