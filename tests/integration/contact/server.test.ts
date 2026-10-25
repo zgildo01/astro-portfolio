@@ -18,10 +18,14 @@ const SUBMISSION = {
 
 beforeEach(() => {
   vi.spyOn(console, "warn").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
 afterEach(() => {
-  const diagnostics = JSON.stringify(vi.mocked(console.warn).mock.calls);
+  const diagnostics = JSON.stringify([
+    ...vi.mocked(console.warn).mock.calls,
+    ...vi.mocked(console.error).mock.calls
+  ]);
   for (const privateValue of [
     PRIVATE_MARKER,
     SUBMISSION.name,
@@ -93,6 +97,7 @@ describe("contact Worker endpoint", () => {
     expect(response.status).toBe(200);
     expect(await response.json()).toMatchObject({ ok: true });
     expect(console.warn).not.toHaveBeenCalled();
+    expect(console.error).not.toHaveBeenCalled();
     expect(limiter).toHaveBeenCalledExactlyOnceWith({
       key: "contact:192.0.2.10"
     });
@@ -313,17 +318,21 @@ describe("contact Worker endpoint", () => {
     "CONTACT_FROM_EMAIL",
     "CONTACT_TO_EMAIL",
     "CONTACT_RATE_LIMITER"
-  ] as const)("fails closed if %s is absent", async (key) => {
-    const { env, fetcher } = fixture({ [key]: undefined });
-    const response = await handleContactRequest(request(), env, fetcher);
-    expect(response.status).toBe(503);
-    expect(fetcher).not.toHaveBeenCalled();
-    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
-      reason: "configuration_unavailable",
-      missingConfiguration: [key],
-      invalidMailboxFields: []
-    });
-  });
+  ] as const)(
+    "reports a service error and fails closed if %s is absent",
+    async (key) => {
+      const { env, fetcher } = fixture({ [key]: undefined });
+      const response = await handleContactRequest(request(), env, fetcher);
+      expect(response.status).toBe(503);
+      expect(fetcher).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+        reason: "configuration_unavailable",
+        missingConfiguration: [key],
+        invalidMailboxFields: []
+      });
+      expect(console.warn).not.toHaveBeenCalled();
+    }
+  );
 
   it("rejects invalid configured mailboxes without forwarding them to Resend", async () => {
     const { env, fetcher } = fixture({
@@ -332,7 +341,7 @@ describe("contact Worker endpoint", () => {
     const response = await handleContactRequest(request(), env, fetcher);
     expect(response.status).toBe(503);
     expect(fetcher).not.toHaveBeenCalled();
-    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+    expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
       reason: "configuration_unavailable",
       missingConfiguration: [],
       invalidMailboxFields: ["CONTACT_FROM_EMAIL"]
@@ -349,7 +358,7 @@ describe("contact Worker endpoint", () => {
     expect(response.status).toBe(503);
     expect(limiter).not.toHaveBeenCalled();
     expect(fetcher).not.toHaveBeenCalled();
-    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+    expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
       reason: "client_ip_missing"
     });
   });
@@ -370,7 +379,7 @@ describe("contact Worker endpoint", () => {
     expect(response.status).toBe(503);
     expect(await response.text()).not.toContain(PRIVATE_MARKER);
     expect(fetcher).not.toHaveBeenCalled();
-    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+    expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
       reason: "rate_limiter_unavailable"
     });
   });
@@ -391,6 +400,8 @@ describe("contact Worker endpoint", () => {
         ok: false,
         errors: { turnstileToken: expect.any(String) }
       });
+      expect(console.warn).toHaveBeenCalledOnce();
+      expect(console.error).not.toHaveBeenCalled();
       expect(fetcher).toHaveBeenCalledOnce();
     }
   );
@@ -420,7 +431,7 @@ describe("contact Worker endpoint", () => {
       expect(response.status).toBe(503);
       expect(await response.text()).not.toContain(PRIVATE_MARKER);
       expect(fetcher).toHaveBeenCalledOnce();
-      expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
         reason,
         ...(status === undefined ? {} : { status })
       });
@@ -436,7 +447,7 @@ describe("contact Worker endpoint", () => {
     expect(response.status).toBe(503);
     expect(await response.text()).not.toContain(PRIVATE_MARKER);
     expect(fetcher).toHaveBeenCalledOnce();
-    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+    expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
       reason: "turnstile_timeout"
     });
   });
@@ -474,7 +485,7 @@ describe("contact Worker endpoint", () => {
       expect(result.ok).toBe(false);
       expect(JSON.stringify(result)).not.toContain(PRIVATE_MARKER);
       expect(fetcher).toHaveBeenCalledTimes(2);
-      expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
         reason,
         ...(status === undefined ? {} : { status })
       });
@@ -497,7 +508,7 @@ describe("contact Worker endpoint", () => {
     expect(response.status).toBe(503);
     expect(await response.text()).not.toContain(PRIVATE_MARKER);
     expect(fetcher).toHaveBeenCalledTimes(2);
-    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+    expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
       reason: "email_timeout"
     });
   });
@@ -524,6 +535,7 @@ describe("contact Worker endpoint", () => {
       reason: "turnstile_rejected",
       errorCodes: ["invalid-input-secret"]
     });
+    expect(console.error).not.toHaveBeenCalled();
     expect(fetcher).toHaveBeenCalledOnce();
   });
 
@@ -544,6 +556,7 @@ describe("contact Worker endpoint", () => {
       hostnameMatches: false,
       actionMatches: false
     });
+    expect(console.error).not.toHaveBeenCalled();
   });
 
   it.each(["turnstile", "email"] as const)(
@@ -564,7 +577,7 @@ describe("contact Worker endpoint", () => {
       const response = await handleContactRequest(request(), env, fetcher);
 
       expect(response.status).toBe(503);
-      expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
         reason:
           provider === "email"
             ? "email_request_failed"
@@ -596,7 +609,7 @@ describe("contact Worker endpoint", () => {
       const response = await handleContactRequest(request(), env, fetcher);
 
       expect(response.status).toBe(503);
-      expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      expect(console.error).toHaveBeenCalledExactlyOnceWith("contact_failure", {
         reason: provider === "email" ? "email_timeout" : "turnstile_timeout"
       });
     }

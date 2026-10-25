@@ -5,6 +5,15 @@
   "compatibility_date": "2026-10-17",
   "workers_dev": true,
   "keep_vars": true,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "persist": true
+    }
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
