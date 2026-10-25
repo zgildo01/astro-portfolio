@@ -59,7 +59,7 @@
   }
 }
 
-@media (max-width: 10rem) {
+@media (max-width: 22.5rem) {
   .skipLink {
     padding-inline: var(--space-2);
   }

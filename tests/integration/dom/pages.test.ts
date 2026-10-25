@@ -344,7 +344,15 @@ describe("professional page DOM contracts", () => {
     );
     expect(document.title).toBe(title);
     expect(document.head.querySelectorAll("title")).toHaveLength(1);
-    expect(document.head.querySelector("script,img,[onerror]")).toBeNull();
+    expect(
+      document.head.querySelector(
+        'script:not([type="application/ld+json"]),img,[onerror]'
+      )
+    ).toBeNull();
+    const structured = document.head.querySelector(
+      'script[type="application/ld+json"]'
+    )!;
+    expect(JSON.parse(structured.textContent!)["@graph"][2].name).toBe(title);
     expect(
       document
         .querySelector('meta[name="description"]')

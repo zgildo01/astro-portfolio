@@ -316,3 +316,14 @@
     gap: 0.75rem;
   }
 }
+
+@media (max-width: 22.5rem) {
+  .work-card h3 a,
+  .work-card h3 a > :first-child {
+    display: block;
+  }
+
+  .work-card__arrow {
+    display: none;
+  }
+}

@@ -1,6 +1,7 @@
 const skipLinkSelector = "a[data-skip-link]";
 const mainStartSelector = "[data-main-start-marker]";
-const headerControlSelector = "body > header a, body > header summary";
+const interactiveControlSelector =
+  'a[href], button, input, select, textarea, summary, label, [tabindex], [role="status"], [role="alert"]';
 const revealScrollDistance = 48;
 const controlClearance = 4;
 const meaningfulHeadingHeight = 44;
@@ -20,7 +21,7 @@ interface SkipLinkVisibilityState {
   viewportLeft: number;
   scrollDistance: number;
   menuOpen: boolean;
-  overlapsHeaderControl: boolean;
+  overlapsInteractiveControl: boolean;
 }
 
 /** Extracts an element ID from a same-page URL fragment. */
@@ -52,7 +53,7 @@ export function shouldShowFloatingSkipLink({
   viewportLeft,
   scrollDistance,
   menuOpen,
-  overlapsHeaderControl
+  overlapsInteractiveControl
 }: SkipLinkVisibilityState): boolean {
   const mainStartOutsideViewport =
     markerBottom <= viewportTop ||
@@ -73,7 +74,7 @@ export function shouldShowFloatingSkipLink({
       headingVisibleHeight < meaningfulHeadingHeight ||
       scrollDistance >= revealScrollDistance) &&
     !menuOpen &&
-    !overlapsHeaderControl
+    !overlapsInteractiveControl
   );
 }
 
@@ -125,9 +126,6 @@ export function initializeSkipLink(
 
   const header = root.querySelector<HTMLElement>("body > header");
   const compactMenu = header?.querySelector<HTMLDetailsElement>("details");
-  const headerControls = [
-    ...root.querySelectorAll<HTMLElement>(headerControlSelector)
-  ];
   let active = true;
 
   const update = () => {
@@ -145,7 +143,12 @@ export function initializeSkipLink(
     const marker = mainStart.getBoundingClientRect();
     const heading = mainHeading?.getBoundingClientRect();
     const button = skipLink.getBoundingClientRect();
-    const overlapsHeaderControl = headerControls.some((control) => {
+    // Include controls and feedback added after initialization, such as errors.
+    const controls = root.querySelectorAll<HTMLElement>(
+      interactiveControlSelector
+    );
+    const overlapsInteractiveControl = [...controls].some((control) => {
+      if (control === skipLink) return false;
       const closedDetails = control.closest("details:not([open])");
 
       if (closedDetails && control.tagName !== "SUMMARY") {
@@ -178,7 +181,7 @@ export function initializeSkipLink(
         menuOpen: Boolean(
           compactMenu?.open && compactMenu.getClientRects().length
         ),
-        overlapsHeaderControl
+        overlapsInteractiveControl
       })
     );
   };
@@ -188,6 +191,7 @@ export function initializeSkipLink(
   view.visualViewport?.addEventListener("scroll", update);
   view.visualViewport?.addEventListener("resize", update);
   compactMenu?.addEventListener("toggle", update);
+  root.addEventListener("focusin", update);
   root.fonts?.ready.then(update);
   update();
 
@@ -198,5 +202,6 @@ export function initializeSkipLink(
     view.visualViewport?.removeEventListener("scroll", update);
     view.visualViewport?.removeEventListener("resize", update);
     compactMenu?.removeEventListener("toggle", update);
+    root.removeEventListener("focusin", update);
   };
 }

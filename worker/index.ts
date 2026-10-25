@@ -2,6 +2,7 @@ import {
   handleContactRequest,
   type ContactEnv
 } from "../src/lib/contact/server";
+import { withApiSecurityHeaders } from "../src/lib/security/headers";
 
 export interface Env extends ContactEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -12,19 +13,21 @@ export default {
     const { pathname } = new URL(request.url);
 
     if (pathname === "/api/contact" || pathname === "/api/contact/") {
-      return handleContactRequest(request, env);
+      return withApiSecurityHeaders(await handleContactRequest(request, env));
     }
 
     if (pathname === "/api" || pathname.startsWith("/api/")) {
-      return Response.json(
-        { ok: false, message: "This page could not be found." },
-        {
-          status: 404,
-          headers: {
-            "Cache-Control": "no-store",
-            "X-Content-Type-Options": "nosniff"
+      return withApiSecurityHeaders(
+        Response.json(
+          { ok: false, message: "This page could not be found." },
+          {
+            status: 404,
+            headers: {
+              "Cache-Control": "no-store",
+              "X-Content-Type-Options": "nosniff"
+            }
           }
-        }
+        )
       );
     }
 

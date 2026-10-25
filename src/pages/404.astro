@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../config/site";
+import { withBasePath } from "../lib/routing";
+---
+
+<BaseLayout
+  title={`Page not found | ${siteConfig.name}`}
+  description="This page could not be found. Return to the portfolio, review selected work, or get in touch."
+  noindex
+>
+  <article class="page">
+    <header class="page-intro">
+      <p class="page-eyebrow">404 / Page not found</p>
+      <h1>This page could not be found.</h1>
+      <p class="page-introduction">
+        The address may have changed. The portfolio is still here.
+      </p>
+    </header>
+    <ul class="page-actions">
+      <li>
+        <a href={withBasePath("/", import.meta.env.BASE_URL)}>Return home</a>
+      </li>
+      <li>
+        <a href={withBasePath("/work", import.meta.env.BASE_URL)}
+          >View selected work</a
+        >
+      </li>
+      <li>
+        <a href={withBasePath("/contact", import.meta.env.BASE_URL)}
+          >Contact me</a
+        >
+      </li>
+    </ul>
+  </article>
+</BaseLayout>
