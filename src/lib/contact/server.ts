@@ -23,6 +23,53 @@ const UNAVAILABLE_MESSAGE =
 const VERIFICATION_MESSAGE =
   "Please complete the security check again before sending your message.";
 const PROVIDER_TIMEOUT_MS = 8_000;
+const TURNSTILE_ERROR_CODES = new Set([
+  "missing-input-secret",
+  "invalid-input-secret",
+  "missing-input-response",
+  "invalid-input-response",
+  "bad-request",
+  "timeout-or-duplicate",
+  "internal-error"
+]);
+
+type FailureReason =
+  | "configuration_unavailable"
+  | "client_ip_missing"
+  | "rate_limiter_unavailable"
+  | "turnstile_http_error"
+  | "turnstile_response_invalid"
+  | "turnstile_rejected"
+  | "turnstile_context_mismatch"
+  | "turnstile_timeout"
+  | "turnstile_request_failed"
+  | "email_http_error"
+  | "email_response_invalid"
+  | "email_timeout"
+  | "email_request_failed";
+
+function warnFailure(
+  reason: FailureReason,
+  details: {
+    status?: number;
+    missingConfiguration?: readonly (keyof ContactEnv)[];
+    invalidMailboxFields?: readonly (
+      "CONTACT_FROM_EMAIL" | "CONTACT_TO_EMAIL"
+    )[];
+    errorCodes?: readonly string[];
+    hostnameMatches?: boolean;
+    actionMatches?: boolean;
+  } = {}
+): void {
+  console.warn("contact_failure", { reason, ...details });
+}
+
+function isTimeout(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === "TimeoutError" || error.name === "AbortError")
+  );
+}
 
 function json(
   body: ContactResponse,
@@ -116,17 +163,52 @@ async function verifyTurnstile(
         })
       }
     );
-    if (!response.ok) return "unavailable";
-    const result: unknown = await response.json();
-    if (!isRecord(result) || typeof result.success !== "boolean") {
+    if (!response.ok) {
+      warnFailure("turnstile_http_error", { status: response.status });
       return "unavailable";
     }
-    return result.success === true &&
-      result.hostname === hostname &&
-      result.action === "contact"
-      ? "verified"
-      : "rejected";
-  } catch {
+    let result: unknown;
+    try {
+      result = await response.json();
+    } catch (error) {
+      warnFailure(
+        isTimeout(error) ? "turnstile_timeout" : "turnstile_response_invalid"
+      );
+      return "unavailable";
+    }
+    if (!isRecord(result) || typeof result.success !== "boolean") {
+      warnFailure("turnstile_response_invalid");
+      return "unavailable";
+    }
+    if (!result.success) {
+      warnFailure("turnstile_rejected", {
+        errorCodes: Array.isArray(result["error-codes"])
+          ? [
+              ...new Set(
+                result["error-codes"].filter(
+                  (code): code is string =>
+                    typeof code === "string" && TURNSTILE_ERROR_CODES.has(code)
+                )
+              )
+            ]
+          : []
+      });
+      return "rejected";
+    }
+    const hostnameMatches = result.hostname === hostname;
+    const actionMatches = result.action === "contact";
+    if (!hostnameMatches || !actionMatches) {
+      warnFailure("turnstile_context_mismatch", {
+        hostnameMatches,
+        actionMatches
+      });
+      return "rejected";
+    }
+    return "verified";
+  } catch (error) {
+    warnFailure(
+      isTimeout(error) ? "turnstile_timeout" : "turnstile_request_failed"
+    );
     return "unavailable";
   }
 }
@@ -160,12 +242,25 @@ async function sendNotification(
         ].join("\n")
       })
     });
-    if (!response.ok) return false;
-    const result: unknown = await response.json();
-    return (
-      isRecord(result) && typeof result.id === "string" && result.id.length > 0
-    );
-  } catch {
+    if (!response.ok) {
+      warnFailure("email_http_error", { status: response.status });
+      return false;
+    }
+    let result: unknown;
+    try {
+      result = await response.json();
+    } catch (error) {
+      warnFailure(
+        isTimeout(error) ? "email_timeout" : "email_response_invalid"
+      );
+      return false;
+    }
+    const accepted =
+      isRecord(result) && typeof result.id === "string" && result.id.length > 0;
+    if (!accepted) warnFailure("email_response_invalid");
+    return accepted;
+  } catch (error) {
+    warnFailure(isTimeout(error) ? "email_timeout" : "email_request_failed");
     return false;
   }
 }
@@ -248,11 +343,32 @@ export async function handleContactRequest(
     !configuredMailbox(env.CONTACT_TO_EMAIL) ||
     !env.CONTACT_RATE_LIMITER
   ) {
+    const missingConfiguration = (
+      [
+        ["TURNSTILE_SECRET_KEY", !env.TURNSTILE_SECRET_KEY?.trim()],
+        ["RESEND_API_KEY", !env.RESEND_API_KEY?.trim()],
+        ["CONTACT_FROM_EMAIL", !env.CONTACT_FROM_EMAIL?.trim()],
+        ["CONTACT_TO_EMAIL", !env.CONTACT_TO_EMAIL?.trim()],
+        ["CONTACT_RATE_LIMITER", !env.CONTACT_RATE_LIMITER]
+      ] as const
+    )
+      .filter(([, missing]) => missing)
+      .map(([name]) => name);
+    const invalidMailboxFields = (
+      ["CONTACT_FROM_EMAIL", "CONTACT_TO_EMAIL"] as const
+    ).filter((name) => env[name]?.trim() && !configuredMailbox(env[name]));
+    warnFailure("configuration_unavailable", {
+      missingConfiguration,
+      invalidMailboxFields
+    });
     return unavailable();
   }
 
   const ip = request.headers.get("CF-Connecting-IP");
-  if (!ip?.trim()) return unavailable();
+  if (!ip?.trim()) {
+    warnFailure("client_ip_missing");
+    return unavailable();
+  }
 
   try {
     const rate = await env.CONTACT_RATE_LIMITER.limit({ key: `contact:${ip}` });
@@ -268,6 +384,7 @@ export async function handleContactRequest(
       );
     }
   } catch {
+    warnFailure("rate_limiter_unavailable");
     return unavailable();
   }
 

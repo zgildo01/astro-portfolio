@@ -55,7 +55,13 @@ window.__contactTest = {
   solve() { this.options.callback("browser-test-token"); }
 };
 window.turnstile = {
-  ready(callback) { callback(); },
+  ready(callback) {
+    const script = document.querySelector('script[src^="https://challenges.cloudflare.com/turnstile/v0/api.js"]');
+    if (script && (script.async || script.defer)) {
+      throw new Error("Turnstile ready() does not support an async/defer script.");
+    }
+    callback();
+  },
   render(container, options) {
     window.__contactTest.options = options;
     const widget = document.createElement("div");
