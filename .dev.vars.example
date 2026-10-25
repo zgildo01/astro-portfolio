@@ -1,0 +1,8 @@
+# Copy to .dev.vars for local Wrangler testing. Never commit .dev.vars.
+# No email can be sent until every value is explicitly configured.
+# Use an isolated Resend test destination, never the production inbox.
+# Worker secrets are separate from Astro's .env build settings.
+TURNSTILE_SECRET_KEY=
+RESEND_API_KEY=
+CONTACT_FROM_EMAIL=
+CONTACT_TO_EMAIL=

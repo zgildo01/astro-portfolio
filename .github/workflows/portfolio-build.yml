@@ -46,6 +46,12 @@ jobs:
       - name: Run tests
         run: npm run test
 
+      - name: Install Chromium for contact browser checks
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Verify contact form with test adapters
+        run: npm run test:contact:e2e
+
   build:
     if: >-
       github.event_name != 'pull_request' &&
@@ -73,6 +79,8 @@ jobs:
       - name: Build site from vault content and generate resume PDF
         env:
           RESUME_CONTENT_TOKEN: ${{ secrets.RESUME_CONTENT_TOKEN }}
+          PUBLIC_TURNSTILE_SITE_KEY: ${{ github.ref == 'refs/heads/main' && vars.PUBLIC_TURNSTILE_SITE_KEY || '' }}
+          PUBLIC_CONTACT_EMAIL: ${{ vars.PUBLIC_CONTACT_EMAIL }}
         run: |
           if [[ -z "$RESUME_CONTENT_TOKEN" ]]; then
             echo "RESUME_CONTENT_TOKEN is required for trusted builds." >&2
@@ -83,7 +91,7 @@ jobs:
       - name: Verify resume PDF
         run: test -s dist/resume/Zeus-Zaragoza-Resume.pdf
 
-      - name: Validate Cloudflare static assets
+      - name: Validate Cloudflare Worker and static assets
         run: npx wrangler deploy --dry-run
 
       - name: Upload built site
