@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "dev:worker": "CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV=false wrangler dev --ip 127.0.0.1",
     "check": "astro check",
     "lint": "eslint \"**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx,astro}\" --max-warnings=0",
     "lint:fix": "npm run lint -- --fix",
@@ -15,7 +16,9 @@
     "format:check": "prettier . --check",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:contact:e2e": "node tests/e2e/contact.mjs",
     "build": "astro build",
+    "build:verify": "node scripts/verify-pr-build.mjs",
     "build:pdf": "node scripts/generate-resume-pdf.mjs",
     "preview": "astro preview",
     "validate": "npm run format:check && npm run lint && npm run check && npm run test && npm run build",

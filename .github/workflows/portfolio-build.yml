@@ -7,7 +7,8 @@ on:
     branches: [develop, main]
   workflow_dispatch:
   repository_dispatch:
-    types: [resume_changed]
+    # Retain the legacy name while the vault notifier migrates on master.
+    types: [site_content_changed, resume_changed]
 
 permissions:
   contents: read
@@ -46,6 +47,58 @@ jobs:
       - name: Run tests
         run: npm run test
 
+      - name: Install Chromium for contact browser checks
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Verify contact form with test adapters
+        run: npm run test:contact:e2e
+
+  pr_build:
+    name: PR production build
+    if: github.event_name == 'pull_request'
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out proposed merge
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22.22.3"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium and system dependencies
+        run: npx playwright install --with-deps --only-shell chromium
+
+      - name: Verify site, PDF, and Worker using synthetic content
+        env:
+          CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: "false"
+          WRANGLER_SEND_METRICS: "false"
+        run: npm run build:verify
+
+  build_validation:
+    name: Build validation
+    if: always() && github.event_name == 'pull_request'
+    needs: [checks, pr_build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all pull request checks to pass
+        env:
+          CHECKS_RESULT: ${{ needs.checks.result }}
+          PR_BUILD_RESULT: ${{ needs.pr_build.result }}
+        run: |
+          if [[ "$CHECKS_RESULT" != "success" || "$PR_BUILD_RESULT" != "success" ]]; then
+            echo "Build validation failed: code checks and the PR production build must both pass." >&2
+            exit 1
+          fi
+          echo "Build validation passed."
+
   build:
     if: >-
       github.event_name != 'pull_request' &&
@@ -73,6 +126,8 @@ jobs:
       - name: Build site from vault content and generate resume PDF
         env:
           RESUME_CONTENT_TOKEN: ${{ secrets.RESUME_CONTENT_TOKEN }}
+          PUBLIC_TURNSTILE_SITE_KEY: ${{ github.ref == 'refs/heads/main' && vars.PUBLIC_TURNSTILE_SITE_KEY || '' }}
+          PUBLIC_CONTACT_EMAIL: ${{ vars.PUBLIC_CONTACT_EMAIL }}
         run: |
           if [[ -z "$RESUME_CONTENT_TOKEN" ]]; then
             echo "RESUME_CONTENT_TOKEN is required for trusted builds." >&2
@@ -83,7 +138,7 @@ jobs:
       - name: Verify resume PDF
         run: test -s dist/resume/Zeus-Zaragoza-Resume.pdf
 
-      - name: Validate Cloudflare static assets
+      - name: Validate Cloudflare Worker and static assets
         run: npx wrangler deploy --dry-run
 
       - name: Upload built site
