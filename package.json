@@ -19,11 +19,12 @@
     "test:dom": "vitest run --project dom",
     "test:coverage": "vitest run --coverage",
     "test:contact:e2e": "node tests/e2e/contact.mjs",
+    "test:contact:worker": "node tests/runtime/contact.mjs",
     "build": "astro build",
     "build:verify": "node scripts/verify-pr-build.mjs",
     "build:pdf": "node scripts/generate-resume-pdf.mjs",
     "preview": "astro preview",
-    "validate": "npm run format:check && npm run lint && npm run check && npm run test:coverage && npm run build",
+    "validate": "npm run format:check && npm run lint && npm run check && npm run test:coverage && npm run test:contact:worker && npm run build",
     "astro": "astro"
   },
   "dependencies": {

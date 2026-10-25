@@ -160,7 +160,7 @@ async function verifyTurnstile(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       {
         method: "POST",
-        redirect: "error",
+        redirect: "manual",
         signal: AbortSignal.timeout(PROVIDER_TIMEOUT_MS),
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -228,7 +228,7 @@ async function sendNotification(
   try {
     const response = await fetcher("https://api.resend.com/emails", {
       method: "POST",
-      redirect: "error",
+      redirect: "manual",
       signal: AbortSignal.timeout(PROVIDER_TIMEOUT_MS),
       headers: {
         Authorization: `Bearer ${configuration.apiKey}`,
