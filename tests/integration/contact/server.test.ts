@@ -106,7 +106,7 @@ describe("contact Worker endpoint", () => {
     expect(verificationUrl).toBe(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify"
     );
-    expect(verification).toMatchObject({ method: "POST", redirect: "error" });
+    expect(verification).toMatchObject({ method: "POST", redirect: "manual" });
     expect(verification?.signal).toBeInstanceOf(AbortSignal);
     expect(JSON.parse(String(verification?.body))).toEqual({
       secret: env.TURNSTILE_SECRET_KEY,
@@ -117,7 +117,7 @@ describe("contact Worker endpoint", () => {
     expect(emailUrl).toBe("https://api.resend.com/emails");
     expect(email).toMatchObject({
       method: "POST",
-      redirect: "error",
+      redirect: "manual",
       headers: { Authorization: "Bearer test-resend-secret" }
     });
     expect(email?.signal).toBeInstanceOf(AbortSignal);
@@ -408,6 +408,14 @@ describe("contact Worker endpoint", () => {
 
   it.each([
     [
+      new Response(PRIVATE_MARKER, {
+        status: 302,
+        headers: { Location: "https://unexpected.example.test/verify" }
+      }),
+      "turnstile_http_error",
+      302
+    ],
+    [
       new Response(PRIVATE_MARKER, { status: 502 }),
       "turnstile_http_error",
       502
@@ -453,6 +461,14 @@ describe("contact Worker endpoint", () => {
   });
 
   it.each([
+    [
+      new Response(PRIVATE_MARKER, {
+        status: 307,
+        headers: { Location: "https://unexpected.example.test/email" }
+      }),
+      "email_http_error",
+      307
+    ],
     [new Response(PRIVATE_MARKER, { status: 429 }), "email_http_error", 429],
     [
       new Response("invalid response", { status: 200 }),
