@@ -16,12 +16,14 @@
     "format:check": "prettier . --check",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:dom": "vitest run --project dom",
+    "test:coverage": "vitest run --coverage",
     "test:contact:e2e": "node tests/e2e/contact.mjs",
     "build": "astro build",
     "build:verify": "node scripts/verify-pr-build.mjs",
     "build:pdf": "node scripts/generate-resume-pdf.mjs",
     "preview": "astro preview",
-    "validate": "npm run format:check && npm run lint && npm run check && npm run test && npm run build",
+    "validate": "npm run format:check && npm run lint && npm run check && npm run test:coverage && npm run build",
     "astro": "astro"
   },
   "dependencies": {
@@ -35,18 +37,29 @@
   "allowScripts": {
     "esbuild": true
   },
+  "overrides": {
+    "miniflare@5.20261019.2-beta": {
+      "undici": "7.30.1"
+    }
+  },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@eslint/js": "^10.0.1",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/user-event": "^14.6.8",
+    "@types/jsdom": "^30.0.0",
     "@types/node": "^22.20.4",
+    "@vitest/coverage-v8": "^5.0.5",
+    "axe-core": "^4.14.0",
     "eslint": "^10.10.0",
     "eslint-plugin-astro": "^3.1.0",
+    "jsdom": "^30.1.3",
     "playwright": "^1.63.0",
     "prettier": "3.9.6",
     "prettier-plugin-astro": "0.14.1",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0",
-    "vitest": "5.0.0",
+    "vitest": "^5.0.5",
     "wrangler": "^4.151.1"
   }
 }

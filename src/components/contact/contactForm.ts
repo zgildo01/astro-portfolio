@@ -183,7 +183,10 @@ function initializeContactForm(form: HTMLFormElement): void {
     challengeError.hidden = false;
     retry.hidden = false;
     updateButton();
-    if (!sending) {
+    if (
+      !sending &&
+      !["success", "error"].includes(status.dataset.state ?? "")
+    ) {
       announce(
         `${message} Your message is still here. You can also use the contact links below.`
       );
@@ -191,6 +194,8 @@ function initializeContactForm(form: HTMLFormElement): void {
   }
 
   async function prepareVerification(): Promise<void> {
+    token = "";
+    updateButton();
     retry.hidden = true;
     challengeError.hidden = true;
     announce("Complete the verification before sending your message.");
@@ -235,6 +240,13 @@ function initializeContactForm(form: HTMLFormElement): void {
 
   for (const name of fieldNames) {
     inputs[name].addEventListener("input", () => {
+      if (status.dataset.state === "success") {
+        announce(
+          token
+            ? "Verification complete. Your message is ready to send."
+            : "Complete the verification before sending your message."
+        );
+      }
       if (inputs[name].getAttribute("aria-invalid") !== "true") return;
       inputs[name].removeAttribute("aria-invalid");
       form.querySelector<HTMLElement>(`#contact-${name}-error`)!.hidden = true;

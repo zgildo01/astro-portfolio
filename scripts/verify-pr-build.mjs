@@ -255,7 +255,7 @@ try {
     path.join(fixtureDirectory, "worker")
   ]);
   process.stdout.write(
-    "PR build verification passed: static pages, published/draft boundaries, resume PDF, and Worker bundle. Synthetic output is for validation only.\n"
+    "Production build verification passed: static pages, published/draft boundaries, resume PDF, and Worker bundle. Synthetic output is for validation only.\n"
   );
 } finally {
   await rm(fixtureDirectory, { recursive: true, force: true });
