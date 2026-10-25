@@ -121,7 +121,45 @@ describe("parseWorkMarkdown", () => {
     }
   );
 
-  it.each(["ready", "Published", "true", "null", "[published]"])(
+  it.each(["Published", "PUBLISHED", '" published "', '" Published "'])(
+    "accepts explicit publication with capitalization or surrounding whitespace (%s)",
+    (status) => {
+      expect(
+        parseWorkMarkdown(
+          publishedNote.replace("status: published", `status: ${status}`)
+        )
+      ).toEqual(parseWorkMarkdown(publishedNote));
+    }
+  );
+
+  it.each(["Draft", "DRAFT", '" draft "', '" Draft "'])(
+    "never exposes incomplete draft content with capitalization or surrounding whitespace (%s)",
+    (status) => {
+      expect(
+        parseWorkMarkdown(
+          `---\nstatus: ${status}\n---\n# Private material\n\n- Incomplete narrative\n<script>secret</script>`
+        )
+      ).toBeNull();
+    }
+  );
+
+  it.each([
+    ["organization: Example organization\n", "organization"],
+    [
+      "## The outcome\n\nThe team used the documentation to coordinate work and understand existing capabilities.",
+      "Missing required section: The outcome."
+    ]
+  ])(
+    "still validates capitalized published metadata and narrative (%#)",
+    (removedContent, expectedIssue) => {
+      const source = publishedNote
+        .replace("status: published", "status: Published")
+        .replace(removedContent, "");
+      expect(validationError(source).message).toContain(expectedIssue);
+    }
+  );
+
+  it.each(["ready", "publish", "true", "null", "[published]", '" "'])(
     "rejects an explicitly invalid publication status (%s)",
     (status) => {
       expect(
