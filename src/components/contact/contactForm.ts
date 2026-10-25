@@ -18,7 +18,6 @@ interface TurnstileOptions {
 interface Turnstile {
   render(container: HTMLElement, options: TurnstileOptions): string;
   reset(widgetId: string): void;
-  ready?(callback: () => void): void;
 }
 
 type ContactWindow = Window & { turnstile?: Turnstile };
@@ -54,12 +53,10 @@ function loadTurnstile(): Promise<Turnstile> {
           fail();
           return;
         }
-        const finish = () => {
-          window.clearTimeout(timer);
-          resolve(api);
-        };
-        if (api.ready) api.ready(finish);
-        else finish();
+        // The load event makes the explicit API available. Turnstile rejects
+        // ready() when its script was loaded with async or defer.
+        window.clearTimeout(timer);
+        resolve(api);
       },
       { once: true }
     );

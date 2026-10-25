@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   handleContactRequest,
@@ -15,6 +15,29 @@ const SUBMISSION = {
   honeypot: "",
   turnstileToken: "test-verification-token"
 };
+
+beforeEach(() => {
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  const diagnostics = JSON.stringify(vi.mocked(console.warn).mock.calls);
+  for (const privateValue of [
+    PRIVATE_MARKER,
+    SUBMISSION.name,
+    SUBMISSION.email,
+    SUBMISSION.message,
+    SUBMISSION.turnstileToken,
+    "test-turnstile-secret",
+    "test-resend-secret",
+    "portfolio@example.test",
+    "owner@example.test",
+    "192.0.2.10"
+  ]) {
+    expect(diagnostics).not.toContain(privateValue);
+  }
+  vi.restoreAllMocks();
+});
 
 function request(
   payload: unknown = SUBMISSION,
@@ -69,6 +92,7 @@ describe("contact Worker endpoint", () => {
 
     expect(response.status).toBe(200);
     expect(await response.json()).toMatchObject({ ok: true });
+    expect(console.warn).not.toHaveBeenCalled();
     expect(limiter).toHaveBeenCalledExactlyOnceWith({
       key: "contact:192.0.2.10"
     });
@@ -294,6 +318,11 @@ describe("contact Worker endpoint", () => {
     const response = await handleContactRequest(request(), env, fetcher);
     expect(response.status).toBe(503);
     expect(fetcher).not.toHaveBeenCalled();
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      reason: "configuration_unavailable",
+      missingConfiguration: [key],
+      invalidMailboxFields: []
+    });
   });
 
   it("rejects invalid configured mailboxes without forwarding them to Resend", async () => {
@@ -303,6 +332,11 @@ describe("contact Worker endpoint", () => {
     const response = await handleContactRequest(request(), env, fetcher);
     expect(response.status).toBe(503);
     expect(fetcher).not.toHaveBeenCalled();
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      reason: "configuration_unavailable",
+      missingConfiguration: [],
+      invalidMailboxFields: ["CONTACT_FROM_EMAIL"]
+    });
   });
 
   it("does not trust X-Forwarded-For when Cloudflare's connecting IP is absent", async () => {
@@ -315,6 +349,9 @@ describe("contact Worker endpoint", () => {
     expect(response.status).toBe(503);
     expect(limiter).not.toHaveBeenCalled();
     expect(fetcher).not.toHaveBeenCalled();
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      reason: "client_ip_missing"
+    });
   });
 
   it("enforces the rate limit before verification or delivery", async () => {
@@ -333,6 +370,9 @@ describe("contact Worker endpoint", () => {
     expect(response.status).toBe(503);
     expect(await response.text()).not.toContain(PRIVATE_MARKER);
     expect(fetcher).not.toHaveBeenCalled();
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      reason: "rate_limiter_unavailable"
+    });
   });
 
   it.each([
@@ -356,18 +396,34 @@ describe("contact Worker endpoint", () => {
   );
 
   it.each([
-    new Response(PRIVATE_MARKER, { status: 502 }),
-    new Response("malformed provider JSON", { status: 200 }),
-    Response.json({ success: "true" })
-  ])(
+    [
+      new Response(PRIVATE_MARKER, { status: 502 }),
+      "turnstile_http_error",
+      502
+    ],
+    [
+      new Response("malformed provider JSON", { status: 200 }),
+      "turnstile_response_invalid",
+      undefined
+    ],
+    [
+      Response.json({ success: "true" }),
+      "turnstile_response_invalid",
+      undefined
+    ]
+  ] as const)(
     "handles Turnstile failure without exposing diagnostics",
-    async (providerResponse) => {
+    async (providerResponse, reason, status) => {
       const { env, fetcher } = fixture();
       fetcher.mockReset().mockResolvedValueOnce(providerResponse);
       const response = await handleContactRequest(request(), env, fetcher);
       expect(response.status).toBe(503);
       expect(await response.text()).not.toContain(PRIVATE_MARKER);
       expect(fetcher).toHaveBeenCalledOnce();
+      expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+        reason,
+        ...(status === undefined ? {} : { status })
+      });
     }
   );
 
@@ -380,16 +436,27 @@ describe("contact Worker endpoint", () => {
     expect(response.status).toBe(503);
     expect(await response.text()).not.toContain(PRIVATE_MARKER);
     expect(fetcher).toHaveBeenCalledOnce();
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      reason: "turnstile_timeout"
+    });
   });
 
   it.each([
-    new Response(PRIVATE_MARKER, { status: 429 }),
-    new Response("invalid response", { status: 200 }),
-    Response.json({ error: PRIVATE_MARKER }),
-    Response.json({ id: "" })
-  ])(
+    [new Response(PRIVATE_MARKER, { status: 429 }), "email_http_error", 429],
+    [
+      new Response("invalid response", { status: 200 }),
+      "email_response_invalid",
+      undefined
+    ],
+    [
+      Response.json({ error: PRIVATE_MARKER }),
+      "email_response_invalid",
+      undefined
+    ],
+    [Response.json({ id: "" }), "email_response_invalid", undefined]
+  ] as const)(
     "reports delivery failure without claiming success or retrying",
-    async (providerResponse) => {
+    async (providerResponse, reason, status) => {
       const { env, fetcher } = fixture();
       fetcher
         .mockReset()
@@ -407,6 +474,10 @@ describe("contact Worker endpoint", () => {
       expect(result.ok).toBe(false);
       expect(JSON.stringify(result)).not.toContain(PRIVATE_MARKER);
       expect(fetcher).toHaveBeenCalledTimes(2);
+      expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+        reason,
+        ...(status === undefined ? {} : { status })
+      });
     }
   );
 
@@ -426,7 +497,110 @@ describe("contact Worker endpoint", () => {
     expect(response.status).toBe(503);
     expect(await response.text()).not.toContain(PRIVATE_MARKER);
     expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      reason: "email_timeout"
+    });
   });
+
+  it("logs only recognized Turnstile failure codes and keeps provider-controlled text private", async () => {
+    const { env, fetcher } = fixture();
+    fetcher.mockReset().mockResolvedValueOnce(
+      Response.json({
+        success: false,
+        "error-codes": [
+          "invalid-input-secret",
+          "invalid-input-secret",
+          PRIVATE_MARKER,
+          SUBMISSION.email,
+          { unexpected: SUBMISSION.turnstileToken }
+        ],
+        diagnostic: PRIVATE_MARKER
+      })
+    );
+    const response = await handleContactRequest(request(), env, fetcher);
+
+    expect(response.status).toBe(422);
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      reason: "turnstile_rejected",
+      errorCodes: ["invalid-input-secret"]
+    });
+    expect(fetcher).toHaveBeenCalledOnce();
+  });
+
+  it("reports verification context mismatch without logging hostname or action values", async () => {
+    const { env, fetcher } = fixture();
+    fetcher.mockReset().mockResolvedValueOnce(
+      Response.json({
+        success: true,
+        hostname: PRIVATE_MARKER,
+        action: SUBMISSION.email
+      })
+    );
+    const response = await handleContactRequest(request(), env, fetcher);
+
+    expect(response.status).toBe(422);
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+      reason: "turnstile_context_mismatch",
+      hostnameMatches: false,
+      actionMatches: false
+    });
+  });
+
+  it.each(["turnstile", "email"] as const)(
+    "classifies a %s network failure without logging exception details or retrying",
+    async (provider) => {
+      const { env, fetcher } = fixture();
+      fetcher.mockReset();
+      if (provider === "email") {
+        fetcher.mockResolvedValueOnce(
+          Response.json({
+            success: true,
+            hostname: "portfolio.example",
+            action: "contact"
+          })
+        );
+      }
+      fetcher.mockRejectedValueOnce(new Error(PRIVATE_MARKER));
+      const response = await handleContactRequest(request(), env, fetcher);
+
+      expect(response.status).toBe(503);
+      expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+        reason:
+          provider === "email"
+            ? "email_request_failed"
+            : "turnstile_request_failed"
+      });
+      expect(fetcher).toHaveBeenCalledTimes(provider === "email" ? 2 : 1);
+    }
+  );
+
+  it.each(["turnstile", "email"] as const)(
+    "identifies a timeout while reading the %s response without logging body details",
+    async (provider) => {
+      const { env, fetcher } = fixture();
+      const timedOut = Response.json({ diagnostic: PRIVATE_MARKER });
+      vi.spyOn(timedOut, "json").mockRejectedValueOnce(
+        new DOMException(PRIVATE_MARKER, "AbortError")
+      );
+      fetcher.mockReset();
+      if (provider === "email") {
+        fetcher.mockResolvedValueOnce(
+          Response.json({
+            success: true,
+            hostname: "portfolio.example",
+            action: "contact"
+          })
+        );
+      }
+      fetcher.mockResolvedValueOnce(timedOut);
+      const response = await handleContactRequest(request(), env, fetcher);
+
+      expect(response.status).toBe(503);
+      expect(console.warn).toHaveBeenCalledExactlyOnceWith("contact_failure", {
+        reason: provider === "email" ? "email_timeout" : "turnstile_timeout"
+      });
+    }
+  );
 
   it("keeps HTML-like visitor content in a plain-text body", async () => {
     const { env, fetcher } = fixture();

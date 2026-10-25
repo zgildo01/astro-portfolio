@@ -93,9 +93,8 @@ const configured = Boolean(siteKey);
           required></textarea>
         <p id="contact-message-hint" class="contact-field-hint">
           {
-            `${CONTACT_LIMITS.messageMin}–${CONTACT_LIMITS.message.toLocaleString("en-US")} characters.`
+            `${CONTACT_LIMITS.messageMin}–${CONTACT_LIMITS.message.toLocaleString("en-US")} characters. Please leave out confidential information.`
           }
-          Please leave out confidential information.
         </p>
         <p id="contact-message-error" class="contact-field-error" hidden></p>
       </div>
