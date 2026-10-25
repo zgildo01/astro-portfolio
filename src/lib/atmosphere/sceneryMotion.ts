@@ -43,8 +43,16 @@ export function initializeSceneryMotion(
     "[data-scenery-control]"
   );
   const inputs = root.querySelectorAll<HTMLInputElement>(
-    '[data-scenery-control] input[name="scenery-motion"]'
+    '[data-scenery-control] input[type="radio"]'
   );
+  const originalNames = new Map<HTMLInputElement, string>();
+  inputs.forEach((input) => {
+    originalNames.set(input, input.name);
+    const group = [...controls].indexOf(
+      input.closest<HTMLFieldSetElement>("[data-scenery-control]")!
+    );
+    input.name = `scenery-motion-${group}`;
+  });
   let choice = readPreference(view);
 
   function update() {
@@ -67,6 +75,11 @@ export function initializeSceneryMotion(
 
   function synchronizeStorage(event: StorageEvent) {
     if (event.key !== null && event.key !== SCENERY_MOTION_STORAGE_KEY) return;
+    try {
+      if (event.storageArea && event.storageArea !== view!.localStorage) return;
+    } catch {
+      return;
+    }
     choice = parseSceneryMotion(event.newValue);
     update();
   }
@@ -91,6 +104,9 @@ export function initializeSceneryMotion(
     inputs.forEach((input) =>
       input.removeEventListener("change", changeChoice)
     );
+    inputs.forEach((input) => {
+      input.name = originalNames.get(input)!;
+    });
     preference.removeEventListener("change", update);
     root.removeEventListener("visibilitychange", update);
     view.removeEventListener("storage", synchronizeStorage);
