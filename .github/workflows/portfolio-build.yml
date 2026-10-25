@@ -62,13 +62,12 @@ jobs:
       - name: Verify contact form with test adapters
         run: npm run test:contact:e2e
 
-  pr_build:
-    name: PR production build
-    if: github.event_name == 'pull_request'
+  build_verification:
+    name: Production build verification
     needs: checks
     runs-on: ubuntu-latest
     steps:
-      - name: Check out proposed merge
+      - name: Check out portfolio
         uses: actions/checkout@v7
         with:
           persist-credentials: false
@@ -93,17 +92,17 @@ jobs:
 
   build_validation:
     name: Build validation
-    if: always() && github.event_name == 'pull_request'
-    needs: [checks, pr_build]
+    if: always()
+    needs: [checks, build_verification]
     runs-on: ubuntu-latest
     steps:
-      - name: Require all pull request checks to pass
+      - name: Require the full verification suite to pass
         env:
           CHECKS_RESULT: ${{ needs.checks.result }}
-          PR_BUILD_RESULT: ${{ needs.pr_build.result }}
+          BUILD_VERIFICATION_RESULT: ${{ needs.build_verification.result }}
         run: |
-          if [[ "$CHECKS_RESULT" != "success" || "$PR_BUILD_RESULT" != "success" ]]; then
-            echo "Build validation failed: code checks and the PR production build must both pass." >&2
+          if [[ "$CHECKS_RESULT" != "success" || "$BUILD_VERIFICATION_RESULT" != "success" ]]; then
+            echo "Build validation failed: code checks and production build verification must both pass." >&2
             exit 1
           fi
           echo "Build validation passed."
@@ -112,7 +111,7 @@ jobs:
     if: >-
       github.event_name != 'pull_request' &&
       (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
-    needs: checks
+    needs: build_validation
     runs-on: ubuntu-latest
     steps:
       - name: Check out portfolio
