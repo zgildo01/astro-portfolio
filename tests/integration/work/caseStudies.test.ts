@@ -1,4 +1,5 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
+import { JSDOM } from "jsdom";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import CaseStudyCard from "../../../src/components/work/CaseStudyCard.astro";
@@ -155,9 +156,25 @@ describe("work case studies", () => {
     ]);
 
     for (const html of [card, page]) {
-      expect(html).toContain("&lt;strong&gt;with markup&lt;/strong&gt;");
-      expect(html).not.toContain(untrustedTitle);
-      expect(html).toContain("&lt;markup&gt; &amp; context.");
+      const dom = new JSDOM(html);
+      try {
+        const document = dom.window.document;
+        const authoredContent = document.querySelector(
+          ".work-card, main article"
+        )!;
+        expect(
+          document.querySelector("strong,markup,[onerror],[onload]")
+        ).toBeNull();
+        expect(
+          authoredContent.querySelector(
+            "strong,markup,script,[onerror],[onload]"
+          )
+        ).toBeNull();
+        expect(document.body.textContent).toContain(untrustedTitle);
+        expect(document.body.textContent).toContain(entry.description);
+      } finally {
+        dom.window.close();
+      }
     }
     expect(page).toContain("&lt;script&gt;");
     expect(page).not.toContain(untrustedParagraph);

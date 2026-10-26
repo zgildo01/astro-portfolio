@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import worker, { type Env } from "../../../worker/index";
+import { apiSecurityHeaders } from "../../../src/config/security";
 
 describe("contact Worker routing", () => {
   it("delegates site pages and downloads to the static asset binding", async () => {
@@ -27,20 +28,29 @@ describe("contact Worker routing", () => {
       expect(response.status).toBe(405);
       expect(response.headers.get("allow")).toBe("POST");
       expect(response.headers.get("cache-control")).toBe("no-store");
+      for (const [name, value] of Object.entries(apiSecurityHeaders)) {
+        expect(response.headers.get(name), name).toBe(value);
+      }
       expect(fetchAssets).not.toHaveBeenCalled();
     }
   );
 
-  it("returns a JSON 404 for unknown API routes", async () => {
-    const fetchAssets = vi.fn();
-    const response = await worker.fetch(
-      new Request("https://portfolio.example/api/unknown"),
-      { ASSETS: { fetch: fetchAssets } }
-    );
+  it.each(["/api", "/api/unknown"])(
+    "returns a secured JSON 404 for %s",
+    async (path) => {
+      const fetchAssets = vi.fn();
+      const response = await worker.fetch(
+        new Request(`https://portfolio.example${path}`),
+        { ASSETS: { fetch: fetchAssets } }
+      );
 
-    expect(response.status).toBe(404);
-    expect(await response.json()).toMatchObject({ ok: false });
-    expect(response.headers.get("cache-control")).toBe("no-store");
-    expect(fetchAssets).not.toHaveBeenCalled();
-  });
+      expect(response.status).toBe(404);
+      expect(await response.json()).toMatchObject({ ok: false });
+      expect(response.headers.get("cache-control")).toBe("no-store");
+      for (const [name, value] of Object.entries(apiSecurityHeaders)) {
+        expect(response.headers.get(name), name).toBe(value);
+      }
+      expect(fetchAssets).not.toHaveBeenCalled();
+    }
+  );
 });

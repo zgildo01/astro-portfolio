@@ -1,6 +1,7 @@
 # build output
 dist/
 coverage/
+reports/
 .wrangler/
 # generated types
 .astro/

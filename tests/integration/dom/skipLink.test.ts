@@ -325,6 +325,47 @@ describe("rendered skip link and real browser events", () => {
     expect(visible()).toBe(true);
   });
 
+  it.each([
+    { name: "main link", selector: "main a" },
+    { name: "footer link", selector: "body > footer a" },
+    { name: "footer motion label", selector: "body > footer label" }
+  ])("keeps the floating link clear of a visible $name", ({ selector }) => {
+    marker = rectangle(50, -10, 1, 1);
+    const target = document.querySelector<HTMLElement>(selector)!;
+    let control = rectangle(20, 12, 100, 40);
+    vi.spyOn(target, "getBoundingClientRect").mockImplementation(() => control);
+    cleanup = initializeSkipLink();
+    expect(visible()).toBe(false);
+    control = rectangle(400, 12, 100, 40);
+    fireEvent.focusIn(target);
+    expect(visible()).toBe(true);
+  });
+
+  it.each(["button", "feedback"])(
+    "protects a %s added after initialization when it receives focus",
+    (kind) => {
+      marker = rectangle(50, -10, 1, 1);
+      cleanup = initializeSkipLink();
+      expect(visible()).toBe(true);
+      const target = document.createElement(
+        kind === "button" ? "button" : "div"
+      );
+      if (kind === "feedback") {
+        target.setAttribute("role", "status");
+        target.tabIndex = -1;
+      }
+      main.append(target);
+      vi.spyOn(target, "getBoundingClientRect").mockReturnValue(
+        rectangle(20, 12, 100, 40)
+      );
+      fireEvent.focusIn(target);
+      expect(visible()).toBe(false);
+      target.remove();
+      fireEvent.scroll(window);
+      expect(visible()).toBe(true);
+    }
+  );
+
   it("ignores zero-sized header controls", () => {
     marker = rectangle(50, -10, 1, 1);
     const headerLink =
@@ -379,6 +420,7 @@ describe("rendered skip link and real browser events", () => {
     const removeWindow = vi.spyOn(window, "removeEventListener");
     const removeViewport = vi.spyOn(viewport, "removeEventListener");
     const removeMenu = vi.spyOn(menu, "removeEventListener");
+    const removeDocument = vi.spyOn(document, "removeEventListener");
     cleanup = initializeSkipLink();
     cleanup?.();
     cleanup = null;
@@ -387,6 +429,10 @@ describe("rendered skip link and real browser events", () => {
     expect(removeViewport).toHaveBeenCalledWith("scroll", expect.any(Function));
     expect(removeViewport).toHaveBeenCalledWith("resize", expect.any(Function));
     expect(removeMenu).toHaveBeenCalledWith("toggle", expect.any(Function));
+    expect(removeDocument).toHaveBeenCalledWith(
+      "focusin",
+      expect.any(Function)
+    );
     marker = rectangle(50, 900, 1, 1);
     fireEvent.scroll(window);
     viewport.dispatchEvent(new Event("resize"));

@@ -34,6 +34,7 @@ function createBrowser() {
   };
   const viewListeners = new Map<string, () => void>();
   const menuListeners = new Map<string, () => void>();
+  const rootListeners = new Map<string, () => void>();
   const skipLink = {
     hash: "#main-content",
     dataset: {} as DOMStringMap,
@@ -88,7 +89,11 @@ function createBrowser() {
       if (selector === "body > header") return header;
       return null;
     },
-    querySelectorAll: () => [control, closedMenuLink],
+    querySelectorAll: () => [skipLink, control, closedMenuLink],
+    addEventListener: vi.fn((name: string, listener: () => void) => {
+      rootListeners.set(name, listener);
+    }),
+    removeEventListener: vi.fn(),
     getElementById: (id: string) => (id === "main-content" ? main : null)
   } as unknown as Document;
 
@@ -99,7 +104,8 @@ function createBrowser() {
     view,
     menu,
     emitView: (name: string) => viewListeners.get(name)?.(),
-    emitMenu: (name: string) => menuListeners.get(name)?.()
+    emitMenu: (name: string) => menuListeners.get(name)?.(),
+    emitRoot: (name: string) => rootListeners.get(name)?.()
   };
 }
 
@@ -130,7 +136,7 @@ describe("shouldShowFloatingSkipLink", () => {
     viewportLeft: 0,
     scrollDistance: 0,
     menuOpen: false,
-    overlapsHeaderControl: false
+    overlapsInteractiveControl: false
   };
 
   it("shows when zoom leaves main below the viewport at page load", () => {
@@ -183,7 +189,7 @@ describe("shouldShowFloatingSkipLink", () => {
     ).toBe(true);
   });
 
-  it("stays hidden while the menu is open or the button covers a header control", () => {
+  it("stays hidden while the menu is open or the button covers an interactive control", () => {
     expect(
       shouldShowFloatingSkipLink({
         ...visibleMarker,
@@ -197,7 +203,7 @@ describe("shouldShowFloatingSkipLink", () => {
         ...visibleMarker,
         markerTop: 250,
         markerBottom: 251,
-        overlapsHeaderControl: true
+        overlapsInteractiveControl: true
       })
     ).toBe(false);
   });
@@ -225,7 +231,7 @@ describe("initializeSkipLink", () => {
 
     browser.state.controlLeft = 180;
     browser.state.controlRight = 240;
-    browser.emitView("resize");
+    browser.emitRoot("focusin");
     expect(browser.skipLink.dataset.floatingVisible).toBe("false");
 
     browser.state.controlLeft = 50;

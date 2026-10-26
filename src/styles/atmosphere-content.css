@@ -453,7 +453,7 @@ html[data-scenery-motion="motion"][data-scenery-paused="false"]
     font-size: 0.875rem;
   }
 
-  .page .atmospheric-hero-actions .atmospheric-action-primary {
+  .page .atmospheric-hero-actions a.atmospheric-action-primary {
     display: flex;
     min-inline-size: 0;
     padding-block: 0.75rem;
