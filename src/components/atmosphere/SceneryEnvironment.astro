@@ -12,11 +12,18 @@ const [arrivalPlate, interiorPlate, signalPlate, botanicalPlate] =
       getImage({
         src,
         width: Math.min(1100, src.width),
+        widths: [480, 768, Math.min(1100, src.width)],
         format: "webp",
         quality: 72
       })
     )
   );
+const ghostPlate = await getImage({
+  src: signal,
+  width: 768,
+  format: "webp",
+  quality: 72
+});
 const ascending = [arrivalPlate, interiorPlate, arrivalPlate, interiorPlate];
 const descending = [signalPlate, botanicalPlate, signalPlate, botanicalPlate];
 ---
@@ -29,6 +36,8 @@ const descending = [signalPlate, botanicalPlate, signalPlate, botanicalPlate];
           ascending.map((plate) => (
             <img
               src={plate.src}
+              srcset={plate.srcSet.attribute}
+              sizes="(max-width: 47.999rem) 80vw, 55vw"
               {...plate.attributes}
               alt=""
               decoding="async"
@@ -44,6 +53,8 @@ const descending = [signalPlate, botanicalPlate, signalPlate, botanicalPlate];
           descending.map((plate) => (
             <img
               src={plate.src}
+              srcset={plate.srcSet.attribute}
+              sizes="(max-width: 47.999rem) 80vw, 55vw"
               {...plate.attributes}
               alt=""
               decoding="async"
@@ -56,7 +67,7 @@ const descending = [signalPlate, botanicalPlate, signalPlate, botanicalPlate];
   </div>
   <div
     class={styles.ghost}
-    style={{ backgroundImage: `url("${signalPlate.src}")` }}
+    style={{ backgroundImage: `url("${ghostPlate.src}")` }}
     data-scenery-effect
   >
   </div>

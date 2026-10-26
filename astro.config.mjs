@@ -3,17 +3,28 @@ import { spawn } from "node:child_process";
 import process from "node:process";
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "astro/config";
+import { loadEnv } from "vite";
+import { resolveSiteOrigin } from "./src/config/siteOrigin";
+import { pageContentSecurityPolicy } from "./src/config/security";
+import { writeSecurityHeaders } from "./scripts/security-headers.mjs";
 
 const pdfGeneratorPath = fileURLToPath(
   new URL("./scripts/generate-resume-pdf.mjs", import.meta.url)
 );
 let configuredBasePath = "/";
+const buildEnvironment = loadEnv(
+  process.env.NODE_ENV ?? "production",
+  process.cwd(),
+  "PORTFOLIO_"
+);
 
 export default defineConfig({
-  ...(process.env.PORTFOLIO_SITE_URL
-    ? { site: process.env.PORTFOLIO_SITE_URL }
-    : {}),
+  site: resolveSiteOrigin(
+    process.env.PORTFOLIO_SITE_URL ?? buildEnvironment.PORTFOLIO_SITE_URL
+  ),
   base: process.env.PORTFOLIO_BASE_PATH ?? "/",
+  security: { csp: pageContentSecurityPolicy },
+  markdown: { syntaxHighlight: false },
   integrations: [
     {
       name: "resume-pdf",
@@ -38,6 +49,7 @@ export default defineConfig({
                 );
             });
           });
+          await writeSecurityHeaders(dir, configuredBasePath);
         }
       }
     }

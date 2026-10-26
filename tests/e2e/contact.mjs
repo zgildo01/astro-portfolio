@@ -94,7 +94,7 @@ try {
     if (server.exitCode !== null)
       throw new Error("Contact test server exited.");
     try {
-      const response = await fetch(`${origin}/contact`);
+      const response = await fetch(`${origin}/contact/`);
       if (response.ok) {
         ready = true;
         break;
@@ -156,7 +156,7 @@ try {
   const summary = page.locator("#contact-errors");
   const status = page.locator("[data-contact-status]");
   async function load() {
-    await page.goto(`${origin}/contact`);
+    await page.goto(`${origin}/contact/`);
     await submit.waitFor();
     await page.waitForFunction(
       () => !document.querySelector("[data-contact-submit]").disabled
@@ -308,7 +308,7 @@ try {
         "https://challenges.cloudflare.com/turnstile/v0/api.js*",
         (route) => route.abort("failed")
       );
-      await blocked.goto(`${origin}/contact`);
+      await blocked.goto(`${origin}/contact/`);
       await blocked
         .locator("[data-contact-retry]")
         .waitFor({ state: "visible" });
@@ -371,7 +371,7 @@ try {
     async () => {
       const noScript = await browser.newContext({ javaScriptEnabled: false });
       const fallback = await noScript.newPage();
-      await fallback.goto(`${origin}/contact`);
+      await fallback.goto(`${origin}/contact/`);
       assert.equal(
         await fallback.locator("[data-contact-submit]").isDisabled(),
         true

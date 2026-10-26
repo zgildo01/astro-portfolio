@@ -97,7 +97,7 @@ const env = {
   RESUME_VAULT_DIR: vaultDirectory,
   // Explicit empty values also prevent Astro from falling back to local .env files.
   RESUME_CONTENT_TOKEN: "",
-  PUBLIC_TURNSTILE_SITE_KEY: "",
+  PUBLIC_TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
   PUBLIC_CONTACT_EMAIL: "",
   PORTFOLIO_BASE_PATH: "/",
   CLOUDFLARE_API_TOKEN: "",
@@ -254,8 +254,11 @@ try {
     "--outdir",
     path.join(fixtureDirectory, "worker")
   ]);
+  await run(process.execPath, [
+    path.join(root, "scripts", "verify-release.mjs")
+  ]);
   process.stdout.write(
-    "Production build verification passed: static pages, published/draft boundaries, resume PDF, and Worker bundle. Synthetic output is for validation only.\n"
+    "Production build verification passed: published/draft boundaries, resume PDF, Worker bundle, and full release audits. Synthetic output is for validation only.\n"
   );
 } finally {
   await rm(fixtureDirectory, { recursive: true, force: true });
