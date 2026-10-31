@@ -1,4 +1,4 @@
-/* global PerformanceObserver, document, performance */
+/* global PerformanceObserver, document, performance, window */
 import assert from "node:assert/strict";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -32,8 +32,15 @@ const budgets = {
 const browser = await chromium.launch({ headless: true });
 const results = [];
 const failures = [];
+const home =
+  routes.find((route) => new URL(route, origin).pathname === origin.pathname) ??
+  routes[0];
+const scenarios = [
+  ...routes.map((route) => ({ route, mode: "immersive" })),
+  { route: home, mode: "minimal" }
+];
 
-async function sample(route) {
+async function sample(route, mode) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
     deviceScaleFactor: 2,
@@ -76,29 +83,39 @@ async function sample(route) {
       uploadThroughput: 93_750
     });
     await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
-    await page.addInitScript(() => {
-      globalThis.__portfolioPerformance = { lcpMs: 0, cls: 0, events: [] };
-      new PerformanceObserver((list) => {
-        for (const entry of list.getEntries())
-          globalThis.__portfolioPerformance.lcpMs = entry.startTime;
-      }).observe({ type: "largest-contentful-paint", buffered: true });
-      new PerformanceObserver((list) => {
-        for (const entry of list.getEntries())
-          if (!entry.hadRecentInput)
-            globalThis.__portfolioPerformance.cls += entry.value;
-      }).observe({ type: "layout-shift", buffered: true });
-      new PerformanceObserver((list) => {
-        for (const entry of list.getEntries())
-          if (entry.interactionId)
-            globalThis.__portfolioPerformance.events.push(entry.duration);
-      }).observe({ type: "event", durationThreshold: 16, buffered: true });
-    });
+    await page.addInitScript(
+      ({ mode, auditOrigin }) => {
+        if (mode !== "immersive" && window.location.origin === auditOrigin)
+          window.localStorage.setItem("portfolio-experience-mode", mode);
+        globalThis.__portfolioPerformance = { lcpMs: 0, cls: 0, events: [] };
+        new PerformanceObserver((list) => {
+          for (const entry of list.getEntries())
+            globalThis.__portfolioPerformance.lcpMs = entry.startTime;
+        }).observe({ type: "largest-contentful-paint", buffered: true });
+        new PerformanceObserver((list) => {
+          for (const entry of list.getEntries())
+            if (!entry.hadRecentInput)
+              globalThis.__portfolioPerformance.cls += entry.value;
+        }).observe({ type: "layout-shift", buffered: true });
+        new PerformanceObserver((list) => {
+          for (const entry of list.getEntries())
+            if (entry.interactionId)
+              globalThis.__portfolioPerformance.events.push(entry.duration);
+        }).observe({ type: "event", durationThreshold: 16, buffered: true });
+      },
+      { mode, auditOrigin: origin.origin }
+    );
     const response = await page.goto(new URL(route, origin).href, {
       waitUntil: "networkidle"
     });
     assert.equal(response.status(), 200, route);
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(500);
+    assert.equal(
+      await page.locator("html").getAttribute("data-experience-mode"),
+      mode,
+      "The requested cold-load appearance mode did not initialize."
+    );
     const initial = await page.evaluate(() => ({
       ...globalThis.__portfolioPerformance,
       encodedBytes:
@@ -124,7 +141,7 @@ async function sample(route) {
       () => performance.eventCounts.get("click") ?? 0
     );
     for (let index = 0; index < 4; index++)
-      await page.locator("header summary").click();
+      await page.locator("header [data-mobile-navigation] > summary").click();
     await page.waitForTimeout(250);
     const interaction = await page.evaluate(() => ({
       events: globalThis.__portfolioPerformance.events,
@@ -189,12 +206,12 @@ function exceeds(metrics) {
 }
 
 try {
-  for (const route of routes) {
-    const samples = [await sample(route)];
+  for (const { route, mode } of scenarios) {
+    const samples = [await sample(route, mode)];
     // A failed measurement gets two additional cold runs. The median still
     // fails a consistent regression while reducing single-run host noise.
     if (exceeds(samples[0])) {
-      samples.push(await sample(route), await sample(route));
+      samples.push(await sample(route, mode), await sample(route, mode));
     }
     const metrics = Object.fromEntries(
       Object.keys(budgets).map((key) => [
@@ -204,13 +221,15 @@ try {
         ]
       ])
     );
-    results.push({ route, metrics, samples });
+    results.push({ route, mode, metrics, samples });
     for (const [key, limit] of Object.entries(budgets)) {
       if (metrics[key] > limit)
-        failures.push(`${route}: ${key} ${metrics[key]} exceeds ${limit}`);
+        failures.push(
+          `${mode} ${route}: ${key} ${metrics[key]} exceeds ${limit}`
+        );
     }
     process.stdout.write(
-      `Performance ${route}: LCP ${Math.round(metrics.lcpMs)}ms, CLS ${metrics.cls.toFixed(3)}, sampled interaction <=${metrics.interactionUpperBoundMs}ms.\n`
+      `Performance ${mode} ${route}: LCP ${Math.round(metrics.lcpMs)}ms, CLS ${metrics.cls.toFixed(3)}, sampled interaction <=${metrics.interactionUpperBoundMs}ms.\n`
     );
   }
 } finally {

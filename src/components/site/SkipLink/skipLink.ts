@@ -125,7 +125,9 @@ export function initializeSkipLink(
   }
 
   const header = root.querySelector<HTMLElement>("body > header");
-  const compactMenu = header?.querySelector<HTMLDetailsElement>("details");
+  const compactMenu = header?.querySelector<HTMLDetailsElement>(
+    "[data-mobile-navigation]"
+  );
   let active = true;
 
   const update = () => {

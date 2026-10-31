@@ -58,7 +58,7 @@ jobs:
       - name: Check Astro and TypeScript
         run: npm run check
 
-      - name: Run tests with coverage
+      - name: Run all test groups with coverage
         run: npm run test:coverage
 
       - name: Verify contact provider requests in the Worker runtime

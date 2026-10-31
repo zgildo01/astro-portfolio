@@ -3,7 +3,11 @@ import SiteNavigation from "./SiteNavigation.astro";
 import styles from "./MobileNavigation.module.css";
 ---
 
-<details class={styles.navigation}>
+<details
+  class={styles.navigation}
+  name="portfolio-header-panel"
+  data-mobile-navigation
+>
   <summary class={styles.toggle}>
     <span>Menu</span>
 

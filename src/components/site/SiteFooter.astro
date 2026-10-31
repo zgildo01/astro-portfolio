@@ -23,7 +23,7 @@ const { scenery = false } = Astro.props;
     <SiteNavigation placement="footer" label="Footer" />
 
     <div class={styles.lower}>
-      <p class={styles.remark}>Why not stay a while?</p>
+      <p class={styles.remark} data-atmosphere-copy>Why not stay a while?</p>
       {scenery && <SceneryMotionControl />}
       <p class={styles.copyright}>
         <small>&copy; {currentYear} {siteConfig.name}</small>
