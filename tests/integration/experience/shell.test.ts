@@ -33,7 +33,11 @@ describe("optional experience isolation", () => {
       const source = await readFile(new URL(path, projectRoot), "utf8");
 
       for (const specifier of importSpecifiers(source)) {
-        expect(specifier).not.toMatch(/(?:experience|react)/i);
+        expect(specifier).not.toMatch(/(?:^|\/)(?:react|react-dom)(?:\/|$)/i);
+        const imported = new URL(specifier, new URL(path, projectRoot));
+        expect(imported.pathname).not.toMatch(
+          /\/features\/experience(?:\/|$)|\/layouts\/ExperienceLayout\.astro$/i
+        );
       }
 
       expect(source).not.toMatch(/\bclient:(?:load|idle|visible|media|only)\b/);

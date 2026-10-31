@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import userEvent from "@testing-library/user-event";
-import { fireEvent, getAllByRole, getByRole } from "@testing-library/dom";
+import { fireEvent, getByRole } from "@testing-library/dom";
 import {
   afterEach,
   beforeAll,
@@ -26,6 +26,8 @@ let hidden = false;
 
 function mount(html = shellHtml): void {
   mountHtml(html);
+  // These legacy motion cases exercise the deliberately immersive layer.
+  document.documentElement.dataset.experienceMode = "immersive";
 }
 
 function matchMedia(initial = false) {
@@ -49,7 +51,11 @@ function matchMedia(initial = false) {
 }
 
 function radios(): HTMLInputElement[] {
-  return getAllByRole(document.body, "radio") as HTMLInputElement[];
+  return [
+    ...document.querySelectorAll<HTMLInputElement>(
+      '[data-scenery-control] input[type="radio"]'
+    )
+  ];
 }
 
 function state(): string | undefined {
@@ -86,6 +92,51 @@ afterEach(() => {
 });
 
 describe("rendered scenery controls and browser preferences", () => {
+  it.each(["minimal", "unrecognized"])(
+    "keeps saved Motion paused and controls hidden in %s mode",
+    (mode) => {
+      matchMedia();
+      window.localStorage.setItem(SCENERY_MOTION_STORAGE_KEY, "motion");
+      document.documentElement.dataset.experienceMode = mode;
+      cleanup = initializeSceneryMotion();
+      expect(state()).toBe("still");
+      expect(
+        document.querySelector<HTMLFieldSetElement>("[data-scenery-control]")!
+          .hidden
+      ).toBe(true);
+      expect(window.localStorage.getItem(SCENERY_MOTION_STORAGE_KEY)).toBe(
+        "motion"
+      );
+      document.documentElement.dataset.experienceMode = "immersive";
+      document.dispatchEvent(new Event("portfolio:experience-mode-change"));
+      expect(state()).toBe("motion");
+      expect(
+        document.querySelector<HTMLFieldSetElement>("[data-scenery-control]")!
+          .hidden
+      ).toBe(false);
+      document.documentElement.dataset.experienceMode = mode;
+      document.dispatchEvent(new Event("portfolio:experience-mode-change"));
+      expect(state()).toBe("still");
+      expect(
+        document.querySelector<HTMLFieldSetElement>("[data-scenery-control]")!
+          .hidden
+      ).toBe(true);
+      expect(window.localStorage.getItem(SCENERY_MOTION_STORAGE_KEY)).toBe(
+        "motion"
+      );
+
+      cleanup?.();
+      cleanup = null;
+      document.documentElement.dataset.experienceMode = "immersive";
+      document.dispatchEvent(new Event("portfolio:experience-mode-change"));
+      expect(state()).toBe("still");
+      expect(
+        document.querySelector<HTMLFieldSetElement>("[data-scenery-control]")!
+          .hidden
+      ).toBe(true);
+    }
+  );
+
   it("keeps its native Still fallback hidden before JavaScript enhancement", () => {
     const group = document.querySelector<HTMLFieldSetElement>(
       "[data-scenery-control]"
@@ -237,6 +288,13 @@ describe("rendered scenery controls and browser preferences", () => {
       })
     );
     expect(state()).toBe("still");
+    window.dispatchEvent(
+      new StorageEvent("storage", {
+        key: SCENERY_MOTION_STORAGE_KEY,
+        newValue: "motion"
+      })
+    );
+    expect(state()).toBe("motion");
     expect(write).not.toHaveBeenCalled();
   });
 

@@ -1,0 +1,78 @@
+/* Minimal removes decorative effects; Immersive stays still without scripts. */
+html:not([data-experience-mode="immersive"]) [data-scenery-environment],
+html:not([data-experience-mode="immersive"]) [data-atmosphere-copy],
+html:not([data-experience-mode="immersive"]) [data-scenery-control] {
+  display: none;
+}
+
+html:not([data-experience-mode="immersive"]) .atmospheric-scene__frame::before,
+html:not([data-experience-mode="immersive"]) .atmospheric-scene__frame::after {
+  display: none;
+}
+
+html:not([data-experience-mode="immersive"]) .atmospheric-scene__frame img {
+  animation: none;
+  transform: none;
+}
+
+html:not([data-experience-mode="immersive"]) .page .atmospheric-editorial-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+html:not([data-experience-mode="immersive"]) .atmospheric-editorial-copy {
+  max-inline-size: var(--content-width);
+}
+
+html[data-experience-mode="minimal"] [data-atmosphere-figure] {
+  display: none;
+}
+
+html[data-experience-mode="minimal"] .page.atmospheric-page {
+  inline-size: min(100%, var(--content-width));
+}
+
+html[data-experience-mode="minimal"] .page .atmospheric-home-hero,
+html[data-experience-mode="minimal"] .page .atmospheric-about-grid,
+html[data-experience-mode="minimal"] .case-study__layout {
+  display: block;
+}
+
+html[data-experience-mode="minimal"]
+  :is(
+    .atmospheric-hero-copy,
+    .atmospheric-page-intro,
+    .atmospheric-content-block,
+    .atmospheric-home-continuation
+  ) {
+  background: none;
+  box-shadow: none;
+}
+
+html[data-experience-mode="minimal"] .page .atmospheric-home-continuation {
+  display: block;
+  margin-block-start: var(--space-7);
+}
+
+html[data-experience-mode="minimal"]
+  .atmospheric-home-continuation
+  > .page-eyebrow {
+  margin-block-end: var(--space-3);
+}
+
+html[data-experience-mode="minimal"] .case-study__body {
+  margin-block-start: var(--space-6);
+}
+
+html[data-experience-mode="minimal"] .case-study__sidebar {
+  position: static;
+}
+
+@media print {
+  html [data-scenery-environment],
+  html [data-atmosphere-copy],
+  html [data-atmosphere-figure],
+  html [data-experience-control],
+  html [data-scenery-control] {
+    display: none !important;
+  }
+}

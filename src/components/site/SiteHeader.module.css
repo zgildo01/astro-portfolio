@@ -12,6 +12,7 @@
 .inner {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--space-4);
   padding-block: var(--space-5);
@@ -82,8 +83,34 @@
   display: block;
 }
 
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  margin-inline-start: auto;
+}
+
 .mobileNavigation {
   display: none;
+}
+
+.displaySettings {
+  /* Match the closed disclosure before enhancement to keep the header stable. */
+  flex-shrink: 0;
+  inline-size: 6.75rem;
+  max-inline-size: 100%;
+  min-block-size: 2.75rem;
+}
+
+@media (max-width: 47.999rem), (max-height: 25rem) {
+  .displaySettings:has(details[open]),
+  .controls:has([data-experience-control][open]) {
+    inline-size: 100%;
+  }
 }
 
 @media (max-width: 47.999rem) {
@@ -102,7 +129,6 @@
 
   .mobileNavigation {
     display: block;
-    margin-inline-start: auto;
   }
 }
 
