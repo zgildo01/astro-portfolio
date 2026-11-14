@@ -1,0 +1,40 @@
+---
+import { experiencePaths } from "../routes";
+interface Props {
+  active: "investigation" | "explainer";
+}
+const { active } = Astro.props;
+const paths = experiencePaths(import.meta.env.BASE_URL);
+---
+
+<footer class="page-footer">
+  <div>
+    <p>Fictional publication · interactive satire</p><p>
+      {
+        active === "investigation"
+          ? "The Civic Margin is part of this artwork. It is not an actual news organization."
+          : "Original editorial commentary with linked primary sources. No visitor data is submitted by these article pages."
+      }
+    </p>
+  </div>
+  <div class="footer-links">
+    {
+      active === "investigation" ? (
+        <>
+          <>
+            <a href={paths.company}>BROOD public site</a>
+            <a href={paths.explainer}>Real-world background</a>
+          </>
+        </>
+      ) : (
+        <>
+          <>
+            <a href={paths.investigation}>Fictional investigation</a>
+            <a href={paths.confidence}>Company response</a>
+          </>
+        </>
+      )
+    }
+    <a href={paths.portfolio}>Leave this experience ↗</a>
+  </div>
+</footer>

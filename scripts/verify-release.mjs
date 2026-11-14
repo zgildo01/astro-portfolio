@@ -51,6 +51,7 @@ try {
   });
   await run("tests/e2e/accessibility.mjs", result.auditPaths ?? result.paths);
   await run("tests/e2e/experience-modes.mjs", result.paths);
+  await run("tests/e2e/experience.mjs", result.experiencePaths);
   await run("tests/e2e/security.mjs", result.paths);
   await run("tests/e2e/performance.mjs", result.paths);
   await writeFile(

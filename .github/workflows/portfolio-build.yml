@@ -76,11 +76,14 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Install Chromium for contact browser checks
-        run: npx playwright install --with-deps --only-shell chromium
+      - name: Install Chromium and Firefox for browser checks
+        run: npx playwright install --with-deps --only-shell chromium firefox
 
       - name: Verify contact form with test adapters
         run: npm run test:contact:e2e
+
+      - name: Verify development console survives type checking in both browsers
+        run: npm run test:experience:dev
 
   build_verification:
     name: Production build verification

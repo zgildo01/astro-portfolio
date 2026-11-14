@@ -1,0 +1,143 @@
+---
+import ExperienceLayout from "../../layouts/ExperienceLayout.astro";
+import { experiencePaths } from "../../features/experience/routes";
+import CorporateHeader from "../../features/experience/world/CorporateHeader.astro";
+import CorporateFooter from "../../features/experience/world/CorporateFooter.astro";
+import "../../features/experience/world/company.css";
+
+const paths = experiencePaths(import.meta.env.BASE_URL);
+---
+
+<ExperienceLayout
+  title="Public confidence — Brood Civic Systems"
+  description="BROOD’s fictional Public Confidence response and service documents, part of an interactive surveillance satire."
+  world="company"
+>
+  <CorporateHeader active="confidence" />
+  <main id="main-content" class="shell">
+    <section class="trust-hero" aria-labelledby="trust-heading">
+      <div>
+        <p class="kicker">A statement from Brood</p><h1 id="trust-heading">
+          Confidence is a continuous service.
+        </h1><p class="hero-lede">
+          Questions are an important part of public life. So is the reassurance
+          that essential services remain uninterrupted.
+        </p>
+      </div><div class="confidence-plate" aria-hidden="true">
+        <svg viewBox="0 0 80 80"
+          ><circle cx="40" cy="40" r="33" fill="none" stroke="currentColor"
+          ></circle><circle
+            cx="40"
+            cy="40"
+            r="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-dasharray="2 4"></circle><path
+            d="m25 41 10 10 21-25"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"></path></svg
+        ><p>PUBLIC CONFIDENCE<br />CONTINUITY MAINTAINED</p>
+      </div>
+    </section>
+    <section class="trust-body" aria-labelledby="response-heading">
+      <aside>
+        <p class="kicker">Corporate affairs<br />Statement 04</p><p>
+          Context: the fictional incident described by The Civic Margin.
+        </p>
+      </aside>
+      <div class="trust-article">
+        <h2 id="response-heading">
+          The information was available. We made it useful.
+        </h2>
+        <p>
+          Recent coverage has asked whether Brood's picture of community life is
+          too complete. We welcome the opportunity to clarify our position.
+        </p>
+        <p>
+          Our purpose has always been connection: bringing separate details into
+          a shared context, so that places and patterns need not be considered
+          in isolation. What some describe as an accumulation of information, we
+          understand as an accumulation of responsibility.
+        </p>
+        <p>
+          We recognize the concerns described in The Civic Margin’s account. We
+          have commissioned an internal review of our public response.
+          Collection continues while its recommendations are considered.
+        </p>
+        <p>
+          Information does not become less relevant because its subject is
+          absent. Our systems remain prepared to account for the quiet hours,
+          the unoccupied spaces, and the intervals between one appearance and
+          the next.
+        </p>
+        <div class="principle-table">
+          <div>
+            <h3>Context is a public good.</h3><p>
+              A single detail can be misunderstood. A complete picture offers
+              reassurance.
+            </p>
+          </div><div>
+            <h3>Continuity is care.</h3><p>
+              Enrollment can be a barrier to inclusion. Our covered communities
+              participate automatically.
+            </p>
+          </div><div>
+            <h3>Access is a responsibility.</h3><p>
+              Authorized customers receive a comprehensive picture. The people
+              in it receive the reassurance that access is managed.
+            </p>
+          </div><div>
+            <h3>Publication is a privilege.</h3><p>
+              The public record and the operational record serve different
+              purposes.
+            </p>
+          </div>
+        </div>
+        <p>
+          Brood remains committed to a future in which nobody has to wonder
+          whether they have been overlooked.
+        </p>
+        <p>
+          <strong>Everyone accounted for.</strong><br />Corporate Affairs ·
+          Brood Civic Systems
+        </p>
+        <p class="small-notice">
+          This is fictional corporate rhetoric about an invented incident. It is
+          not a statement of law or a claim about any real company. The linked
+          explainer separates the experience's fiction from sourced privacy
+          facts.
+        </p>
+        <a class="text-link" href={paths.investigation}
+          ><span>Read the coverage from The Civic Margin</span><span
+            aria-hidden="true">↗</span
+          ></a
+        ><br /><a class="text-link" href={paths.explainer}
+          ><span>Read the data &amp; rights explainer</span><span
+            aria-hidden="true">↗</span
+          ></a
+        >
+        <section class="document-shelf" aria-labelledby="documents-heading">
+          <p class="kicker">Service documents</p><h2 id="documents-heading">
+            A considered level of access.
+          </h2><details id="service-documents">
+            <summary>Operational materials</summary><div
+              class="document-interior"
+            >
+              <p>
+                Observation suite 04 / Retained view<br />Access to the
+                monitoring room remains authorized.
+              </p><a class="text-link" id="console-entry" href={paths.console}
+                ><span>Open observation suite 04</span><span aria-hidden="true"
+                  >↗</span
+                ></a
+              >
+            </div>
+          </details>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <CorporateFooter active="confidence" />
+</ExperienceLayout>

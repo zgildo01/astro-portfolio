@@ -2,8 +2,20 @@ import { Buffer } from "node:buffer";
 import { describe, expect, it, vi } from "vitest";
 import {
   checkBuiltSite,
+  cssUrlReferences,
   jpegDimensions
 } from "../../../scripts/check-built-site.mjs";
+
+describe("compiled CSS asset references", () => {
+  it("keeps nested filter URLs inside an embedded SVG instead of treating its fragment as a file", () => {
+    const svg = "data:image/svg+xml,%3Crect filter='url(%23noise)'/%3E";
+    expect(
+      cssUrlReferences(
+        `a{background:url("${svg}")} b{background:url( ./scene.webp )} c{src:url('font.woff2')}`
+      )
+    ).toEqual([svg, "./scene.webp", "font.woff2"]);
+  });
+});
 
 describe("release-audit network boundary", () => {
   it.each([

@@ -7,11 +7,22 @@ interface Props {
   alt: string;
   caption: string;
   number: string;
-  variant: "arrival" | "interior";
+  variant: "arrival" | "interior" | "detail";
   eager?: boolean;
+  period?: number;
+  phase?: number;
 }
 
-const { image, alt, caption, number, variant, eager = false } = Astro.props;
+const {
+  image,
+  alt,
+  caption,
+  number,
+  variant,
+  eager = false,
+  period = 23,
+  phase = -18
+} = Astro.props;
 const widths = image.width > 1024 ? [480, 768, 1024, 1536] : [480, 768, 1024];
 ---
 
@@ -19,7 +30,11 @@ const widths = image.width > 1024 ? [480, 768, 1024, 1536] : [480, 768, 1024];
   class:list={["atmospheric-scene", `atmospheric-scene--${variant}`]}
   data-atmosphere-figure
 >
-  <div class="atmospheric-scene__frame">
+  <div
+    class="atmospheric-scene__frame signal-frame"
+    data-frame-interference
+    style={{ "--signal-period": `${period}s`, "--signal-phase": `${phase}s` }}
+  >
     <Image
       src={image}
       alt={alt}
@@ -32,8 +47,9 @@ const widths = image.width > 1024 ? [480, 768, 1024, 1536] : [480, 768, 1024];
       loading={eager ? "eager" : "lazy"}
       fetchpriority={eager ? "high" : "auto"}
       decoding="async"
-      data-scenery-effect
     />
+    <span class="frame-grain" aria-hidden="true"></span>
+    <span class="frame-track" aria-hidden="true"></span>
   </div>
 
   <figcaption data-atmosphere-copy>

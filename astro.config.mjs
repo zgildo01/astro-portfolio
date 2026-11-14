@@ -3,6 +3,7 @@ import { spawn } from "node:child_process";
 import process from "node:process";
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
 import { loadEnv } from "vite";
 import { resolveSiteOrigin } from "./src/config/siteOrigin";
 import { pageContentSecurityPolicy } from "./src/config/security";
@@ -26,6 +27,26 @@ export default defineConfig({
   security: { csp: pageContentSecurityPolicy },
   markdown: { syntaxHighlight: false },
   integrations: [
+    react(),
+    {
+      name: "isolated-vite-cache",
+      hooks: {
+        "astro:config:setup": ({ command, updateConfig }) => {
+          // check/sync and Vitest must not replace a running dev server's React
+          // runtime with production modules that do not provide jsxDEV.
+          const scope = [command, process.env.NODE_ENV ?? "default"]
+            .map(encodeURIComponent)
+            .join("-");
+          updateConfig({
+            vite: {
+              cacheDir: fileURLToPath(
+                new URL(`./node_modules/.vite/astro-${scope}/`, import.meta.url)
+              )
+            }
+          });
+        }
+      }
+    },
     {
       name: "resume-pdf",
       hooks: {

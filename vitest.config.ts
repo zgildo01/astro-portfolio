@@ -3,7 +3,8 @@ import type { ViteUserConfig } from "vitest/config";
 
 const uiLogicTests = [
   "tests/unit/atmosphere/**/*.test.ts",
-  "tests/unit/components/**/*.test.ts"
+  "tests/unit/components/**/*.test.ts",
+  "tests/unit/experience/**/*.test.ts"
 ];
 const uiDomTests = ["tests/integration/dom/**/*.test.ts"];
 const backendTests = [
@@ -80,6 +81,8 @@ const config: ViteUserConfig = {
         "src/config/**/*.ts",
         "src/lib/**/*.ts",
         "src/components/**/*.ts",
+        "src/features/experience/console/state.ts",
+        "src/features/experience/console/readouts.ts",
         "worker/**/*.ts"
       ],
       exclude: ["src/lib/**/types.ts", "src/lib/**/index.ts"],

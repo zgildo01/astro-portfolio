@@ -58,6 +58,25 @@ const { caseStudies } = await loadPortfolioForBuild({
         </section>
 
         <section
+          class="atmospheric-content-block"
+          aria-labelledby="personal-project-heading"
+        >
+          <h2 id="personal-project-heading">Personal project</h2>
+          <h3>BROOD Civic Systems</h3>
+          <p>
+            An interactive surveillance fiction exploring the gap between public
+            information and permission. Astro documents lead into an isolated
+            React console with recursive camera views, session observations,
+            accessible controls, and a static fallback.
+          </p>
+          <p>
+            <a href={withBasePath("/experience/", import.meta.env.BASE_URL)}
+              >Explore the optional experience</a
+            >
+          </p>
+        </section>
+
+        <section
           class="work-page__next-steps atmospheric-content-block"
           aria-labelledby="work-next-steps-heading"
         >

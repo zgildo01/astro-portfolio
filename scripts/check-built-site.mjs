@@ -67,6 +67,15 @@ function parseCsp(value) {
   );
 }
 
+/** Keep quoted data URLs intact, including SVG filters with nested url(). */
+export function cssUrlReferences(source) {
+  return [
+    ...source.matchAll(
+      /url\(\s*(?:"((?:\\.|[^"\\])*)"|'((?:\\.|[^'\\])*)'|([^)]*?))\s*\)/g
+    )
+  ].map((match) => match[1] ?? match[2] ?? match[3].trim());
+}
+
 function assertHeaders(response, expected, label) {
   for (const [name, value] of Object.entries(expected))
     assert.equal(response.headers.get(name), value, `${label}: ${name}`);
@@ -226,7 +235,7 @@ export async function checkBuiltSite({
     const professional = [...documents.values()].filter(
       ({ file, pathname }) =>
         !/(?:^|\/)404(?:\.html|\/index\.html)$/.test(file) &&
-        pathname !== `${base}/experience/`
+        !pathname.startsWith(`${base}/experience/`)
     );
     const paths = professional.map(({ pathname }) => pathname).sort();
     for (const required of ["", "about/", "resume/", "work/", "contact/"])
@@ -476,10 +485,8 @@ export async function checkBuiltSite({
         for (const candidate of element.getAttribute("srcset").split(","))
           localReference(candidate.trim().split(/\s+/)[0], pathname, "asset");
       for (const element of document.querySelectorAll("[style]"))
-        for (const match of element
-          .getAttribute("style")
-          .matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/g))
-          localReference(match[1], pathname, "asset");
+        for (const reference of cssUrlReferences(element.getAttribute("style")))
+          localReference(reference, pathname, "asset");
       for (const form of document.querySelectorAll("form[action]")) {
         assert.equal(
           form.getAttribute("method")?.toLowerCase(),
@@ -502,7 +509,7 @@ export async function checkBuiltSite({
       if (!/\.(css|m?js)$/.test(file)) continue;
       const source = await readFile(path.join(root, file), "utf8");
       const matches = file.endsWith(".css")
-        ? source.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/g)
+        ? cssUrlReferences(source).map((reference) => [undefined, reference])
         : source.matchAll(
             /(?:\bfrom\s*|\bimport\s*\(?\s*)["']((?:\.|\/)[^"']+)["']/g
           );
@@ -616,6 +623,22 @@ export async function checkBuiltSite({
       assert.equal(unknownApi.headers.get("Cache-Control"), "no-store");
       assertHeaders(unknownApi, apiSecurityHeaders, pathname);
     }
+    const network = await requestLocal("/api/experience/network");
+    assert.equal(network.status, 200, "Current-request readout HTTP status");
+    assert.equal(network.headers.get("Cache-Control"), "private, no-store");
+    assert.equal(network.headers.get("CDN-Cache-Control"), "no-store");
+    assert.equal(
+      network.headers.get("Cross-Origin-Resource-Policy"),
+      "same-origin"
+    );
+    assertHeaders(network, apiSecurityHeaders, "Current-request readout");
+    const networkReadout = JSON.parse(network.body.toString());
+    assert.equal(networkReadout.source, "Cloudflare request metadata");
+    for (const field of ["clientIp", "country", "region", "city", "provider"])
+      assert(
+        networkReadout[field] === null ||
+          typeof networkReadout[field] === "string"
+      );
     const missing = await requestLocal(`${base}/__release_missing_page__`);
     assert.equal(
       missing.status,
@@ -638,15 +661,42 @@ export async function checkBuiltSite({
       1,
       "404 recovery heading"
     );
-    const experience = await requestLocal(`${base}/experience/`);
-    assert.equal(experience.status, 200, "Experience placeholder HTTP status");
-    assert.match(
-      experience.headers.get("X-Robots-Tag") ?? "",
-      /noindex/,
-      "Experience placeholder must remain noindex"
-    );
+    const experiencePaths = [...documents.values()]
+      .filter(({ pathname }) => pathname.startsWith(`${base}/experience/`))
+      .map(({ pathname }) => pathname)
+      .sort();
+    for (const pathname of experiencePaths) {
+      const experience = await requestLocal(pathname);
+      assert.equal(
+        experience.status,
+        200,
+        `${pathname}: experience HTTP status`
+      );
+      assert.match(
+        experience.headers.get("X-Robots-Tag") ?? "",
+        /noindex/,
+        `${pathname}: experience must remain noindex`
+      );
+      const document = [...documents.values()].find(
+        (page) => page.pathname === pathname
+      ).document;
+      assert.match(
+        document.querySelector('meta[name="robots"]')?.content ?? "",
+        /noindex,nofollow/
+      );
+      assert.equal(document.querySelectorAll("main").length, 1);
+      assert.equal(document.querySelectorAll("h1").length, 1);
+      assert.equal(
+        document.querySelector(
+          'link[rel="canonical"],script[type="application/ld+json"]'
+        ),
+        null
+      );
+      assertHeaders(experience, assetSecurityHeaders, pathname);
+    }
     const report = {
       paths,
+      experiencePaths,
       auditPaths: [...paths, `${base}/__release_missing_page__`],
       canonicalOrigin,
       htmlPages: professional.length,

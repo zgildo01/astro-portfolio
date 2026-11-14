@@ -77,6 +77,59 @@
   font-size: inherit;
 }
 
+.observationEntry {
+  position: absolute;
+  inset-inline-end: max(1rem, env(safe-area-inset-right));
+  inset-block-end: max(1rem, env(safe-area-inset-bottom));
+  display: grid;
+  place-items: center;
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  border: 1px solid transparent;
+  color: #71847b;
+  text-decoration: none;
+}
+
+.observationEntry svg {
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: rotate(13deg) scaleX(-1);
+}
+
+.observationEntry:hover,
+.observationEntry:focus-visible {
+  color: var(--color-text);
+}
+
+.observationEntry:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.observationLabel {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-end: calc(100% + 0.5rem);
+  inline-size: max-content;
+  max-inline-size: calc(100vw - 3rem);
+  padding: 0.5rem 0.75rem;
+  background: var(--color-surface-recessed);
+  color: var(--color-text);
+  font-family: var(--font-metadata);
+  font-size: var(--type-caption);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.observationEntry:hover .observationLabel,
+.observationEntry:focus-visible .observationLabel {
+  opacity: 1;
+}
+
 @media (min-width: 64rem) {
   .inner {
     grid-template-columns: minmax(0, 1fr) auto;

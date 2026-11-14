@@ -29,6 +29,9 @@ export async function writeSecurityHeaders(directory, basePath = "/") {
     "",
     withBasePath("/experience/", basePath),
     "  X-Robots-Tag: noindex, nofollow",
+    "",
+    withBasePath("/experience/*", basePath),
+    "  X-Robots-Tag: noindex, nofollow",
     ""
   ];
   await writeFile(path.join(destination, "_headers"), rules.join("\n"));

@@ -1,0 +1,36 @@
+---
+import { experiencePaths } from "../routes";
+interface Props {
+  active: "investigation" | "explainer";
+}
+const { active } = Astro.props;
+const paths = experiencePaths(import.meta.env.BASE_URL);
+---
+
+<header>
+  <div class="edition-strip">
+    <p>
+      {
+        active === "investigation"
+          ? "Independent desk / fictional edition 01"
+          : "Independent desk / source notes checked 31 October 2026"
+      }
+    </p><a href={paths.portfolio}>Leave this experience ↗</a>
+  </div>
+  <div class="masthead">
+    <a href={paths.investigation}>The Civic Margin</a><p>
+      A record of what remains outside the statement.
+    </p>
+  </div>
+  <nav class="desk-nav" aria-label="Publication">
+    <a
+      href={paths.investigation}
+      aria-current={active === "investigation" ? "page" : undefined}
+      >Investigation</a
+    ><a
+      href={paths.explainer}
+      aria-current={active === "explainer" ? "page" : undefined}
+      >Data &amp; rights</a
+    ><a href={paths.confidence}>Company response ↗</a>
+  </nav>
+</header>

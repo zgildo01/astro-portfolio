@@ -1,0 +1,186 @@
+---
+import ExperienceLayout from "../../layouts/ExperienceLayout.astro";
+import { experiencePaths } from "../../features/experience/routes";
+import NewsHeader from "../../features/experience/world/NewsHeader.astro";
+import NewsFooter from "../../features/experience/world/NewsFooter.astro";
+import "../../features/experience/world/news.css";
+import {
+  getSceneImages,
+  sceneById
+} from "../../features/experience/scenes.server";
+
+const paths = experiencePaths(import.meta.env.BASE_URL);
+const scenes = await getSceneImages();
+const hall = sceneById(scenes, "hall");
+---
+
+<ExperienceLayout
+  title="BROOD’s continuity archive — The Civic Margin"
+  description="A fictional investigation into BROOD Civic Systems, part of an interactive surveillance satire."
+  world="news"
+>
+  <div class="sheet">
+    <NewsHeader active="investigation" />
+    <main id="main-content">
+      <article>
+        <header class="article-header">
+          <p class="rubric">
+            <span class="fiction-tag"
+              >Fictional investigation / BROOD story</span
+            ><span>Public systems · information power</span>
+          </p>
+          <h1>
+            BROOD calls an exposed observation archive a continuity feature.
+          </h1>
+          <p class="deck">
+            An invented company promises that no one will be overlooked. Its
+            fictional records suggest that being seen and agreeing to be watched
+            were never the same requirement.
+          </p>
+          <div class="byline">
+            <p>By the Civic Margin story desk</p><p>
+              Interactive fiction · edition dated <time datetime="2026-10-31"
+                >31 October 2026</time
+              >
+            </p>
+          </div>
+        </header>
+        <div class="article-layout">
+          <div class="article-body">
+            <div class="reality-note">
+              <p>
+                BROOD, this publication, the review panel, and the events below
+                are fictional. This story is an original satire. The real-world
+                sources in the sidebar support the separate background
+                discussion, not allegations against this invented company.
+              </p>
+            </div>
+            <p>
+              The first thing visible in the archive was an empty chair. Beyond
+              it sat a terminal, a desk lamp, and a door left open into a
+              service corridor. The room appeared prepared for someone. Its
+              camera had already begun keeping the record.
+            </p>
+            <p>
+              BROOD Civic Systems faces questions from a municipal oversight
+              panel after a retained observation archive becomes accessible
+              through its public materials. The company describes the exposure
+              as a demonstration of operational continuity. The panel describes
+              a different problem: material gathered for one purpose had become
+              available for another, without the people concerned being asked.
+            </p>
+            <p>
+              Participation, according to the company’s public materials,
+              requires “no sign-up, no download.” BROOD advertises this as a
+              convenience. When the panel asked how a resident could opt out,
+              the company supplied instructions for opting a department in.
+            </p>
+            <p>
+              The archive does not reveal a spectacular secret. It reveals a
+              structure. Room views sit beside visit intervals, device reports,
+              recurring selections, and the moments a visitor considers leaving.
+              Individually, each entry looks administrative. Together, they
+              become a story the subject did not write.
+            </p>
+            <h2>The company’s answer was that the pieces already existed.</h2>
+            <p>
+              BROOD’s acquisition process draws from supplied records,
+              observation services, and information encountered online. The
+              review panel questions whether those inputs were gathered and
+              repurposed with permission. BROOD answers the permission question
+              with an availability argument: if information can be reached, it
+              can be made useful.
+            </p>
+            <blockquote class="pullquote">
+              <p>“We do not create exposure. We make it legible.”</p><cite
+                >Invented BROOD statement, within this fiction</cite
+              >
+            </blockquote>
+            <p>
+              That phrasing gives the company a convenient role. Exposure
+              happens elsewhere; BROOD merely organizes it. Its public materials
+              call the resulting picture care. A waiting room that remains ready
+              becomes evidence of welcome. A road that never leaves the camera
+              network becomes evidence of coverage. An empty control room
+              becomes evidence that the service can continue without a witness.
+            </p>
+            <p>
+              The panel’s concern is not simply whether a single record was
+              public. It asks who joined the records, who decided how long to
+              keep them, who gained access, and what the people represented
+              could actually refuse. The company’s answer points back to its own
+              service terms.
+            </p>
+            <h2>Visibility has a direction.</h2>
+            <p>
+              The archive offers a narrow view into the machinery of
+              observation. The company regards this access as a courtesy,
+              granted on its own terms. Permission to inspect the institution is
+              presented as something different from permission to document it.
+            </p>
+            <p>
+              “Publication remains a privilege,” another company statement
+              reads. The distinction is difficult to miss. BROOD treats the
+              public’s visibility as a useful condition. It treats its own
+              visibility as an exception it has generously allowed.
+            </p>
+            <p>
+              Its <a href={paths.confidence}>Public Confidence response</a> offers
+              reassurance, a service register, and the promise that access remains
+              managed. It does not answer the central question of the inquiry: who
+              gets to decide when somebody else’s ordinary life becomes an institutional
+              record?
+            </p>
+            <p>
+              The chair in the archive remains empty. The system continues to
+              report that everyone is accounted for.
+            </p>
+          </div>
+          <aside class="article-aside" aria-label="Context and related reading">
+            <section class="aside-block">
+              <figure>
+                <img
+                  src={hall.src}
+                  srcset={hall.srcSet}
+                  width={hall.width}
+                  height={hall.height}
+                  sizes="(max-width: 550px) calc(100vw - 2rem), (max-width: 900px) 45vw, 300px"
+                  loading="lazy"
+                  decoding="async"
+                  alt="An empty office hallway with closed doors and framed pictures, one hanging slightly crooked."
+                /><figcaption>
+                  Company service corridor / fictional setting. Original scene
+                  study.
+                </figcaption>
+              </figure><h2>Within the story</h2><p>
+                The company, alleged collection practices, exposed archive, and
+                municipal review are invented. No real person or company is the
+                subject of these fictional allegations.
+              </p><a href={paths.confidence}>Read BROOD’s response →</a>
+            </section>
+            <section class="aside-block">
+              <h2>Outside the fiction</h2><p>
+                In a March 2024 discussion, FTC staff described agency
+                allegations concerning sensitive information handled by real
+                data businesses, including X-Mode and InMarket. That documented
+                background is separate from BROOD’s invented story.
+              </p><a
+                href="https://www.ftc.gov/policy/advocacy-research/tech-at-ftc/2024/03/ftc-cracks-down-mass-data-collectors-closer-look-avast-x-mode-inmarket"
+                >Read the FTC discussion ↗</a
+              >
+            </section>
+            <section class="aside-block">
+              <h2>Related explainer</h2><h3 class="related-title">
+                Public does not mean permission.
+              </h3><p>
+                What browser readings, commercial data markets, and privacy
+                frameworks actually tell us—and what they do not.
+              </p><a href={paths.explainer}>Read the sourced background →</a>
+            </section>
+          </aside>
+        </div>
+      </article>
+    </main>
+    <NewsFooter active="investigation" />
+  </div>
+</ExperienceLayout>

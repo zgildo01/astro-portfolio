@@ -1,7 +1,8 @@
 /* Minimal removes decorative effects; Immersive stays still without scripts. */
 html:not([data-experience-mode="immersive"]) [data-scenery-environment],
 html:not([data-experience-mode="immersive"]) [data-atmosphere-copy],
-html:not([data-experience-mode="immersive"]) [data-scenery-control] {
+html:not([data-experience-mode="immersive"]) [data-scenery-control],
+html:not([data-experience-mode="immersive"]) [data-observation-entry] {
   display: none;
 }
 
@@ -72,7 +73,8 @@ html[data-experience-mode="minimal"] .case-study__sidebar {
   html [data-atmosphere-copy],
   html [data-atmosphere-figure],
   html [data-experience-control],
-  html [data-scenery-control] {
+  html [data-scenery-control],
+  html [data-observation-entry] {
     display: none !important;
   }
 }
