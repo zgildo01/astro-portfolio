@@ -1,7 +1,9 @@
 ---
 import { pageMetadata } from "../config/pageMetadata";
 import { siteConfig } from "../config/site";
-import arrival from "../assets/scenery/arrival.png";
+import clinicalBloom from "../assets/scenery/clinical-bloom.png";
+import withheldReflection from "../assets/scenery/withheld-reflection.png";
+import closedPassage from "../assets/scenery/closed-passage.png";
 import SceneFigure from "../components/atmosphere/SceneFigure.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { withBasePath } from "../lib/routing";
@@ -51,8 +53,8 @@ const metadata = pageMetadata.home;
       </div>
 
       <SceneFigure
-        image={arrival}
-        alt="Vacant brick storefronts with faded green awnings line a cracked street at night. A single lit display window overlooks a dark passage leading to empty houses."
+        image={clinicalBloom}
+        alt="A pale flower in a glass on a level tiled shelf. The water inside the upright glass rests at an impossible angle."
         caption="Good people are so hard to find."
         number="01"
         variant="arrival"
@@ -74,7 +76,30 @@ const metadata = pageMetadata.home;
         </p>
       </div>
 
-      <p class="atmospheric-courtesy">The lights are left on for a reason.</p>
+      <p class="atmospheric-courtesy" data-atmosphere-copy>
+        There's plenty of work to be done.
+      </p>
     </section>
+
+    <div class="atmospheric-home-details" data-atmosphere-figure>
+      <SceneFigure
+        image={withheldReflection}
+        alt="An empty chair faces a wall mirror whose reflection shows a different, unoccupied corridor."
+        caption="Solutions are hardly one sided."
+        number="02"
+        variant="detail"
+        period={29}
+        phase={-7}
+      />
+      <SceneFigure
+        image={closedPassage}
+        alt="An empty clinical corridor ends at a door frame filled with solid tiles; a floor line continues up the wall."
+        caption="Everything has its place."
+        number="03"
+        variant="detail"
+        period={19}
+        phase={-14}
+      />
+    </div>
   </article>
 </BaseLayout>

@@ -1,5 +1,6 @@
 .navigation {
-  position: relative;
+  /* The header anchors the panel below the complete row of controls. */
+  position: static;
 }
 
 .toggle {
@@ -84,7 +85,7 @@
 .panel {
   position: absolute;
   inset-block-start: calc(100% + var(--space-2));
-  inset-inline-end: 0;
+  inset-inline-end: var(--page-gutter);
   z-index: var(--layer-overlay);
 
   inline-size: min(18rem, calc(100vw - (var(--page-gutter) * 2)));

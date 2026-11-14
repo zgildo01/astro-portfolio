@@ -33,14 +33,18 @@ describe("optional experience isolation", () => {
       const source = await readFile(new URL(path, projectRoot), "utf8");
 
       for (const specifier of importSpecifiers(source)) {
-        expect(specifier).not.toMatch(/(?:experience|react)/i);
+        expect(specifier).not.toMatch(/(?:^|\/)(?:react|react-dom)(?:\/|$)/i);
+        const imported = new URL(specifier, new URL(path, projectRoot));
+        expect(imported.pathname).not.toMatch(
+          /\/features\/experience(?:\/|$)|\/layouts\/ExperienceLayout\.astro$/i
+        );
       }
 
       expect(source).not.toMatch(/\bclient:(?:load|idle|visible|media|only)\b/);
     }
   );
 
-  it("does not install React for the professional shell", async () => {
+  it("provides React only through the optional console entry", async () => {
     const packageJson = JSON.parse(
       await readFile(new URL("package.json", projectRoot), "utf8")
     ) as {
@@ -52,8 +56,15 @@ describe("optional experience isolation", () => {
       ...packageJson.devDependencies
     };
 
-    expect(packages).not.toHaveProperty("react");
-    expect(packages).not.toHaveProperty("react-dom");
-    expect(packages).not.toHaveProperty("@astrojs/react");
+    expect(packages).toHaveProperty("react");
+    expect(packages).toHaveProperty("react-dom");
+    expect(packages).toHaveProperty("@astrojs/react");
+    const consolePage = await readFile(
+      new URL("src/pages/experience/console.astro", projectRoot),
+      "utf8"
+    );
+    expect(consolePage).toMatch(/ExperienceRoot[\s\S]*?client:load/);
+    expect(consolePage).toContain('id="experience-exit"');
+    expect(consolePage).toContain('id="retained-views"');
   });
 });

@@ -1,31 +1,29 @@
 ---
 import { getImage } from "astro:assets";
-import arrival from "../../assets/scenery/arrival.png";
-import botanical from "../../assets/scenery/botanical.png";
-import interior from "../../assets/scenery/interior.png";
-import signal from "../../assets/scenery/signal.png";
+import clinicalBloom from "../../assets/scenery/clinical-bloom.png";
+import withheldReflection from "../../assets/scenery/withheld-reflection.png";
+import closedPassage from "../../assets/scenery/closed-passage.png";
 import styles from "./SceneryEnvironment.module.css";
 
-const [arrivalPlate, interiorPlate, signalPlate, botanicalPlate] =
-  await Promise.all(
-    [arrival, interior, signal, botanical].map((src) =>
-      getImage({
-        src,
-        width: Math.min(1100, src.width),
-        widths: [480, 768, Math.min(1100, src.width)],
-        format: "webp",
-        quality: 72
-      })
-    )
-  );
+const [bloomPlate, reflectionPlate, passagePlate] = await Promise.all(
+  [clinicalBloom, withheldReflection, closedPassage].map((src) =>
+    getImage({
+      src,
+      width: Math.min(1100, src.width),
+      widths: [480, 768, Math.min(1100, src.width)],
+      format: "webp",
+      quality: 72
+    })
+  )
+);
 const ghostPlate = await getImage({
-  src: signal,
+  src: withheldReflection,
   width: 768,
   format: "webp",
   quality: 72
 });
-const ascending = [arrivalPlate, interiorPlate, arrivalPlate, interiorPlate];
-const descending = [signalPlate, botanicalPlate, signalPlate, botanicalPlate];
+const ascending = [bloomPlate, reflectionPlate, bloomPlate, reflectionPlate];
+const descending = [passagePlate, bloomPlate, passagePlate, bloomPlate];
 ---
 
 <div class={styles.environment} aria-hidden="true" data-scenery-environment>
@@ -40,6 +38,7 @@ const descending = [signalPlate, botanicalPlate, signalPlate, botanicalPlate];
               sizes="(max-width: 47.999rem) 80vw, 55vw"
               {...plate.attributes}
               alt=""
+              loading="lazy"
               decoding="async"
               fetchpriority="low"
             />
@@ -57,6 +56,7 @@ const descending = [signalPlate, botanicalPlate, signalPlate, botanicalPlate];
               sizes="(max-width: 47.999rem) 80vw, 55vw"
               {...plate.attributes}
               alt=""
+              loading="lazy"
               decoding="async"
               fetchpriority="low"
             />

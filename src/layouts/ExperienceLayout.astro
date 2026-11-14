@@ -1,0 +1,49 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  world: "company" | "news" | "console";
+}
+
+const { title, description, world } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-experience-world={world}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="experience-skip-link" href="#main-content">Skip to content</a>
+    <slot />
+  </body>
+</html>
+
+<style>
+  .experience-skip-link {
+    position: absolute;
+    top: 0.5rem;
+    left: 1rem;
+    z-index: 100;
+    max-width: calc(100% - 2rem);
+    padding: 0.8rem 1rem;
+    color: #fff;
+    background: #153b3c;
+    font:
+      1rem/1.5 Arial,
+      Helvetica,
+      sans-serif;
+    transform: translateY(-200%);
+  }
+
+  .experience-skip-link:focus {
+    outline: 3px solid #836234;
+    outline-offset: 3px;
+    transform: none;
+  }
+</style>

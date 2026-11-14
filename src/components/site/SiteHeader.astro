@@ -3,6 +3,7 @@ import { siteConfig } from "../../config/site";
 import { withBasePath } from "../../lib/routing";
 import MobileNavigation from "./MobileNavigation.astro";
 import SiteNavigation from "./SiteNavigation.astro";
+import ExperienceModeControl from "../atmosphere/ExperienceModeControl.astro";
 import styles from "./SiteHeader.module.css";
 ---
 
@@ -22,12 +23,18 @@ import styles from "./SiteHeader.module.css";
       </div>
     </div>
 
-    <div class={styles.fullNavigation}>
-      <SiteNavigation placement="header" />
-    </div>
+    <div class={styles.controls}>
+      <div class={styles.fullNavigation}>
+        <SiteNavigation placement="header" />
+      </div>
 
-    <div class={styles.mobileNavigation}>
-      <MobileNavigation />
+      <div class={styles.mobileNavigation}>
+        <MobileNavigation />
+      </div>
+
+      <div class={styles.displaySettings}>
+        <ExperienceModeControl />
+      </div>
     </div>
   </div>
 </header>

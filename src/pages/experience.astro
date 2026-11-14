@@ -1,0 +1,184 @@
+---
+import ExperienceLayout from "../layouts/ExperienceLayout.astro";
+import { experiencePaths } from "../features/experience/routes";
+import CorporateHeader from "../features/experience/world/CorporateHeader.astro";
+import CorporateFooter from "../features/experience/world/CorporateFooter.astro";
+import "../features/experience/world/company.css";
+import {
+  getSceneImages,
+  sceneById
+} from "../features/experience/scenes.server";
+
+const paths = experiencePaths(import.meta.env.BASE_URL);
+const scenes = await getSceneImages();
+const reception = sceneById(scenes, "reception");
+const arrival = sceneById(scenes, "arrival");
+---
+
+<ExperienceLayout
+  title="Brood Civic Systems — Everyone accounted for"
+  description="The public site of BROOD Civic Systems, a fictional company in an interactive surveillance satire."
+  world="company"
+>
+  <CorporateHeader active="home" />
+  <main id="main-content">
+    <section class="hero shell" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="kicker">Civic intelligence. Continuous care.</p><h1
+          id="hero-title"
+        >
+          Everyone accounted for.
+        </h1><p class="hero-lede">
+          A safer place begins with a fuller picture. Brood brings the details
+          of everyday life into one reassuring field of view.
+        </p><a class="button-link" href={paths.confidence}
+          ><span>Our public commitment</span><span aria-hidden="true">↗</span
+          ></a
+        >
+      </div>
+      <figure class="hero-figure">
+        <div class="photo-window">
+          <img
+            src={reception.src}
+            srcset={reception.srcSet}
+            width={reception.width}
+            height={reception.height}
+            sizes="(max-width: 700px) calc(100vw - 3.2rem), (max-width: 1328px) 45vw, 600px"
+            fetchpriority="high"
+            alt="An empty corporate reception area with a tidy desk, muted walls, and a framed picture that is slightly crooked."
+          />
+        </div><figcaption>
+          <span>Brood offices / Reception</span><span>A considered welcome</span
+          >
+        </figcaption>
+      </figure>
+    </section>
+    <div class="assurance-line shell">
+      <p>Connected places</p><p>Participation included</p><p>
+        Procurement ready
+      </p>
+    </div>
+    <section
+      class="platform shell"
+      id="platform"
+      aria-labelledby="platform-heading"
+    >
+      <div class="platform-intro">
+        <p class="kicker">The Brood approach</p><h2 id="platform-heading">
+          A community is more than a collection of places.
+        </h2><p>
+          Patterns connect an arrival to a departure. A quiet street to a
+          familiar route. A moment of uncertainty to an opportunity for care.
+        </p><p>Our work is to keep those connections in view.</p>
+      </div>
+      <div class="platform-rows">
+        <div class="platform-row">
+          <span class="row-number">01</span><div>
+            <h3>Give ordinary journeys a second purpose.</h3><p>
+              A trip to work. A visit to a friend. Individually, these are
+              routine journeys. Together, they’re a renewable source of context.
+            </p>
+          </div>
+        </div>
+        <div class="platform-row">
+          <span class="row-number">02</span><div>
+            <h3>Remove the friction of participation.</h3><p>
+              No sign-up. No download. No one left out. Simply moving through a
+              covered area helps build a more complete picture.
+            </p>
+          </div>
+        </div>
+        <div class="platform-row">
+          <span class="row-number">03</span><div>
+            <h3>Keep care continuous.</h3><p>
+              People come and go. Their contribution needn’t. Brood keeps
+              yesterday’s context available for tomorrow’s questions.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="statement-band" aria-labelledby="continuity-heading">
+      <div class="statement-inner shell">
+        <p class="kicker">An enduring commitment</p><div>
+          <h2 id="continuity-heading">Nobody has to be alone anymore.</h2><p>
+            Attention is a resource. We believe a connected community should
+            have enough of it to go around.
+          </p><a class="text-link" href={paths.confidence}
+            ><span>Explore our public confidence statement</span><span
+              aria-hidden="true">↗</span
+            ></a
+          >
+        </div>
+      </div>
+    </section>
+    <section class="work-study shell" aria-labelledby="work-study-heading">
+      <div class="work-copy">
+        <p class="kicker">Our work / Community continuity</p><h2
+          id="work-study-heading"
+        >
+          Another quiet quarter. Another reason to renew.
+        </h2><p class="work-lede">
+          An empty street is still delivering insights.
+        </p><p>
+          During the review period, the street remained empty. Brood recorded
+          uninterrupted coverage. With no gaps in the record, the contract was
+          renewed.
+        </p><a class="text-link" href={paths.confidence}
+          ><span>Our approach to public confidence</span><span
+            aria-hidden="true">↗</span
+          ></a
+        >
+      </div>
+      <figure class="work-figure">
+        <img
+          src={arrival.src}
+          srcset={arrival.srcSet}
+          width={arrival.width}
+          height={arrival.height}
+          sizes="(max-width: 700px) calc(100vw - 2.5rem), (max-width: 1328px) 46vw, 615px"
+          loading="lazy"
+          decoding="async"
+          alt="A rundown brick streetscape at night, with dark shop windows, a lit storefront, and a narrow passage between buildings."
+        /><figcaption>
+          <span>Community continuity / Field record 01</span><span
+            >Attention maintained</span
+          >
+        </figcaption>
+      </figure>
+    </section>
+    <section class="coverage shell" aria-labelledby="coverage-heading">
+      <div class="section-heading">
+        <h2 id="coverage-heading">A matter of public confidence.</h2><p
+          class="kicker"
+        >
+          Perspectives / service notes
+        </p>
+      </div>
+      <div class="coverage-grid">
+        <article class="coverage-item">
+          <p class="kicker">From Brood / company statement</p><h3>
+            The information was available. We made it useful.
+          </h3><p>
+            Our response to questions raised by The Civic Margin, and our
+            continuing commitment to a complete picture.
+          </p><a class="text-link" href={paths.confidence}
+            ><span>Read our response</span><span aria-hidden="true">↗</span></a
+          >
+        </article>
+        <article class="coverage-item">
+          <p class="kicker">The Civic Margin / fictional investigation</p><h3>
+            The view from outside the network.
+          </h3><p>
+            An independent account of the fictional Brood incident, alongside a
+            sourced explanation of the real data economy.
+          </p><a class="text-link" href={paths.investigation}
+            ><span>Read the coverage</span><span aria-hidden="true">↗</span></a
+          >
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <CorporateFooter active="home" />
+</ExperienceLayout>

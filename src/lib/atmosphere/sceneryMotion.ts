@@ -1,3 +1,5 @@
+import { EXPERIENCE_MODE_CHANGE_EVENT } from "./experienceMode";
+
 export type SceneryMotion = "motion" | "still";
 
 export const SCENERY_MOTION_STORAGE_KEY = "portfolio-scenery-motion";
@@ -56,11 +58,18 @@ export function initializeSceneryMotion(
   let choice = readPreference(view);
 
   function update() {
-    const motion = resolveSceneryMotion(choice, preference.matches);
+    const immersive =
+      root.documentElement.dataset.experienceMode === "immersive";
+    const motion = immersive
+      ? resolveSceneryMotion(choice, preference.matches)
+      : "still";
     root.documentElement.dataset.sceneryMotion = motion;
     root.documentElement.dataset.sceneryPaused = String(root.hidden);
     inputs.forEach((input) => {
       input.checked = input.value === motion;
+    });
+    controls.forEach((control) => {
+      control.hidden = !immersive;
     });
   }
 
@@ -91,12 +100,10 @@ export function initializeSceneryMotion(
 
   // Apply the preference before revealing the control or starting any motion.
   update();
-  controls.forEach((control) => {
-    control.hidden = false;
-  });
   inputs.forEach((input) => input.addEventListener("change", changeChoice));
   preference.addEventListener("change", update);
   root.addEventListener("visibilitychange", update);
+  root.addEventListener(EXPERIENCE_MODE_CHANGE_EVENT, update);
   view.addEventListener("storage", synchronizeStorage);
   view.addEventListener("pageshow", restorePage);
 
@@ -109,6 +116,7 @@ export function initializeSceneryMotion(
     });
     preference.removeEventListener("change", update);
     root.removeEventListener("visibilitychange", update);
+    root.removeEventListener(EXPERIENCE_MODE_CHANGE_EVENT, update);
     view.removeEventListener("storage", synchronizeStorage);
     view.removeEventListener("pageshow", restorePage);
     root.documentElement.dataset.sceneryMotion = "still";

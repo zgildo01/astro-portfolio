@@ -19,6 +19,7 @@ import CaseStudyLayout from "../../../src/layouts/CaseStudyLayout.astro";
 import BaseLayout from "../../../src/layouts/BaseLayout.astro";
 import { siteConfig } from "../../../src/config/site";
 import { pageMetadata } from "../../../src/config/pageMetadata";
+import { experiencePaths } from "../../../src/features/experience/routes";
 import type { LoadedPortfolioContent } from "../../../src/lib/content/loadPortfolioForBuild";
 import { createPortfolioContent } from "../../fixtures/portfolio";
 import { mountHtml } from "../../helpers/dom";
@@ -286,10 +287,16 @@ describe("professional page DOM contracts", () => {
     const routes = new Set(
       pages.map((page) => page.path.replace(/\/$/, "") || "/")
     );
+    routes.add(experiencePaths("/").company.replace(/\/$/, ""));
     for (const entry of state.content!.caseStudies)
       routes.add(`/work/${entry.slug}`);
     for (const page of pages) {
       await render(page);
+      const discovery = getByRole(document.body, "link", {
+        name: "Open BROOD Civic Systems experience"
+      });
+      expect(discovery.id).toBe("observation-entry");
+      expect(discovery.getAttribute("href")).toBe("/experience/");
       for (const link of document.querySelectorAll<HTMLAnchorElement>(
         "a[href]"
       )) {

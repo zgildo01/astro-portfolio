@@ -3,6 +3,7 @@ import {
   type ContactEnv
 } from "../src/lib/contact/server";
 import { withApiSecurityHeaders } from "../src/lib/security/headers";
+import { handleNetworkReadout } from "../src/lib/experience/network";
 
 export interface Env extends ContactEnv {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -14,6 +15,13 @@ export default {
 
     if (pathname === "/api/contact" || pathname === "/api/contact/") {
       return withApiSecurityHeaders(await handleContactRequest(request, env));
+    }
+
+    if (
+      pathname === "/api/experience/network" ||
+      pathname === "/api/experience/network/"
+    ) {
+      return withApiSecurityHeaders(handleNetworkReadout(request));
     }
 
     if (pathname === "/api" || pathname.startsWith("/api/")) {

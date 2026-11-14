@@ -15,11 +15,13 @@ import ContactForm from "../../../src/components/contact/ContactForm.astro";
 import { CONTACT_LIMITS } from "../../../src/lib/contact/validation";
 import { deferred, flushMicrotasks, mountHtml } from "../../helpers/dom";
 import { createTurnstile } from "../../helpers/turnstile";
+import { expectResolvedReferences } from "../../helpers/pageAssertions";
 
 let container: Awaited<ReturnType<typeof AstroContainer.create>>;
 const props = {
   siteKey: "1x00000000000000000000AA",
   endpoint: "/api/contact",
+  email: undefined as string | undefined,
   linkedin: "https://www.linkedin.com/in/example/",
   github: "https://github.com/example"
 };
@@ -126,14 +128,34 @@ afterEach(() => {
 });
 
 describe("contact progressive enhancement and verification bootstrap", () => {
-  it("starts with disabled native controls, an accessible form name, and contact alternatives", async () => {
-    await mount();
+  it("ships disabled native controls, accessible field contracts, and no-script contact alternatives", async () => {
+    await mount({ email: "contact@example.com" });
     expect(fields().disabled).toBe(true);
     expect(send().disabled).toBe(true);
     expect(form().noValidate).toBe(false);
     expect(screen.getByRole("form", { name: "Start a conversation" })).toBe(
       form()
     );
+    expectResolvedReferences();
+    for (const name of ["name", "email", "message"] as const) {
+      const field = name === "message" ? message() : input(name);
+      expect(field.required, `${name} must retain native validation`).toBe(
+        true
+      );
+      expect(field.labels?.[0]?.htmlFor).toBe(`contact-${name}`);
+    }
+    expect(input("name").autocomplete).toBe("name");
+    expect(input("email").autocomplete).toBe("email");
+    expect(input("email").type).toBe("email");
+    expect(message().maxLength).toBe(CONTACT_LIMITS.message);
+    expect(status().getAttribute("role")).toBe("status");
+    expect(status().getAttribute("aria-live")).toBe("polite");
+    expect(form().querySelector("noscript")?.textContent).toContain(
+      "JavaScript is needed to send this form."
+    );
+    expect(
+      screen.getByRole("link", { name: "Email me" }).getAttribute("href")
+    ).toBe("mailto:contact@example.com");
     expect(
       screen
         .getByRole("link", { name: "Connect on LinkedIn" })
@@ -152,6 +174,16 @@ describe("contact progressive enhancement and verification bootstrap", () => {
     expect(send().disabled).toBe(true);
     expect(script()).toBeNull();
     expect(status().textContent).toContain("currently unavailable");
+    expect(document.body.textContent).not.toContain(
+      "Contact experience in progress"
+    );
+    expect(document.querySelector("[data-contact-challenge]")).toBeNull();
+    expect(document.querySelector('a[href^="mailto:"]')).toBeNull();
+    expect(
+      screen
+        .getByRole("link", { name: "Connect on LinkedIn" })
+        .getAttribute("href")
+    ).toBe(props.linkedin);
     expect(fetcher).not.toHaveBeenCalled();
   });
 
@@ -445,7 +477,9 @@ describe("contact keyboard and validation flows", () => {
     await ready();
     const trap = document.querySelector<HTMLInputElement>("#contact-honeypot")!;
     expect(trap.closest("[hidden]")).not.toBeNull();
+    expect(trap.closest("[hidden]")?.getAttribute("aria-hidden")).toBe("true");
     expect(trap.tabIndex).toBe(-1);
+    expect(document.querySelector('input[name="phone"]')).toBeNull();
     trap.value = "automated-entry";
     setFields();
     submit();
@@ -476,8 +510,12 @@ describe("contact delivery and response handling", () => {
     );
   });
 
-  it("honors an explicit deployment prefix when constructing the submission URL", async () => {
-    await mount({ endpoint: "/portfolio/api/contact" });
+  it("escapes public configuration and honors its deployment prefix when submitting", async () => {
+    const untrustedKey = '" onfocus="alert(1)';
+    await mount({ endpoint: "/portfolio/api/contact", siteKey: untrustedKey });
+    expect(form().getAttribute("action")).toBe("/portfolio/api/contact");
+    expect(form().dataset.siteKey).toBe(untrustedKey);
+    expect(form().hasAttribute("onfocus")).toBe(false);
     const widget = createTurnstile();
     setApi(widget.api);
     await initialize();

@@ -1,0 +1,257 @@
+---
+import ExperienceLayout from "../../layouts/ExperienceLayout.astro";
+import { experiencePaths } from "../../features/experience/routes";
+import NewsHeader from "../../features/experience/world/NewsHeader.astro";
+import NewsFooter from "../../features/experience/world/NewsFooter.astro";
+import "../../features/experience/world/news.css";
+
+const paths = experiencePaths(import.meta.env.BASE_URL);
+---
+
+<ExperienceLayout
+  title="Public does not mean permission — The Civic Margin"
+  description="A sourced explainer on data availability, aggregation, and privacy protections, accompanying the fictional BROOD surveillance experience."
+  world="news"
+>
+  <div class="sheet">
+    <NewsHeader active="explainer" />
+    <main id="main-content">
+      <article>
+        <header class="article-header">
+          <p class="rubric">
+            <span class="fiction-tag"
+              >Sourced explainer / real-world background</span
+            ><span>Data markets · privacy frameworks</span>
+          </p>
+          <h1>Public does not mean permission.</h1>
+          <p class="deck">
+            An ordinary trace can become part of an extraordinary picture. The
+            important questions concern how that picture was assembled, who can
+            use it, and what control remains with its subject.
+          </p>
+          <div class="byline">
+            <p>By the Civic Margin editorial desk</p><p>
+              Source notes checked <time datetime="2026-10-31"
+                >31 October 2026</time
+              >
+            </p>
+          </div>
+        </header>
+        <div class="article-layout">
+          <div class="article-body">
+            <div class="reality-note">
+              <p>
+                The Civic Margin and BROOD are fictional. This explainer
+                discusses real sources, linked where used. The invented
+                investigation is not evidence about a real surveillance company.
+              </p>
+            </div>
+            <p>
+              The BROOD story turns information into an atmosphere: an empty
+              room, an attentive machine, and an institution pleased with the
+              completeness of its records. The real question underneath it is
+              less theatrical. What does the ability to obtain information
+              entitle its holder to do?
+            </p>
+            <h2>A browser readout is one part of the picture.</h2>
+            <p>
+              The observation console reflects browser-reported settings and
+              events inside its own page: local time, device characteristics,
+              selected views, and intervals without interaction. These
+              observations remain in the current document. It does not retrieve
+              someone’s accounts or buy a commercial dossier. Its optional
+              network panel reports information Cloudflare supplies about the
+              current request, labels that source, and does not invent a
+              location when readings are unavailable.
+            </p>
+            <p>
+              Those design choices matter to the piece. A technical reading is
+              not proof of identity, and a selected channel is not proof of a
+              person’s thoughts. Treating either as a complete portrait is part
+              of the fictional institution’s confidence. The artwork invites the
+              visitor to question that confidence.
+            </p>
+            <h2>Availability has more than one meaning.</h2>
+            <p>
+              The FTC explains that people-search services assemble personal
+              information into reports for sale. Their inputs can include public
+              records and other sources. The agency also describes opt-out
+              routes and their limits: removal from a service does not erase the
+              underlying public record, and information may later reappear. <a
+                href="https://consumer.ftc.gov/articles/what-know-about-people-search-sites-sell-your-information"
+                >FTC consumer guidance</a
+              >
+            </p>
+            <p>
+              That is different from saying that everybody’s data is freely
+              available online. Some information is public; other information is
+              bought, licensed, supplied under particular conditions, or exposed
+              against expectations. Collapsing those differences into “it was
+              already there” makes a convenient corporate argument. It does not
+              answer the ethical questions about combining records or changing
+              their purpose.
+            </p>
+            <blockquote class="pullquote">
+              <p>
+                The question is not only what can be found. It is who gets to
+                turn finding it into power.
+              </p><cite>Editorial interpretation</cite>
+            </blockquote>
+            <h2>Different frameworks, uneven reach.</h2>
+            <p>
+              The Congressional Research Service’s August 2025 report describes
+              U.S. federal consumer privacy law as sectoral, covering areas such
+              as health, finance, and children’s information, alongside broader
+              state laws. That is a patchwork of protections, rather than an
+              absence of privacy law. Which rules apply depends on the relevant
+              law and circumstances. <a
+                href="https://www.congress.gov/crs-product/R48667"
+                >CRS: Preemption and Privacy Law</a
+              >
+            </p>
+            <p>
+              The EU’s GDPR uses a broader framework for covered personal-data
+              processing. The European Data Protection Board identifies
+              requirements including lawful and fair processing, transparency,
+              defined purposes, limited collection and retention, and
+              accountability. The framework does not prohibit every use of data
+              or guarantee that misuse never occurs. <a
+                href="https://www.edpb.europa.eu/topics/key-gdpr-concepts/basic-principles_en"
+                >EDPB: Basic principles</a
+              >
+            </p>
+            <p>
+              For the fictional BROOD, the gaps and boundaries become a sales
+              language: continuity, usefulness, confidence. For a reader, they
+              should become questions. What was the original purpose? Who
+              authorized the next use? What happens when the records are wrong?
+              Who can inspect the institution that inspects everyone else?
+            </p>
+            <h2>Leave with a question—and a real resource.</h2>
+            <p>
+              Privacy should not depend entirely on each person finding every
+              intermediary. Individual tools can still offer practical starting
+              points. Their coverage and conditions differ, so use the official
+              explanations to understand what each can change.
+            </p>
+            <ul class="action-links">
+              <li>
+                <a
+                  href="https://consumer.ftc.gov/articles/what-know-about-people-search-sites-sell-your-information"
+                  >Understand people-search opt-outs ↗</a
+                ><span
+                  >The FTC describes removal options and why they may not remove
+                  every copy or source.</span
+                >
+              </li>
+              <li>
+                <a href="https://privacy.ca.gov/drop/how-drop-works/"
+                  >California residents: learn about DROP ↗</a
+                ><span
+                  >The official platform supports deletion requests to
+                  registered data brokers. Its scope has exceptions, including
+                  information supplied directly to a business; it does not erase
+                  the entire internet.</span
+                >
+              </li>
+              <li>
+                <a
+                  href="https://europa.eu/youreurope/citizens/consumers/internet-telecoms/data-protection-online-privacy/"
+                  >Read the EU’s explanation of data rights ↗</a
+                ><span
+                  >Your Europe describes rights such as access and erasure, with
+                  conditions and exceptions.</span
+                >
+              </li>
+            </ul>
+            <p>
+              The activism in this piece is an invitation to ask for
+              explanations that can be checked. A procurement promise should
+              have a retention policy behind it. A claim of public benefit
+              should have a way to challenge harm. And an institution asking to
+              see more should expect to be questioned in return.
+            </p>
+            <p>
+              Read the <a href={paths.investigation}
+                >fictional BROOD investigation</a
+              >, then compare it with <a href={paths.confidence}
+                >the company’s Public Confidence response</a
+              >. The contradiction is deliberate. The real-world references are
+              there to make the next conversation more specific.
+            </p>
+          </div>
+          <aside
+            class="article-aside"
+            aria-label="Sources and editorial context"
+          >
+            <section class="aside-block">
+              <h2>What this page is</h2><p>
+                A sourced background explainer inside a fictional publication.
+                It separates the artwork’s invented allegations from documented
+                issues and provides official starting points for further
+                reading.
+              </p><p>
+                Source dates describe the referenced material. They are not a
+                claim that a later law or enforcement development has been ruled
+                out.
+              </p>
+            </section>
+            <section class="aside-block">
+              <h2>Primary-source notebook</h2><ol class="source-list">
+                <li>
+                  <a
+                    href="https://consumer.ftc.gov/articles/what-know-about-people-search-sites-sell-your-information"
+                    >FTC · People-search services</a
+                  ><span class="source-date"
+                    >Consumer guidance · checked 31 October 2026</span
+                  >
+                </li>
+                <li>
+                  <a href="https://www.congress.gov/crs-product/R48667"
+                    >CRS · Preemption and Privacy Law</a
+                  ><span class="source-date"
+                    >Report R48667 · 29 August 2025</span
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://www.edpb.europa.eu/topics/key-gdpr-concepts/basic-principles_en"
+                    >EDPB · Basic principles</a
+                  ><span class="source-date"
+                    >Official guidance · checked 31 October 2026</span
+                  >
+                </li>
+                <li>
+                  <a href="https://privacy.ca.gov/drop/how-drop-works/"
+                    >California · How DROP works</a
+                  ><span class="source-date"
+                    >Official platform guidance · checked 31 October 2026</span
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://europa.eu/youreurope/citizens/consumers/internet-telecoms/data-protection-online-privacy/"
+                    >Your Europe · Data rights</a
+                  ><span class="source-date"
+                    >Official consumer guidance · checked 31 October 2026</span
+                  >
+                </li>
+              </ol>
+            </section>
+            <section class="aside-block">
+              <h2>In the fictional record</h2><h3 class="related-title">
+                The company says the archive is a form of care.
+              </h3><p>
+                Our invented investigation follows the difference between
+                collecting a record and being accountable for it.
+              </p><a href={paths.investigation}>Read the BROOD story →</a><a
+                href={paths.company}>Visit the fictional company ↗</a
+              >
+            </section>
+          </aside>
+        </div>
+      </article>
+    </main>
+    <NewsFooter active="explainer" />
+  </div>
+</ExperienceLayout>

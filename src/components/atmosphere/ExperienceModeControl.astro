@@ -1,0 +1,53 @@
+---
+import styles from "./ExperienceModeControl.module.css";
+
+const modes = [
+  {
+    value: "immersive",
+    label: "Immersive",
+    description: "Atmospheric scenery with optional background motion."
+  },
+  {
+    value: "minimal",
+    label: "Minimal",
+    description: "Content without decorative imagery or effects."
+  }
+];
+---
+
+<details
+  class={styles.settings}
+  name="portfolio-header-panel"
+  data-experience-control
+  hidden
+>
+  <summary class={styles.toggle}>
+    <span>Display</span>
+    <span class={styles.indicator} aria-hidden="true"></span>
+  </summary>
+
+  <div class={styles.panel}>
+    <fieldset class={styles.fieldset}>
+      <legend>Appearance</legend>
+      <div class={styles.options}>
+        {
+          modes.map(({ value, label, description }) => (
+            <label class={styles.option}>
+              <input
+                type="radio"
+                name="experience-mode"
+                value={value}
+                aria-label={label}
+                checked={value === "immersive"}
+              />
+              <span class={styles.copy}>
+                <span class={styles.name}>{label}</span>
+                <span class={styles.description}>{description}</span>
+              </span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+  </div>
+</details>

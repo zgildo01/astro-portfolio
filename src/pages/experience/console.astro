@@ -1,0 +1,194 @@
+---
+import ExperienceLayout from "../../layouts/ExperienceLayout.astro";
+import ExperienceRoot from "../../features/experience/ExperienceRoot";
+import { getSceneImages } from "../../features/experience/scenes.server";
+import { experiencePaths } from "../../features/experience/routes";
+import "../../features/experience/experience.css";
+
+const paths = experiencePaths(import.meta.env.BASE_URL);
+const scenes = await getSceneImages();
+---
+
+<ExperienceLayout
+  title="Station 04 — BROOD Civic Systems"
+  description="An optional fictional observation console. Every place shown is invented; browser readings describe this session only."
+  world="console"
+>
+  <div class="experience-console-shell">
+    <header class="experience-console-header">
+      <a class="experience-console-brand" href={paths.company}
+        >BROOD / CIVIC SYSTEMS</a
+      >
+      <p>STATION 04 · OBSERVATION SERVICES</p>
+      <a
+        id="experience-exit"
+        class="experience-console-exit"
+        href={paths.portfolio}>Disconnect · Return to portfolio</a
+      >
+    </header>
+    <main id="main-content" class="experience-console-main">
+      <h1>Observation console</h1>
+      <p class="experience-console-disclosure">
+        Fictional surveillance artwork. No camera, microphone, screen capture,
+        or account access. Browser readings remain in this tab. The optional
+        network reading reflects this request through the site’s Worker.
+      </p>
+      <ExperienceRoot
+        scenes={scenes}
+        networkEndpoint={import.meta.env.DEV ? "" : "/api/experience/network"}
+        client:load
+      />
+      <section
+        class="experience-retained"
+        aria-labelledby="retained-heading"
+        id="retained-views"
+      >
+        <h2 id="retained-heading">Retained views</h2>
+        <p>
+          Every scene is available here, including when the console cannot
+          initialize. All locations are fictional and unoccupied.
+        </p>
+        <details>
+          <summary>Open the static scene archive</summary>
+          <div class="experience-retained-grid">
+            {
+              scenes.map((scene) => (
+                <figure>
+                  <img
+                    src={scene.src}
+                    srcset={scene.srcSet}
+                    sizes="(min-width: 900px) 40vw, 90vw"
+                    width={scene.width}
+                    height={scene.height}
+                    loading="lazy"
+                    decoding="async"
+                    alt={scene.alt}
+                  />
+                  <figcaption>{scene.description}</figcaption>
+                </figure>
+              ))
+            }
+          </div>
+        </details>
+      </section>
+      <footer class="experience-console-footer">
+        <p>Everybody accounted for. A fictional work by Zeus Zaragoza.</p>
+        <a href={paths.explainer}>Data and rights</a>
+        <a href={paths.confidence}>Public Confidence Office</a>
+      </footer>
+    </main>
+  </div>
+</ExperienceLayout>
+
+<style is:global>
+  html[data-experience-world="console"] {
+    color-scheme: dark;
+    background: #080c0c;
+  }
+  [data-experience-world="console"] body {
+    margin: 0;
+    color: #d9ddcc;
+    background: #080c0c;
+    font:
+      0.875rem/1.6 "Courier New",
+      monospace;
+  }
+  .experience-console-shell {
+    max-width: 1520px;
+    margin: auto;
+    padding: 1.5rem clamp(1rem, 3vw, 3rem);
+  }
+  .experience-console-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #48514a;
+  }
+  .experience-console-header p {
+    margin: 0;
+    color: #a3afa0;
+  }
+  .experience-console-brand {
+    font-weight: bold;
+    letter-spacing: 0.08em;
+  }
+  .experience-console-exit {
+    margin-left: auto;
+    padding: 0.65rem;
+    border: 1px solid #87947c;
+  }
+  .experience-console-main {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .experience-console-main > h1 {
+    margin: 1.5rem 0 0.5rem;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: normal;
+  }
+  .experience-console-disclosure {
+    max-width: 100ch;
+    color: #abb7a5;
+    margin-bottom: 1.75rem;
+  }
+  [data-experience-world="console"] a {
+    color: #d9ddcc;
+    text-underline-offset: 0.2em;
+  }
+  [data-experience-world="console"] :focus-visible {
+    outline: 2px solid #e1d69c;
+    outline-offset: 4px;
+  }
+  .experience-retained {
+    margin-top: 2rem;
+    border-top: 1px solid #48514a;
+    padding-top: 1rem;
+    scroll-margin-top: 1rem;
+  }
+  .experience-retained summary {
+    cursor: pointer;
+    padding: 1rem 0;
+  }
+  .experience-retained-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    gap: 1.5rem;
+  }
+  .experience-retained figure {
+    margin: 0;
+  }
+  .experience-retained img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  .experience-retained figcaption {
+    padding: 0.5rem 0;
+  }
+  .experience-console-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    align-items: center;
+    margin-top: 2rem;
+    border-top: 1px solid #48514a;
+    padding-top: 1rem;
+  }
+  @media (max-width: 600px) {
+    .experience-console-exit {
+      margin-left: 0;
+    }
+  }
+  @media print {
+    .experience-console-header,
+    .experience-console-footer {
+      display: block;
+    }
+    .experience-retained details::details-content {
+      display: block;
+    }
+  }
+</style>

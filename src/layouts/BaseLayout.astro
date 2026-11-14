@@ -8,6 +8,8 @@ import "../styles/global.css";
 import "../styles/shell.css";
 import "../styles/patterns.css";
 import "../styles/templates.css";
+import "../styles/experience-modes.css";
+import "../styles/frame-interference.css";
 
 import SceneryEnvironment from "../components/atmosphere/SceneryEnvironment.astro";
 import SiteFooter from "../components/site/SiteFooter.astro";
@@ -18,7 +20,8 @@ import { contactConfig } from "../config/contact";
 import { resolveSiteOrigin } from "../config/siteOrigin";
 import { normalizeRoutePath, withBasePath } from "../lib/routing";
 import { canonicalPageUrl, serializeStructuredData } from "../lib/seo";
-import arrival from "../assets/scenery/arrival.png";
+import closedPassage from "../assets/scenery/closed-passage.png";
+import { experienceModeBootstrap } from "../lib/atmosphere/experienceMode";
 
 interface Props {
   title: string;
@@ -40,7 +43,7 @@ const noindex =
   normalizeRoutePath(Astro.url.pathname) ===
     normalizeRoutePath(withBasePath("/experience", import.meta.env.BASE_URL));
 const socialImage = await getImage({
-  src: arrival,
+  src: closedPassage,
   width: 1200,
   height: 630,
   fit: "cover",
@@ -49,7 +52,7 @@ const socialImage = await getImage({
 });
 const socialImageUrl = new URL(socialImage.src, origin).href;
 const socialImageAlt =
-  "Vacant small-town storefronts and a quiet street at night, from Zeus Zaragoza’s portfolio.";
+  "A quiet tiled passage and closed doorway, from Zeus Zaragoza’s portfolio.";
 const personId = `${homeUrl}#person`;
 const websiteId = `${homeUrl}#website`;
 const structuredData = serializeStructuredData({
@@ -92,10 +95,18 @@ const hasScenery =
   !noindex &&
   normalizeRoutePath(Astro.url.pathname) !==
     normalizeRoutePath(withBasePath("/resume", import.meta.env.BASE_URL));
+Astro.csp?.insertScriptHash(
+  `sha256-${createHash("sha256").update(experienceModeBootstrap).digest("base64")}`
+);
 ---
 
 <!doctype html>
-<html lang="en" data-scenery-motion="still" data-scenery-paused="true">
+<html
+  lang="en"
+  data-experience-mode="immersive"
+  data-scenery-motion="still"
+  data-scenery-paused="true"
+>
   <head>
     <meta charset="UTF-8" />
 
@@ -164,6 +175,7 @@ const hasScenery =
   </head>
 
   <body data-scenery={hasScenery ? "enabled" : undefined}>
+    <script is:inline set:html={experienceModeBootstrap} />
     {hasScenery && <SceneryEnvironment />}
 
     <SkipLink />
@@ -177,5 +189,24 @@ const hasScenery =
     </main>
 
     <SiteFooter scenery={hasScenery} />
+    <script>
+      import { initializeExperienceMode } from "../lib/atmosphere/experienceMode";
+      import { initializeFrameInterference } from "../lib/atmosphere/frameInterference";
+
+      initializeExperienceMode();
+      initializeFrameInterference();
+      function restoreObservationFocus() {
+        if (location.hash !== "#observation-entry") return;
+        const entry = document.getElementById("observation-entry");
+        const target = entry?.getClientRects().length
+          ? entry
+          : document.querySelector<HTMLAnchorElement>("header a[href]");
+        target?.focus({ preventScroll: true });
+      }
+      restoreObservationFocus();
+      // Native fragment focusing may run after this module and discard focus
+      // when Minimal hides the target. Restore it once navigation completes.
+      window.addEventListener("pageshow", restoreObservationFocus);
+    </script>
   </body>
 </html>

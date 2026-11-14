@@ -187,6 +187,12 @@ describe("case-study content to listing and detail DOM", () => {
     expect(links.map((link) => link.getAttribute("href"))).toEqual(
       paths.map((entry) => `/work/${entry.params.slug}`)
     );
+    expect(paths).toEqual(
+      state.cases.map((caseStudy) => ({
+        params: { slug: caseStudy.slug },
+        props: { caseStudy }
+      }))
+    );
     expect(main.querySelectorAll(".work-card")).toHaveLength(3);
   });
 
@@ -203,9 +209,11 @@ describe("case-study content to listing and detail DOM", () => {
     ).toBe("/resume");
     expect(main.querySelector(".work-list__items")).toBeNull();
     expect(main.querySelector(".work-card")).toBeNull();
+    expect(await getStaticPaths()).toEqual([]);
+    expect(main.textContent).not.toContain(createCaseStudy().title);
   });
 
-  it("exposes metadata facts in definition-list relationships", async () => {
+  it("renders authored metadata, definition-list facts, and every section's content", async () => {
     const entry = state.cases[0];
     const main = await renderCase();
     const facts = main.querySelector("dl")!;
@@ -218,11 +226,45 @@ describe("case-study content to listing and detail DOM", () => {
     expect(
       [...facts.querySelectorAll("li")].map((item) => item.textContent)
     ).toEqual(entry.technologies);
+    expectDocumentStructure();
+    expect(main.querySelector("h1")?.textContent).toBe(entry.title);
+    expect(document.title).toContain(entry.title);
+    expect(
+      document
+        .querySelector('meta[name="description"]')
+        ?.getAttribute("content")
+    ).toBe(entry.description);
+    expect(main.querySelector(".page-eyebrow")?.textContent).toBe(
+      entry.category
+    );
+    for (const section of entry.sections) {
+      expect(main.textContent).toContain(section.title);
+      for (const paragraph of section.paragraphs)
+        expect(main.textContent).toContain(paragraph);
+    }
   });
 
   it("keeps each content-section heading connected to exactly one table-of-contents link", async () => {
-    const entry = state.cases[0];
-    const main = await renderCase();
+    const entry = createCaseStudy({
+      sections: [
+        {
+          id: "context",
+          title: "Project context",
+          paragraphs: [
+            "The team needed a common reference for its existing tools."
+          ],
+          workflow: ["Source comments", "Manual generation", "Markdown files"]
+        },
+        {
+          id: "result",
+          title: "Project result",
+          paragraphs: [
+            "Generated files made existing capabilities easier to find."
+          ]
+        }
+      ]
+    });
+    const main = await renderCase(entry);
     const contents = within(main).getByRole("navigation", {
       name: "On this page"
     });
@@ -240,6 +282,15 @@ describe("case-study content to listing and detail DOM", () => {
       ).toHaveLength(1);
     }
     expectResolvedReferences();
+    expect(
+      main
+        .querySelector("figure")
+        ?.closest("section")
+        ?.getAttribute("aria-labelledby")
+    ).toBe("context");
+    expect(main.querySelector("figure")?.textContent).toContain(
+      "Manual generation"
+    );
   });
 
   it("attaches the optional workflow only to its authored content section", async () => {
@@ -319,8 +370,9 @@ describe("case-study content to listing and detail DOM", () => {
 
   it("escapes hostile strings in cards, metadata, facts, technologies, and prose", async () => {
     const entry = createCaseStudy({
-      title: '<img src=x onerror="attack()">',
-      description: '<script>attack()</script> & "quoted" description',
+      title:
+        'Tools <strong>with markup</strong> <img src=x onerror="attack()">',
+      description: '<script>attack()</script> <markup> & "quoted" description',
       organization: '<svg onload="attack()">',
       role: '<a href="javascript:attack()">role</a>',
       technologies: ['<iframe src="https://attacker.invalid">'],
@@ -337,17 +389,23 @@ describe("case-study content to listing and detail DOM", () => {
     const listing = await renderIndex();
     expect(
       listing.querySelector(
-        ".work-card img,.work-card script,.work-card iframe"
+        ".work-card img,.work-card script,.work-card iframe,.work-card strong,.work-card markup,[onerror],[onload]"
       )
     ).toBeNull();
     expect(listing.querySelector(".work-card")?.textContent).toContain(
       entry.title
     );
+    expect(listing.querySelector(".work-card")?.textContent).toContain(
+      entry.description
+    );
     const main = await renderCase(entry);
     expect(
-      main.querySelector("script,img,svg,iframe,[onerror],[onload]")
+      main.querySelector(
+        "script,img,svg,iframe,strong,markup,[onerror],[onload]"
+      )
     ).toBeNull();
     expect(main.textContent).toContain(entry.organization);
+    expect(main.querySelector("h1")?.textContent).toBe(entry.title);
     expect(main.textContent).toContain(entry.sections[0].paragraphs[0]);
     expect(
       document

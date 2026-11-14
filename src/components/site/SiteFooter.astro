@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from "../../config/site";
+import { withBasePath } from "../../lib/routing";
 import SceneryMotionControl from "../atmosphere/SceneryMotionControl.astro";
 import SiteNavigation from "./SiteNavigation.astro";
 import styles from "./SiteFooter.module.css";
@@ -23,11 +24,28 @@ const { scenery = false } = Astro.props;
     <SiteNavigation placement="footer" label="Footer" />
 
     <div class={styles.lower}>
-      <p class={styles.remark}>Why not stay a while?</p>
+      <p class={styles.remark} data-atmosphere-copy>Why not stay a while?</p>
       {scenery && <SceneryMotionControl />}
       <p class={styles.copyright}>
         <small>&copy; {currentYear} {siteConfig.name}</small>
       </p>
     </div>
   </div>
+  <a
+    id="observation-entry"
+    class={styles.observationEntry}
+    href={withBasePath("/experience/", import.meta.env.BASE_URL)}
+    aria-label="Open BROOD Civic Systems experience"
+    data-observation-entry
+  >
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M9 12h27l5 12H16L9 12Z"></path>
+      <path d="m15 24 3 5h12l3-5M25 29v8h-9M7 10l3-2 5 4M35 16h3"></path>
+      <path d="M17 16h13"></path>
+      <circle cx="32.5" cy="20" r="1"></circle>
+    </svg>
+    <span class={styles.observationLabel} aria-hidden="true"
+      >BROOD Civic Systems</span
+    >
+  </a>
 </footer>

@@ -138,65 +138,12 @@
   background: var(--color-surface-recessed);
 }
 
-.atmospheric-scene--arrival .atmospheric-scene__frame {
-  block-size: 34.25rem;
-}
-
-.atmospheric-scene--interior .atmospheric-scene__frame {
-  block-size: 30rem;
-}
-
 .atmospheric-scene__frame img {
+  display: block;
   inline-size: 100%;
-  block-size: 100%;
-  object-fit: cover;
-  object-position: 55% 50%;
-  animation: scene-frame-weave 31s step-end infinite paused;
-}
-
-.atmospheric-scene--interior img {
-  object-position: 61% 50%;
-}
-
-.atmospheric-scene__frame::before,
-.atmospheric-scene__frame::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.atmospheric-scene__frame::before {
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    #08120c40 0px,
-    #08120c40 1px,
-    transparent 1px,
-    transparent 4px
-  );
-  box-shadow: inset 0 0 70px #0b130d6b;
-}
-
-.atmospheric-scene__frame::after {
-  inset: -44% 0 auto;
-  block-size: 34%;
-  background: linear-gradient(
-    transparent,
-    #c7dab21c 52%,
-    #d3e1be2e 67%,
-    transparent 100%
-  );
-  animation: scene-frame-roll 17s linear infinite paused;
-  animation-delay: -6s;
-}
-
-html[data-scenery-motion="motion"][data-scenery-paused="false"]
-  .atmospheric-scene__frame
-  img,
-html[data-scenery-motion="motion"][data-scenery-paused="false"]
-  .atmospheric-scene__frame::after {
-  animation-play-state: running;
+  block-size: auto;
+  object-fit: contain;
+  object-position: center;
 }
 
 .atmospheric-scene figcaption {
@@ -214,6 +161,14 @@ html[data-scenery-motion="motion"][data-scenery-paused="false"]
 .atmospheric-scene__number {
   flex-shrink: 0;
   color: var(--color-accent-warm);
+}
+
+.page .atmospheric-home-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  margin-block-start: clamp(3rem, 7vw, 6rem);
 }
 
 .page .atmospheric-home-continuation {
@@ -373,37 +328,7 @@ html[data-scenery-motion="motion"][data-scenery-paused="false"]
   padding-block-start: 1rem;
 }
 
-@keyframes scene-frame-roll {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(0, 520%, 0);
-  }
-}
-
-@keyframes scene-frame-weave {
-  0%,
-  89%,
-  94%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1.01);
-  }
-  90%,
-  93% {
-    transform: translate3d(-3px, 1px, 0) scale(1.01);
-  }
-}
-
 @media (max-width: 61.25rem) {
-  .atmospheric-scene--arrival .atmospheric-scene__frame {
-    block-size: 32.5rem;
-  }
-
-  .atmospheric-scene--interior .atmospheric-scene__frame {
-    block-size: 27.5rem;
-  }
-
   .page .atmospheric-home-continuation {
     gap: 1.5rem 2.25rem;
     margin-block-start: 4rem;
@@ -463,8 +388,9 @@ html[data-scenery-motion="motion"][data-scenery-paused="false"]
     margin-block-start: 2.125rem;
   }
 
-  .atmospheric-scene--arrival .atmospheric-scene__frame {
-    block-size: 16.875rem;
+  .page .atmospheric-home-details {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
   }
 
   .atmospheric-scene figcaption {
@@ -529,11 +455,6 @@ html[data-scenery-motion="motion"][data-scenery-paused="false"]
     margin-block-start: 2.5rem;
     padding-block-start: 0;
   }
-
-  .atmospheric-scene--interior .atmospheric-scene__frame {
-    block-size: auto;
-    aspect-ratio: 4 / 3;
-  }
 }
 
 @media (max-width: 22.5rem) {
@@ -544,32 +465,9 @@ html[data-scenery-motion="motion"][data-scenery-paused="false"]
   .atmospheric-hero-actions li + li {
     margin-block-start: 0.25rem;
   }
-
-  .atmospheric-scene--arrival .atmospheric-scene__frame {
-    block-size: 14.375rem;
-  }
-}
-
-/* The shared control decides whether motion runs. Restoring duration here
-   leaves the original still composition intact under the global motion reset. */
-@media (prefers-reduced-motion: reduce) {
-  .atmospheric-scene__frame img {
-    animation-duration: 31s !important;
-    animation-iteration-count: infinite !important;
-  }
-
-  .atmospheric-scene__frame::after {
-    animation-duration: 17s !important;
-    animation-iteration-count: infinite !important;
-  }
 }
 
 @media print {
-  .atmospheric-scene__frame::before,
-  .atmospheric-scene__frame::after {
-    display: none;
-  }
-
   .atmospheric-hero-copy,
   .atmospheric-page-intro,
   .atmospheric-content-block,

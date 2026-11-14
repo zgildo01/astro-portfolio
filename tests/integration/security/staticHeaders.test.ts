@@ -26,9 +26,13 @@ describe("Cloudflare static asset header generation", () => {
     const dir = await directory();
     await writeSecurityHeaders(dir);
     const text = await readFile(path.join(dir, "_headers"), "utf8");
-    const [global, fingerprinted, experience, experienceSlash] = text
-      .trim()
-      .split("\n\n");
+    const [
+      global,
+      fingerprinted,
+      experience,
+      experienceSlash,
+      experienceChildren
+    ] = text.trim().split("\n\n");
 
     expect(global.split("\n")[0]).toBe("/*");
     for (const [name, value] of Object.entries(assetSecurityHeaders)) {
@@ -42,9 +46,12 @@ describe("Cloudflare static asset header generation", () => {
     expect(experienceSlash).toBe(
       "/experience/\n  X-Robots-Tag: noindex, nofollow"
     );
+    expect(experienceChildren).toBe(
+      "/experience/*\n  X-Robots-Tag: noindex, nofollow"
+    );
     // Cloudflare allows 100 rules and limits each header line to 2,000 chars.
     expect(text.split("\n").every((line) => line.length <= 2000)).toBe(true);
-    expect(text.match(/^\//gm)).toHaveLength(4);
+    expect(text.match(/^\//gm)).toHaveLength(5);
   });
 
   it("accepts Astro output URLs and prefixes only route-specific header rules", async () => {

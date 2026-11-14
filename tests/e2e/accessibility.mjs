@@ -356,10 +356,15 @@ try {
   await check("compact menu works with keyboard at 320px", async () => {
     await page.setViewportSize({ width: 320, height: 700 });
     await load(page, home);
-    const toggle = page.locator("header summary");
+    const toggle = page.locator("header [data-mobile-navigation] > summary");
     await toggle.focus();
     await page.keyboard.press("Enter");
-    assert.equal(await page.locator("header details").getAttribute("open"), "");
+    assert.equal(
+      await page
+        .locator("header [data-mobile-navigation]")
+        .getAttribute("open"),
+      ""
+    );
     await page.keyboard.press("Tab");
     assert.equal(
       await page.evaluate(
@@ -373,7 +378,9 @@ try {
     await toggle.focus();
     await page.keyboard.press("Space");
     assert.equal(
-      await page.locator("header details").getAttribute("open"),
+      await page
+        .locator("header [data-mobile-navigation]")
+        .getAttribute("open"),
       null
     );
   });
@@ -382,6 +389,10 @@ try {
     "reduced motion defaults to still and explicit choices persist",
     async () => {
       await load(page, home);
+      const settings = page.locator("[data-experience-control]").first();
+      await settings.locator("summary").click();
+      await settings.getByRole("radio", { name: /^Immersive/i }).check();
+      await settings.locator("summary").click();
       await page
         .locator("[data-scenery-control]")
         .waitFor({ state: "visible" });

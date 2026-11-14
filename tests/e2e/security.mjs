@@ -61,6 +61,7 @@ try {
       messages.push({ level: message.type(), text: message.text() });
   });
   await page.addInitScript(() => {
+    window.localStorage.setItem("portfolio-experience-mode", "immersive");
     window.__portfolioUntrustedScriptExecuted = false;
     window.__portfolioSecurityViolations = [];
     document.addEventListener("securitypolicyviolation", (event) => {

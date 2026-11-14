@@ -1,0 +1,153 @@
+/* A clean still is the baseline; motion is an explicitly gated enhancement. */
+.signal-frame {
+  position: relative;
+  display: block;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  background: #080f11;
+}
+
+.signal-frame > img {
+  transform: none;
+  filter: none;
+  transform-origin: center;
+  animation: none;
+}
+
+.signal-frame > :is(.frame-grain, .frame-track) {
+  position: absolute;
+  z-index: 1;
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+  animation: none;
+}
+
+.signal-frame > .frame-grain {
+  inset: -3px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 96px 96px;
+}
+
+.signal-frame > .frame-track {
+  inset: 0;
+  background-image: var(--frame-source, none);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  clip-path: inset(100% 0 0);
+  transform: none;
+  filter: none;
+}
+
+/* The entire disturbance occupies 2% of a 19–29 second cycle (0.38–0.58s). */
+@keyframes frame-picture-slip {
+  0%,
+  81.5%,
+  83.5%,
+  100% {
+    transform: translate(0, 0);
+    filter: blur(0);
+  }
+  82% {
+    transform: translate(-0.8px, 0.1px);
+    filter: blur(0.13px);
+  }
+  82.5% {
+    transform: translate(1.2px, -0.2px);
+    filter: blur(0.22px);
+  }
+  83% {
+    transform: translate(-0.55px, 0.2px);
+    filter: blur(0.08px);
+  }
+}
+
+@keyframes frame-tracking-pass {
+  0%,
+  81.5%,
+  83.5%,
+  100% {
+    opacity: 0;
+    clip-path: inset(100% 0 0);
+    transform: translateX(0);
+    filter: blur(0);
+  }
+  82% {
+    opacity: 0.04;
+    clip-path: inset(16% 0 80%);
+    transform: translateX(-2px);
+    filter: blur(0.18px);
+  }
+  82.5% {
+    opacity: 0.07;
+    clip-path: inset(44% 0 52%);
+    transform: translateX(2.8px);
+    filter: blur(0.28px);
+  }
+  83% {
+    opacity: 0.035;
+    clip-path: inset(78% 0 18%);
+    transform: translateX(-1.3px);
+    filter: blur(0.14px);
+  }
+}
+
+@keyframes frame-grain-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(1px, -1px);
+  }
+  66% {
+    transform: translate(-1px, 1px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-experience-mode="immersive"][data-scenery-motion="motion"][data-scenery-paused="false"]
+    .signal-frame[data-frame-visible="true"]
+    > img {
+    animation: frame-picture-slip var(--signal-period, 23s) linear
+      var(--signal-phase, 0s) infinite;
+  }
+
+  html[data-experience-mode="immersive"][data-scenery-motion="motion"][data-scenery-paused="false"]
+    .signal-frame[data-frame-visible="true"]
+    > .frame-grain {
+    display: block;
+    opacity: 0.024;
+    animation: frame-grain-drift 1.7s steps(1, end) var(--signal-phase, 0s)
+      infinite;
+  }
+
+  html[data-experience-mode="immersive"][data-scenery-motion="motion"][data-scenery-paused="false"]
+    .signal-frame[data-frame-visible="true"]
+    > .frame-track {
+    display: block;
+    animation: frame-tracking-pass var(--signal-period, 23s) linear
+      var(--signal-phase, 0s) infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce), print {
+  .signal-frame > img {
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .signal-frame > :is(.frame-grain, .frame-track) {
+    display: none !important;
+    opacity: 0 !important;
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}

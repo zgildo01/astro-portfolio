@@ -1,7 +1,7 @@
 ---
 import PageIntro from "../components/page/PageIntro.astro";
 import SceneFigure from "../components/atmosphere/SceneFigure.astro";
-import interior from "../assets/scenery/interior.png";
+import withheldReflection from "../assets/scenery/withheld-reflection.png";
 import { pageMetadata } from "../config/pageMetadata";
 import { siteConfig } from "../config/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -26,13 +26,13 @@ const metadata = pageMetadata.about;
         </PageIntro>
 
         <section class="about-page__status atmospheric-content-block">
-          <p class="atmospheric-section-number">01 / In preparation</p>
-          <h2>About page in progress</h2>
+          <p class="atmospheric-section-number">01 / Introductions</p>
+          <h2>Who is Zeus?</h2>
 
           <p>
-            A fuller professional biography, working philosophy, and supporting
-            background will be added as the portfolio’s professional content is
-            developed.
+            It's me. I'm Zeus. I'm a developer passionate about finding
+            solutions, optimizing workflows and building better channels for us
+            all to work and live within. I think we'd work really well together.
           </p>
         </section>
 
@@ -46,6 +46,60 @@ const metadata = pageMetadata.about;
               The principles that guide the work presented in this portfolio
             </li>
           </ul>
+        </section>
+
+        <section class="about-page__status atmospheric-content-block">
+          <p class="atmospheric-section-number">02 / My background</p>
+          <h2>Where did he come from?</h2>
+
+          <p>I came from passion.</p>
+          <p>
+            I was always interested in tech and developing. At just 12 years old
+            I was developing Minecraft mods, at 10 I was playing with Python
+            injectors built by others on video games I loved and at 9 I was
+            playing with HTML and CSS. I've always loved hardware and software.
+          </p>
+          <p>
+            My career was pretty simple, started off with a development
+            bootcamp, got into General Motors, then into a software insurance
+            company named Finys. At General Motors at first I helped with
+            pipeline updates for their CI and BV pipelines, then I moved onto
+            platform tools like their Visual Site Regression tool. Finys had
+            much of the same, platform tools and pipelines.
+          </p>
+        </section>
+
+        <section class="about-page__status atmospheric-content-block">
+          <p class="atmospheric-section-number">03 / Technical Philosophy</p>
+          <h2>What rules decide what you build?</h2>
+
+          <h3>Think it through and be thorough.</h3>
+          <p>
+            The last thing anyone wants to accumulate is tech debt from poorly
+            decided "solutions". Bandaid solutions are unnacceptable, and if a
+            situation can't be fixed right away, coordination should be in place
+            to establish the proper means of doing so.
+          </p>
+          <h3>Take accountability and don't be afraid to speak up.</h3>
+          <p>
+            Sometimes things go wrong, and when they do, it's okay to admit to
+            it and formulate a plan to fix it. It's important to step up and
+            establish ways to do things. It's important to take initiative and
+            ownership on projects and work.
+          </p>
+        </section>
+
+        <section class="about-page__status atmospheric-content-block">
+          <p class="atmospheric-section-number">04 / Portfolio Philosophy</p>
+          <h2>Why does your portfolio look like this?</h2>
+          <p>
+            I'm a huge horror and satire fan. I was deeply inspired by the works
+            of David Lynch, Akira Yamaoka and of course, GTA. A secret, hidden
+            portion of my site is actually formulated to work like the internet
+            accessible in GTA 4 and GTA 5, satire that serves almost like
+            political commentary. It's advocacy for data privacy and poking fun
+            at the people behind it.
+          </p>
         </section>
 
         <section class="about-page__next-steps atmospheric-content-block">
@@ -74,9 +128,9 @@ const metadata = pageMetadata.about;
       </div>
 
       <SceneFigure
-        image={interior}
-        alt="An empty waiting room with burgundy curtains, two dark chairs, a lit floor lamp, and an open doorway into a cold blue corridor."
-        caption="There is more to know."
+        image={withheldReflection}
+        alt="An empty chair faces a wall mirror whose reflection shows a different, unoccupied corridor."
+        caption="There is always more to know."
         number="02"
         variant="interior"
       />
